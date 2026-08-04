@@ -16,6 +16,12 @@ painted-cover style), extended to matching card-frame UI chrome for the
 bestiary/dossier. See T13 (style-prompt suffix) and T11 (now includes
 retro UI chrome) in Implementation Tasks.
 
+**Amended 2026-08-03 (3):** Foundational Decision #18 — adopted the
+STYLE FORMULA prompt-engineering contract from the already-installed
+`higgsfield-game-generation` skill (model-agnostic, reused independent of
+the Decision #15 choice to skip Higgsfield's paid service). Formula frozen
+and approved; see full text under Decision #18.
+
 **Supersedes:** `~/.gstack/projects/game/ceo-plans/archive/2026-08-03-vtm-chronicle.md`
 and premises 1-2 of the original office-hours design doc
 (`rcmanaure-master-design-20260803-183155.md`). That doc's core loop pattern
@@ -108,6 +114,32 @@ work. This is a build-order decision, not an architecture change.
 | 15 | Art generation (amendment, 2026-08-03): v1 art (monster/scenario bestiary images) generated via OpenRouter image models (e.g. Nano Banana/Gemini Flash Image, Seedream 4.5), not Higgsfield. Flat ~$0.04/image regardless of size. Higgsfield deferred to post-v1, only if actual 3D-asset or animation-pipeline needs arise that a flat image model can't cover — its real strength, not simple 2D bestiary portraits | User asked for the cheapest viable MVP art path. OpenRouter image models are far cheaper/more predictable than a specialized 3D/animation asset platform for what v1 actually needs (static 2D archetype portraits), and billing consolidates onto the single OpenRouter account already used for the DM — one provider, one spend cap (Decision #3 rate-limit/spend-cap mechanism), not two |
 | 16 | Art direction (amendment, 2026-08-03): retro pre-digital fantasy painting style — MTG Alpha/Beta and TSR 70s-90s tabletop RPG book art as explicit reference (Larry Elmore, Jeff Easley, Clyde Caldwell, Keith Parkinson painted-cover style; Erol Otus/Dave Trampier pen-and-ink as an optional secondary look for lower-stakes encounters). Concretely: oil/gouache painterly texture, aged-paper/muted-saturated palette, dramatic heroic poses, visible brushwork, NO modern smooth digital-airbrush or anime look. This is a fixed style-prompt suffix appended to every art-gen request (works with any archetype from Decision #6's taxonomy), not a per-image creative choice | User specified the era and named MTG's early editions directly — a vague "retro" instruction produces inconsistent results; naming concrete artist/era references gives the image-gen prompt something specific to lock onto |
 | 17 | UI chrome for bestiary/dossier (amendment, 2026-08-03): card frames match the retro era — thick bordered card frame, title banner, period-appropriate typography (echoes early TCG card layout, not a modern flat-UI card component). Feeds into the already-blocking TODO (T11, UX inputs for /plan-design-review) as a concrete style input, not a separate design task | Generated retro art sitting inside a modern flat-UI card would look pasted-on, undermining the whole point of the art-direction decision (#16); this is a CSS/component styling concern, not new architecture, so it doesn't change effort estimates elsewhere in the plan |
+| 18 | Prompt-engineering methodology (amendment, 2026-08-03): adopt the STYLE FORMULA contract from the already-installed `.agents/skills/higgsfield-game-generation/references/stylization.md` (model-agnostic technique, not tied to using Higgsfield's paid service — works with any image model including the OpenRouter Nano Banana/Seedream chosen in Decision #15). One frozen 60-90 word formula, approved once by the user, inserted byte-identical into every art-gen prompt; style drift is fixed by re-rolling the SAME prompt (sampling variance), never by editing the prompt; regen budget capped at 2 attempts per asset before accepting the best result. Formula approved 2026-08-03 (full text below); re-opening the approval gate (and invalidating prior-generated assets) only happens if the user explicitly asks to change the art style | User explicitly asked to avoid prompt trial-and-error and be faithful to the reference art. This is exactly the problem the STYLE FORMULA contract solves, and it was already sitting installed in the repo unused — reusing it beats inventing a new prompt-consistency scheme from scratch |
+
+**Approved STYLE FORMULA (Decision #18, frozen 2026-08-03 — insert byte-identical into every art-gen prompt):**
+
+> Soft hand-painted oil and gouache fantasy illustration with visible canvas
+> texture and brushwork, pre-digital 1980s-90s tabletop-RPG book-cover
+> style. Solid grounded anatomy, dramatic dynamic poses, form defined by
+> value contrast rather than clean outlines. Monsters in weathered earthy
+> tones (ochre, rust, bone) with one unsettling accent hue per creature
+> type; environments in muted parchment-and-shadow palette; protagonist
+> figures warmer and more saturated to read as the hero. Moody
+> single-source dramatic lighting like a paperback cover, ominous
+> gothic-fantasy atmosphere. High contrast between subject and background,
+> one creature/scene per image, consistent three-quarter portrait framing.
+
+**STYLE TOKEN (compressed, ≤120 chars, for length-limited fields):**
+
+> painterly 1980s TTRPG book-cover oil illustration, earthy weathered
+> palette, dramatic single-source lighting, three-quarter portrait
+
+Per the stylization.md contract: the formula is the source of truth, the
+token is its compression — never maintain two competing style strings.
+Both consumed by T13 (art-gen style-prompt suffix) and, for the UI-element
+kind (card frames, Decision #17), the same formula's palette/mood blocks
+inform the CSS chrome so generated art and UI chrome read as one visual
+system, not two.
 
 ## Scope Decisions (expansion cherry-picks, 0D opt-in ceremony)
 
@@ -458,10 +490,10 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: TODOS.md — UX inputs for /plan-design-review; Decision #17 — retro UI chrome
   - Files: design doc, informs all frontend components
   - Verify: `/plan-design-review` run against the resulting design doc before UI implementation starts
-- [ ] **T13 (P2, human: ~1h / CC: ~15min)** — backend — Fixed style-prompt suffix (Decision #16) appended to every OpenRouter art-gen request
-  - Surfaced by: Decision #16 — retro art direction
+- [ ] **T13 (P2, human: ~1h / CC: ~15min)** — backend — Insert the approved STYLE FORMULA (Decision #18) byte-identical into every OpenRouter art-gen request; use STYLE TOKEN for length-limited fields
+  - Surfaced by: Decision #16 (retro art direction) — implemented via Decision #18's STYLE FORMULA contract
   - Files: art-generation service (same module as T6)
-  - Verify: generated images across different archetypes read as one consistent painted-retro style, not a mix of styles
+  - Verify: generated images across different archetypes read as one consistent painted-retro style, not a mix of styles; style drift fixed by re-rolling the same prompt (2-attempt budget), never by editing prompt text
 - [ ] **T12 (P1, human: ~4h / CC: ~1h)** — backend/design — Age verification at registration (DOB check) + visible mature-content rating on landing/signup
   - Surfaced by: Foundational Decision #14 — Audience is 18+ exclusively, confirmed directly with user
   - Files: signup flow, auth module, landing page
