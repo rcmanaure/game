@@ -22,6 +22,15 @@ STYLE FORMULA prompt-engineering contract from the already-installed
 the Decision #15 choice to skip Higgsfield's paid service). Formula frozen
 and approved; see full text under Decision #18.
 
+**Amended 2026-08-03 (4):** Foundational Decisions #19-21 — adopted
+LangGraph.js (`@langchain/langgraph`) as the orchestration layer for the
+AI DM, implementing the two-model architecture (Decision #7) as a
+StateGraph with `@langchain/openrouter`'s ChatOpenRouter for model calls
+and PostgresSaver for checkpointing. Self-hosted inside the existing
+NestJS/Docker Compose stack, explicitly not LangGraph Platform/Cloud.
+Checkpointing and the existing idempotency-key gate both stay, as separate
+layers solving different failure modes. See T14 in Implementation Tasks.
+
 **Supersedes:** `~/.gstack/projects/game/ceo-plans/archive/2026-08-03-vtm-chronicle.md`
 and premises 1-2 of the original office-hours design doc
 (`rcmanaure-master-design-20260803-183155.md`). That doc's core loop pattern
@@ -116,6 +125,10 @@ work. This is a build-order decision, not an architecture change.
 | 17 | UI chrome for bestiary/dossier (amendment, 2026-08-03): card frames match the retro era — thick bordered card frame, title banner, period-appropriate typography (echoes early TCG card layout, not a modern flat-UI card component). Feeds into the already-blocking TODO (T11, UX inputs for /plan-design-review) as a concrete style input, not a separate design task | Generated retro art sitting inside a modern flat-UI card would look pasted-on, undermining the whole point of the art-direction decision (#16); this is a CSS/component styling concern, not new architecture, so it doesn't change effort estimates elsewhere in the plan |
 | 18 | Prompt-engineering methodology (amendment, 2026-08-03): adopt the STYLE FORMULA contract from the already-installed `.agents/skills/higgsfield-game-generation/references/stylization.md` (model-agnostic technique, not tied to using Higgsfield's paid service — works with any image model including the OpenRouter Nano Banana/Seedream chosen in Decision #15). One frozen 60-90 word formula, approved once by the user, inserted byte-identical into every art-gen prompt; style drift is fixed by re-rolling the SAME prompt (sampling variance), never by editing the prompt; regen budget capped at 2 attempts per asset before accepting the best result. Formula approved 2026-08-03 (full text below); re-opening the approval gate (and invalidating prior-generated assets) only happens if the user explicitly asks to change the art style | User explicitly asked to avoid prompt trial-and-error and be faithful to the reference art. This is exactly the problem the STYLE FORMULA contract solves, and it was already sitting installed in the repo unused — reusing it beats inventing a new prompt-consistency scheme from scratch |
 
+| 19 | AI orchestration (amendment, 2026-08-03): adopt **LangGraph.js** (`@langchain/langgraph`) as the orchestration layer implementing the two-model DM architecture (Decision #7) as a StateGraph. Graph shape: `resolve` node (fast/logical model via ChatOpenRouter, emits JSON GameEvent) → conditional edge on schema validity (retry once, then safe-default node) → `rules-validate` node (our custom server-side rules validator, CEO Review Hardening) → `narrate` node (creative model via ChatOpenRouter) → conditional edge on content-refusal detection (alt-model retry node, then deterministic-template fallback node) → `art-trigger` node (archetype classification, Decision #6). Runs self-hosted inside the existing NestJS backend/Docker Compose on the Hostinger VPS — explicitly NOT using LangGraph Platform/Cloud (a separate paid hosted product), which would reintroduce external infra dependency and cost that every prior decision (single-VPS ownership, cost control) has been steering away from | Confirmed via research: mixing deterministic steps (validation, rules) with LLM steps in the same graph is LangGraph's core design intent — it doesn't replace any hardening decision already made, it's the orchestration substrate those decisions run inside. Production-viable in TS/Node (reached parity with the Python version mid-2025, real NestJS integration precedent exists) |
+| 20 | Model calls via `@langchain/openrouter`'s `ChatOpenRouter` class (verified real, first-party LangChain package — not the older manual `ChatOpenAI` + custom `baseURL` workaround), not a hand-rolled OpenAI-compatible client | First-party maintained integration with tool calling, structured output, and streaming built in, for the exact provider already chosen (Decision: OpenRouter for both DM calls and, per the art-generation amendment, image models) — less code to maintain than wiring `configuration.baseURL` manually |
+| 21 | Checkpointing (amendment, 2026-08-03): LangGraph's `PostgresSaver` checkpointer (same Postgres already in the stack, no new service) handles server-crash recovery mid-turn (resumes an interrupted graph run). The existing Postgres idempotency-key gate (Section 4 hardening) stays as a SEPARATE, final check before any mutation is written to DB — checkpointing resumes interrupted server-side execution, the idempotency key deduplicates client-side retries; neither subsumes the other | User confirmed keeping both layers rather than collapsing to one. Removing the idempotency-key on the assumption that checkpointing covers it would silently reopen the exact permadeath double-mutation risk the Section 4 hardening fix closed |
+
 **Approved STYLE FORMULA (Decision #18, frozen 2026-08-03 — insert byte-identical into every art-gen prompt):**
 
 > Soft hand-painted oil and gouache fantasy illustration with visible canvas
@@ -156,8 +169,10 @@ system, not two.
 ## V1 Launch Scope (consolidated — what ships first)
 
 - Original dark-fantasy IP, NestJS+Postgres backend on Hostinger VPS.
-- Two-model DM (logic model -> validated JSON GameEvent -> creative model
-  narrates), streamed via WebSocket.
+- Two-model DM orchestrated as a LangGraph.js StateGraph (`resolve` ->
+  `rules-validate` -> `narrate` -> `art-trigger` nodes, Decision #19),
+  PostgresSaver checkpointing, model calls via `@langchain/openrouter`'s
+  ChatOpenRouter (Decision #20), streamed via WebSocket.
 - OpenRouter image-model (Nano Banana/Seedream) art per encounter, keyed to a fixed archetype taxonomy,
   cached — shown to the player as an unlockable bestiary/codex.
 - Phaser/PixiJS frontend with sprite animations (idle/attack frame states).
@@ -347,16 +362,20 @@ row has RESCUED=N or USER SEES=Silent — no CRITICAL GAP at plan level.
                                                         |
                         +-------------------------------+-------------------------------+
                         |                               |                               |
-                [Auth/Profile module]           [Turn Resolution module]        [Bestiary/Dossier module]
-                        |                               |                               |
-                  [Postgres: users,             [Postgres: turn idempotency,     [OpenRouter image-gen API
-                                (Nano Banana/Seedream)]
-                   sessions]                      rules validation]                     |
-                        |                               |                       [Postgres: art cache,
-                        |                    +-----------+-----------+            keyed by archetype]
-                        |                    |                       |
-                [Email provider          [Logic model            [Creative model
-                 (Resend/Postmark)]       via OpenRouter]         via OpenRouter]
+                [Auth/Profile module]         [Turn Resolution module]         [Bestiary/Dossier module]
+                        |                     (LangGraph.js StateGraph,                  |
+                        |                      PostgresSaver checkpointer)      [OpenRouter image-gen API
+                  [Postgres: users,                     |                        (Nano Banana/Seedream)]
+                   sessions]                  [Postgres: turn idempotency,                |
+                        |                      rules validation, checkpoints]   [Postgres: art cache,
+                        |                                |                       keyed by archetype]
+                        |            +-----------+-------+-------+-----------+
+                        |            |           |               |           |
+                        |      [resolve node][rules-validate][narrate node][art-trigger
+                        |       ChatOpenRouter  node (custom  ChatOpenRouter  node]
+                        |       logic model]     validator)   creative model]
+                [Email provider
+                 (Resend/Postmark)]
 ```
 
 **Turn resolution data flow (happy + shadow paths):**
@@ -494,6 +513,10 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: Decision #16 (retro art direction) — implemented via Decision #18's STYLE FORMULA contract
   - Files: art-generation service (same module as T6)
   - Verify: generated images across different archetypes read as one consistent painted-retro style, not a mix of styles; style drift fixed by re-rolling the same prompt (2-attempt budget), never by editing prompt text
+- [ ] **T14 (P1, human: ~1-2d / CC: ~3-4h)** — backend — Build the LangGraph.js StateGraph implementing the DM turn resolver (Decision #19): `resolve` -> `rules-validate` -> `narrate` -> `art-trigger` nodes with conditional edges for JSON-retry and content-refusal-fallback; wire `@langchain/openrouter` ChatOpenRouter for both model nodes; configure PostgresSaver checkpointer against the existing Postgres instance
+  - Surfaced by: Decision #19 (LangGraph orchestration), #20 (ChatOpenRouter), #21 (checkpointer + idempotency layering)
+  - Files: new NestJS module (e.g. `src/game/dm-graph/`), wraps/calls into T1 (rules validator), T2 (refusal fallback), T4 (idempotency key), T6 (art trigger)
+  - Verify: a full turn resolves end-to-end through the graph; killing the process mid-turn and restarting resumes from the last checkpoint rather than losing the turn; the idempotency-key gate still rejects a duplicated client retry even after a checkpoint-resumed run
 - [ ] **T12 (P1, human: ~4h / CC: ~1h)** — backend/design — Age verification at registration (DOB check) + visible mature-content rating on landing/signup
   - Surfaced by: Foundational Decision #14 — Audience is 18+ exclusively, confirmed directly with user
   - Files: signup flow, auth module, landing page
