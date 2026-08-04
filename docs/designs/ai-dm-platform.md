@@ -10,6 +10,12 @@ Repo: rcmanaure/game (local, no remote yet)
 from Higgsfield to OpenRouter image models (Nano Banana/Seedream), for MVP
 cost. All prior Higgsfield references in this doc are updated in place.
 
+**Amended 2026-08-03 (2):** Foundational Decisions #16-17 — art direction
+locked to retro pre-digital fantasy painting (MTG Alpha/Beta, TSR 70s-90s
+painted-cover style), extended to matching card-frame UI chrome for the
+bestiary/dossier. See T13 (style-prompt suffix) and T11 (now includes
+retro UI chrome) in Implementation Tasks.
+
 **Supersedes:** `~/.gstack/projects/game/ceo-plans/archive/2026-08-03-vtm-chronicle.md`
 and premises 1-2 of the original office-hours design doc
 (`rcmanaure-master-design-20260803-183155.md`). That doc's core loop pattern
@@ -100,6 +106,8 @@ work. This is a build-order decision, not an architecture change.
 | 13 | Content-abuse gate: from v1, log all DM input/output (already near-free given planned observability) for later audit. Before ANY public/Steam launch (not now): keyword + model-based abuse filter on player free-text input, with a review process — documented here as an explicit launch gate (outside-voice tension #6, resolved) | The content-refusal fix (CEO Review Hardening) stops the DM from narrating disallowed content; it does not stop a player from attempting to generate real illicit content via free-text input. Cosmetic risk now (private/hobby use); existential risk if this genuinely reaches a public Steam audience later |
 | 14 | Audience: 18+ exclusively, not general/teen audience. Age verification at registration (date-of-birth check, not just a checkbox), visible mature-content rating on landing/signup, no content throttling below what OpenRouter models' own content policies already permit for adult fiction. Graphic violence/death content is scoped to what a compliant model will produce for age-verified adult users — never pursuing techniques to circumvent or jailbreak a provider's safety systems against their terms of use, regardless of target intensity | User confirmed 18+ exclusively (not "jóvenes" as in minors) when asked directly. This is a hard boundary, not a preference: content intensity is achieved by selecting models whose stated content policy already permits adult dark fiction (part of the existing content-refusal fallback chain, Foundational Decision covered in CEO Review Hardening), not by defeating provider safety systems |
 | 15 | Art generation (amendment, 2026-08-03): v1 art (monster/scenario bestiary images) generated via OpenRouter image models (e.g. Nano Banana/Gemini Flash Image, Seedream 4.5), not Higgsfield. Flat ~$0.04/image regardless of size. Higgsfield deferred to post-v1, only if actual 3D-asset or animation-pipeline needs arise that a flat image model can't cover — its real strength, not simple 2D bestiary portraits | User asked for the cheapest viable MVP art path. OpenRouter image models are far cheaper/more predictable than a specialized 3D/animation asset platform for what v1 actually needs (static 2D archetype portraits), and billing consolidates onto the single OpenRouter account already used for the DM — one provider, one spend cap (Decision #3 rate-limit/spend-cap mechanism), not two |
+| 16 | Art direction (amendment, 2026-08-03): retro pre-digital fantasy painting style — MTG Alpha/Beta and TSR 70s-90s tabletop RPG book art as explicit reference (Larry Elmore, Jeff Easley, Clyde Caldwell, Keith Parkinson painted-cover style; Erol Otus/Dave Trampier pen-and-ink as an optional secondary look for lower-stakes encounters). Concretely: oil/gouache painterly texture, aged-paper/muted-saturated palette, dramatic heroic poses, visible brushwork, NO modern smooth digital-airbrush or anime look. This is a fixed style-prompt suffix appended to every art-gen request (works with any archetype from Decision #6's taxonomy), not a per-image creative choice | User specified the era and named MTG's early editions directly — a vague "retro" instruction produces inconsistent results; naming concrete artist/era references gives the image-gen prompt something specific to lock onto |
+| 17 | UI chrome for bestiary/dossier (amendment, 2026-08-03): card frames match the retro era — thick bordered card frame, title banner, period-appropriate typography (echoes early TCG card layout, not a modern flat-UI card component). Feeds into the already-blocking TODO (T11, UX inputs for /plan-design-review) as a concrete style input, not a separate design task | Generated retro art sitting inside a modern flat-UI card would look pasted-on, undermining the whole point of the art-direction decision (#16); this is a CSS/component styling concern, not new architecture, so it doesn't change effort estimates elsewhere in the plan |
 
 ## Scope Decisions (expansion cherry-picks, 0D opt-in ceremony)
 
@@ -446,10 +454,14 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: Outside Voice Hardening — Foundational Decision #13
   - Files: observability/logging config
   - Verify: a sampled turn's full input/output is retrievable from logs post-hoc
-- [ ] **T11 (P1, human: ~2-4h / CC: ~30-45min)** — design — Define interaction states (loading/empty/error/success/partial), accessibility basics, responsive layout for login/game/bestiary/dossier before implementation UI work
-  - Surfaced by: TODOS.md — UX inputs for /plan-design-review
+- [ ] **T11 (P1, human: ~2-4h / CC: ~30-45min)** — design — Define interaction states (loading/empty/error/success/partial), accessibility basics, responsive layout, and retro card-frame chrome (Decision #17) for login/game/bestiary/dossier before implementation UI work
+  - Surfaced by: TODOS.md — UX inputs for /plan-design-review; Decision #17 — retro UI chrome
   - Files: design doc, informs all frontend components
   - Verify: `/plan-design-review` run against the resulting design doc before UI implementation starts
+- [ ] **T13 (P2, human: ~1h / CC: ~15min)** — backend — Fixed style-prompt suffix (Decision #16) appended to every OpenRouter art-gen request
+  - Surfaced by: Decision #16 — retro art direction
+  - Files: art-generation service (same module as T6)
+  - Verify: generated images across different archetypes read as one consistent painted-retro style, not a mix of styles
 - [ ] **T12 (P1, human: ~4h / CC: ~1h)** — backend/design — Age verification at registration (DOB check) + visible mature-content rating on landing/signup
   - Surfaced by: Foundational Decision #14 — Audience is 18+ exclusively, confirmed directly with user
   - Files: signup flow, auth module, landing page
