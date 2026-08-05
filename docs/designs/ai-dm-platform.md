@@ -48,6 +48,26 @@ and one addition:
   "prefer new" not "old is broken" note. Added to T14 as implementation
   guidance.
 
+**Amended 2026-08-04 (6) — `/plan-ceo-review`, SELECTIVE EXPANSION, folds in
+findings from three research passes** (`docs/research/2026-08-03-game-design-
+inspiration.md`, `docs/research/2026-08-04-platform-and-business-research.md`,
+`docs/research/2026-08-04-text-format-tooling-research.md`) plus promotes the
+prior open `~/.gstack/projects/game/ceo-plans/2026-08-04-platform-business-
+amendments.md` CEO plan (status ACTIVE, never merged in) into this doc.
+Foundational Decision #22 (monetization) added. Frontend engine question
+(Phaser/PixiJS vs. DOM+CSS, TODOS.md T18) resolved by direct decision —
+**Phaser/PixiJS stays**, no prototype spike needed; T18 closed. Scope
+Decision #7 gets explicit itch.io-first/Electron-over-Tauri guidance. Scope
+Decision #4 (persistent world/NPC memory, post-v1) gets two concrete
+surfacing mechanics: a `recall` node (named "returning face" NPC callback)
+and a chronicle-ledger screen. V1 narration design gets cliffhanger/pacing/
+recap hooks. "Hunger" renamed to **"the Craving"** throughout (V5's
+signature, load-bearing dice-pool mechanic name — the strongest of two
+naming flags surfaced by research; "Humanity" kept as-is, too generic
+across the genre to warrant the rename churn). Progressive bestiary
+familiarity tiers (Monster Hunter-style) evaluated and deferred to
+TODOS.md. See Implementation Tasks T15-T20 and TODOS.md for detail.
+
 **Supersedes:** `~/.gstack/projects/game/ceo-plans/archive/2026-08-03-vtm-chronicle.md`
 and premises 1-2 of the original office-hours design doc
 (`rcmanaure-master-design-20260803-183155.md`). That doc's core loop pattern
@@ -123,7 +143,7 @@ work. This is a build-order decision, not an architecture change.
 
 | # | Decision | Reasoning |
 |---|---|---|
-| 1 | Drop official VTM IP/Dark Pack license. Build an original dark-fantasy IP inspired by VTM mechanics (clans->bloodlines, Hunger, Humanity, Masquerade-like secrecy) | Both Dark Pack and Unbound structurally forbid Steam distribution; user named Steam as a real goal |
+| 1 | Drop official VTM IP/Dark Pack license. Build an original dark-fantasy IP inspired by VTM mechanics (clans->bloodlines, the Craving [renamed from "Hunger" 2026-08-04, see "Amended 2026-08-04 (6)" above — V5's own load-bearing dice-pool mechanic name, too close to reuse], Humanity, Masquerade-like secrecy) | Both Dark Pack and Unbound structurally forbid Steam distribution; user named Steam as a real goal |
 | 2 | Architecture: full platform (Approach B), not the minimal slice or staged hybrid | User's explicit choice; ambition signal repeated twice (IP path, then architecture) |
 | 3 | Backend: NestJS, not FastAPI | Single TypeScript stack shared with Phaser/PixiJS frontend; native WebSocket Gateway for DM streaming; simpler single-runtime Docker on the VPS |
 | 4 | Auth: email/password + JWT session tokens for v1. No OAuth/social login in v1 | Simplest thing that actually gates per-user profiles/saves; hobby project with no confirmed need for social login yet — add OAuth providers later without a schema change (user table keyed by email either way) |
@@ -145,6 +165,7 @@ work. This is a build-order decision, not an architecture change.
 | 19 | AI orchestration (amendment, 2026-08-03): adopt **LangGraph.js** (`@langchain/langgraph`) as the orchestration layer implementing the two-model DM architecture (Decision #7) as a StateGraph. Graph shape: `resolve` node (fast/logical model via ChatOpenRouter, emits JSON GameEvent) → conditional edge on schema validity (retry once, then safe-default node) → `rules-validate` node (our custom server-side rules validator, CEO Review Hardening) → `narrate` node (creative model via ChatOpenRouter) → conditional edge on content-refusal detection (alt-model retry node, then deterministic-template fallback node) → `art-trigger` node (archetype classification, Decision #6). Runs self-hosted inside the existing NestJS backend/Docker Compose on the Hostinger VPS — explicitly NOT using LangGraph Platform/Cloud (a separate paid hosted product), which would reintroduce external infra dependency and cost that every prior decision (single-VPS ownership, cost control) has been steering away from | Confirmed via research: mixing deterministic steps (validation, rules) with LLM steps in the same graph is LangGraph's core design intent — it doesn't replace any hardening decision already made, it's the orchestration substrate those decisions run inside. Production-viable in TS/Node (`StateGraph`, `addNode`, `addEdge`, `addConditionalEdges` all confirmed current against `docs.langchain.com` and the LangChain JS API reference, 2026-08-03). **Corrected 2026-08-03 (5):** the prior claim of "real NestJS integration precedent" does not hold — no such integration package or doc exists, and none is needed. LangGraph.js is a plain Node library: a NestJS provider/service just calls `graph.invoke(...)` or `graph.streamEvents(...)` like any other async method, the same way it would call any SDK client. NestJS's DI container doesn't need to know the graph exists as anything special |
 | 20 | Model calls via `@langchain/openrouter`'s `ChatOpenRouter` class (verified real, first-party LangChain package — not the older manual `ChatOpenAI` + custom `baseURL` workaround), not a hand-rolled OpenAI-compatible client | First-party maintained integration with tool calling, structured output, and streaming built in, for the exact provider already chosen (Decision: OpenRouter for both DM calls and, per the art-generation amendment, image models) — less code to maintain than wiring `configuration.baseURL` manually. **Verified 2026-08-03 (5):** `ChatOpenRouter` confirmed real, package `@langchain/openrouter`, talks to the OpenRouter REST API directly via `fetch`, supports tool calling/structured output/streaming. No image-generation output path on this class — the art-trigger node's OpenRouter image-model call (Decision #15) stays a plain REST call, not routed through `ChatOpenRouter`; nothing in the LangChain JS API surfaces an image-gen content type for it |
 | 21 | Checkpointing (amendment, 2026-08-03): LangGraph's `PostgresSaver` checkpointer (same Postgres already in the stack, no new service) handles server-crash recovery mid-turn (resumes an interrupted graph run). The existing Postgres idempotency-key gate (Section 4 hardening) stays as a SEPARATE, final check before any mutation is written to DB — checkpointing resumes interrupted server-side execution, the idempotency key deduplicates client-side retries; neither subsumes the other | User confirmed keeping both layers rather than collapsing to one. Removing the idempotency-key on the assumption that checkpointing covers it would silently reopen the exact permadeath double-mutation risk the Section 4 hardening fix closed. **Corrected 2026-08-03 (5):** `PostgresSaver` ships in a separate package, `@langchain/langgraph-checkpoint-postgres` (not bundled in `@langchain/langgraph` core) — install it explicitly. Constructor is `PostgresSaver.fromConnString(DB_URI)` (camelCase; Python's `from_conn_string` doesn't apply to JS), and `await checkpointer.setup()` must run once before first use (creates the checkpoint tables). Considered `UntrackedValue` (a new v1.1.0 primitive for graph-state channels that are never checkpointed) for the turn's idempotency key — not needed: the idempotency key is a Postgres unique-constraint check at the mutation-write step, outside the graph's checkpointed state entirely, so there's no channel to exclude |
+| 22 | Monetization (amendment, 2026-08-04): freemium model — capped free daily-turn allowance (2-3 turns/day), one-time purchase unlock (~$15-25, matching PC-indie pay-once convention). Subscription tier (~$5/mo) explicitly NOT accepted yet, deferred pending real conversion data (see TODOS.md). The free-turn cap number is not finalized here — it's contingent on T15's per-turn OpenRouter cost-model pass and must be reconciled (T16) against the ~3-turn session-pacing target so a free user can complete at least one full session/day | Genuine gap — no monetization decision existed in this plan despite a real, non-zero per-turn LLM+art-gen cost (Decision #9/#13's cost-consciousness already established this project treats spend as a first-class concern); pay-once matches PC-indie convention and avoids subscription churn risk this early; model selection (not pricing) is the actual cost lever per research (~100x cost variance between frontier and cheap models), hence gating the cap number on T15's cost pass rather than guessing it now |
 
 **Approved STYLE FORMULA (Decision #18, frozen 2026-08-03 — insert byte-identical into every art-gen prompt):**
 
@@ -178,10 +199,10 @@ system, not two.
 | 1 | Bloodline-flavored DM voice | S | ACCEPTED | Prompt-variant only, reuses the planned DM narrator, no new system |
 | 2 | Shareable dossier export (image) | S-M | ACCEPTED | Real backend now enables higher-quality server-side rendering than a client canvas; core shareability hook |
 | 3 | Bestiary/codex as unlockable collection | S | ACCEPTED | Art cache is required infra regardless (cost control); this just exposes it in UI |
-| 4 | Persistent world/NPC memory across sessions | M | ACCEPTED (post-v1 phase) | The real differentiator vs. generic AI-DM projects; needs real DB, now available |
+| 4 | Persistent world/NPC memory across sessions | M | ACCEPTED (post-v1 phase) | The real differentiator vs. generic AI-DM projects; needs real DB, now available. **Amended 2026-08-04:** concrete surfacing mechanics locked — a `recall` node (queries the NPC/consequence table by user_id, runs before `resolve` in the existing LangGraph StateGraph) deterministically has the DM's opening narration beat reference a specific named NPC from a prior playthrough before any dice roll; plus a read-only "chronicle ledger" screen (Dwarf Fortress Legends-mode-lite) listing past chronicles' key outcomes in order. Both query the same table, no new schema. Rationale: memory that's only queryable is invisible to players — it has to land through a dedicated surfacing touchpoint, not through storage existing (research: Rogue Legacy's named heirs, Darkest Dungeon's named-hero afflictions, Dwarf Fortress's Legends mode all confirm this pattern) |
 | 5 | TTS voice narration | M | DEFERRED to TODOS.md | Highest operational cost/latency addition, lowest marginal immersion gain vs. text+art+animation already shipping; design DM output with a separate "narrated text" field now so TTS can bolt on later without rework |
 | 6 | Procedural tilemap/map generation (Phaser) | M | ACCEPTED (post-v1 phase) | Makes "every playthrough different" literal spatially, not just narratively; uses proven Phaser plugins, not a custom algorithm |
-| 7 | Steam-readiness as a design constraint now (Electron/Tauri wrapper later) | — | ACCEPTED (constraint only, no build now) | Avoid browser-only APIs (native share sheets, certain notification APIs) that don't exist in an embedded webview, so no rework needed when a Steam build is actually pursued |
+| 7 | Steam-readiness as a design constraint now (Electron/Tauri wrapper later) | — | ACCEPTED (constraint only, no build now) | Avoid browser-only APIs (native share sheets, certain notification APIs) that don't exist in an embedded webview, so no rework needed when a Steam build is actually pursued. **Amended 2026-08-04:** sharper sequencing guidance, not a changed decision — ship browser + itch.io as the real first release target (better rev split, no wrap step, no ~7-10K-wishlist Steam marketing runway needed to matter), and if/when a webview wrap actually happens, prefer Electron over Tauri (Tauri's WebView2 path lacks real WebGPU support, a bigger cross-platform render-consistency risk for a Phaser/PixiJS game — Decision #2/#19-21 — than for a plainer DOM app). Zero code impact now; documents intent for whoever picks the wrap tooling later |
 
 ## V1 Launch Scope (consolidated — what ships first)
 
@@ -196,6 +217,15 @@ system, not two.
 - Email/password auth, user profiles, server-side session persistence.
 - Bloodline-flavored DM voice (prompt variants).
 - Shareable dossier image export.
+- Narration-design hooks (amendment 2026-08-04): mid-session cliffhangers
+  (turns end on an unresolved hook, not closure), soft ~3-turn session
+  pacing (optional "continue?" prompt after turn 3, not a forced cutoff),
+  session-end recap (one lightweight creative-model call at logout
+  summarizing "what changed"). Zero new infra — reuses the existing
+  turn-resolution/WebSocket channels and creative-model call path.
+- Monetization (amendment 2026-08-04, Foundational Decision #22):
+  freemium + capped free daily turns + one-time unlock, cap number
+  contingent on T15/T16's cost-model pass.
 - Permadeath (Final Death) + Torpor soft-permadeath.
 - Carried-forward hardening: save/export safety net, textContent-only /
   no-unsanitized-LLM-output-to-innerHTML rendering, action idempotency,
@@ -210,8 +240,9 @@ system, not two.
   Foundational Decisions #9-13 and CEO Review Hardening below for detail.
 
 **Post-v1 (accepted scope, later phase, not launch-blocking):**
-persistent world/NPC memory across sessions; procedural tilemap/dungeon
-generation.
+persistent world/NPC memory across sessions (concrete surfacing mechanics
+locked 2026-08-04: `recall` node for named-NPC callbacks + chronicle-ledger
+screen, see Scope Decision #4); procedural tilemap/dungeon generation.
 
 **Deferred (not this plan's scope, see TODOS.md):** TTS voice narration;
 Discipline/bloodline-flavored job-outcome mechanics; community almanac.
@@ -221,7 +252,8 @@ Discipline/bloodline-flavored job-outcome mechanics; community almanac.
 Scope itself is defined in "V1 Launch Scope" above — this section only adds
 detail not already stated there:
 
-- IP naming: bloodlines, Hunger, Humanity, Veil-of-secrecy (Masquerade
+- IP naming: bloodlines, the Craving (renamed from "Hunger" 2026-08-04 —
+  see "Amended 2026-08-04 (6)" above), Humanity, Veil-of-secrecy (Masquerade
   analog) — no VTM branding, no VTM canon terms, anywhere.
 - Narration output carries a separate structured field for the narrated
   text specifically (not just prose mixed into a general response), so the
@@ -349,6 +381,10 @@ Save load                        | schemaVersion mismatch        | Y (carried) |
 Auth: email verify/reset         | Transactional email fails     | Y (new)  | Retry queue, generic "check back soon" message
 Rate limit / spend cap           | User exceeds daily cap         | Y (new)  | DM access gated, rest of app usable, clear message
 Save/chronicle query (any)       | user_id mismatch (IDOR attempt)| Y (new)  | 403, logged as a security event
+`recall` node (post-v1, T19)     | NPC-table query timeout/error | Y (new, CEO review 2026-08-04) | Fails open — no callback, chronicle starts normally, logged WARN
+Session-end recap call (T17)     | LLM call fails/times out       | Y (new, CEO review 2026-08-04) | Fire-and-forget — logout unaffected, recap silently dropped, logged
+WebSocket handshake (T7)         | Missing/invalid JWT            | Y (new, Eng review 2026-08-04) | Connection rejected at handshake, never reaches turn resolution
+Refresh token (T23)              | Reused after revocation        | Y (new, Eng review 2026-08-04) | Rejected, logged as a security event (same pattern as IDOR attempts)
 ```
 All rows are planned fixes (CEO Review Hardening + Outside Voice Hardening
 sections above). No CRITICAL GAPs remain unaddressed at the plan level.
@@ -365,6 +401,10 @@ Turn resolution (WebSocket)     | Mid-drop reconnect      | Y        | Y*    | R
 Art-gen call (OpenRouter image) | Timeout/error           | Y        | Y*    | Placeholder->async | Y
 Rate limit / spend cap          | Exceeded                | Y        | Y*    | Gated DM, clear msg| Y
 Save/chronicle access           | Cross-user ID attempt   | Y        | Y*    | 403                | Y
+`recall` node query (T19)       | Timeout/DB error        | Y        | Y*    | No callback, no error| Y
+Session-end recap call (T17)    | Fails/times out         | Y        | Y*    | Logout unaffected  | Y
+WebSocket handshake (T7)        | Invalid/missing JWT     | Y        | Y*    | Connection rejected| Y
+Refresh token (T23)             | Reuse after revocation  | Y        | Y*    | Rejected, logged   | Y
 ```
 *Y = test spec required at implementation time (assert-based smoke tests
 per hardening fix, per the carried-forward "minimal assert-based smoke
@@ -393,6 +433,21 @@ row has RESCUED=N or USER SEES=Silent — no CRITICAL GAP at plan level.
                         |       logic model]     validator)   creative model]
                 [Email provider
                  (Resend/Postmark)]
+```
+
+**Chronicle-start recall flow (post-v1, added 2026-08-04 — runs once per new
+chronicle, before the per-turn flow below ever starts):**
+```
+NEW CHRONICLE STARTS --> [recall node: query NPC/consequence table by user_id]
+                            |
+                  timeout/DB error? --> fail open: no callback, log WARN,
+                            |            proceed to resolve as normal
+                            no error
+                            |
+                  prior meaningfully-interacted NPC found?
+                    no  --> proceed to resolve, no callback text
+                    yes --> inject NPC name/fact into `narrate` node's
+                             prompt slot --> [resolve] (first turn begins)
 ```
 
 **Turn resolution data flow (happy + shadow paths):**
@@ -473,8 +528,54 @@ Deploy breaks? --> Is it the app container? --yes--> docker compose rollback
 ## Stale Diagram Audit
 
 No prior diagrams exist in this repo (greenfield) other than the
-superseded plan's core-loop diagram, which is archived, not live. Nothing
-stale to audit.
+superseded plan's core-loop diagram, which is archived, not live. **Checked
+2026-08-04:** the System architecture and Turn resolution data flow
+diagrams above are still accurate — today's additions (the `recall` node,
+session-end recap) are new diagram content added alongside them (Chronicle-
+start recall flow, new above), not corrections to existing diagrams. Nothing
+stale.
+
+## Worktree Parallelization Strategy (Eng Review, 2026-08-04)
+
+| Step | Modules touched | Depends on |
+|---|---|---|
+| T22 (harness) | new harness dir | — |
+| T14 (DM-graph, StateGraph) | `src/game/dm-graph/` | — |
+| T1 (rules validator) | `src/game/rules-validator/` | — |
+| T2 (refusal fallback) | DM orchestration module | — |
+| T25 (eval suite) | eval suite, reuses T22 | T22, T14 |
+| T7 (JWT guard + WS auth) | shared guard, Gateway | — |
+| T23 (JWT refresh/revocation) | auth module | T22 |
+| T12 (age verification) | signup flow, auth module | — |
+| T3 (rate-limit + tier cap) | rate-limit guard, spend table | T15, T22 |
+| T15 (cost-model pass) | new cost-model doc | — |
+| T16 (reconcile cap vs pacing) | same doc / plan doc | T15 |
+| T6 (art-gen placeholder-swap) | art-generation service | — |
+| T13 (STYLE FORMULA) | art-generation service (same as T6) | T6 |
+| T5 (backups/WAL) | deploy scripts, runbook | — |
+| T8 (transactional email) | auth module | — |
+| T24 (CI/CD) | `.github/workflows/` | T22 |
+| T9 (latency/"thinking" UI) | turn-resolution UI component | — |
+| T11 (design/accessibility inputs) | design doc, all frontend | — |
+| T17 (narration hooks + recap) | DM orchestration module | T14 |
+| T19 (`recall` node, post-v1) | DM-graph module (same as T14) | T14 |
+| T20 (chronicle ledger, post-v1) | new frontend page, same table as T19 | T19 |
+| T21 (Hunger→Craving guardrail) | none yet | — |
+| T4 (idempotency, split transactions) | turn resolution service | T3 |
+
+**Parallel lanes:**
+- **Lane A (core resolver):** T22 → T14 → T1 → T2 → T25 (sequential, shared `dm-graph`/orchestration module)
+- **Lane B (auth):** T7 → T23 (waits on T22 per build-order dependency) → T12 — independent module from Lane A
+- **Lane C (monetization):** T15 → T16, and T3 (waits on T15 + T22) — independent module, light coupling to Lane A only via the rate-limit check inside T4
+- **Lane D (art-gen):** T6 → T13 — independent module, called by Lane A's art-trigger node but no code overlap
+- **Lane E (infra/ops):** T5, T8, T24 (waits on T22) — fully independent, no shared module with A-D
+- **Lane F (frontend/design):** T9, T11, T17 (waits on T14), T20 (post-v1, waits on T19) — mostly independent, T17/T20 have single-task dependencies into Lane A/G
+- **Lane G (post-v1 memory):** T19 (waits on T14) → T20 — sequential, shared NPC/consequence table
+- **Lane H (naming):** T21 — trivial, independent
+
+**Execution order:** Launch Lane A, Lane D, and Lane H in parallel first (T22 has no dependencies and gates Lanes B/C/E). Once T22 lands, launch Lane B, Lane C (needs T15 first, itself independent), and Lane E in parallel. Lane F and Lane G start once their single dependencies (T14, T19) land — can run alongside B/C/E.
+
+**Conflict flags:** Lane A and Lane G both eventually touch `src/game/dm-graph/` (T19/T20 add the `recall` node there) — sequence Lane G's start strictly after Lane A's T14 merges, don't run them as true parallel worktrees on the same module.
 
 ## Implementation Tasks
 
@@ -489,14 +590,15 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: CEO Review Hardening — Content-refusal handling
   - Files: DM orchestration module, prompt/template config
   - Verify: forced-refusal test case resolves to a non-empty narration, never a silent no-op
-- [ ] **T3 (P1, human: ~4h / CC: ~1h)** — backend — Postgres-backed rate limit + daily spend cap gating DM access
-  - Surfaced by: CEO Review Hardening — Spend cap; Foundational Decision #9 (no Redis)
-  - Files: rate-limit guard/interceptor, spend-tracking table + migration
-  - Verify: exceeding the cap returns a clear gated response, rest of app still works
-- [ ] **T4 (P1, human: ~4h / CC: ~1h)** — backend — Server-side turn idempotency key (Postgres unique constraint on turn_id)
-  - Surfaced by: CEO Review Hardening — Turn idempotency
+- [ ] **T3 (P1, human: ~4h / CC: ~1h)** — backend — Postgres-backed rate limit + daily spend cap gating DM access. **Extended (CEO review 2026-08-04, Issue 3) to also gate Decision #22's free-turn cap:** add a `tier` (free/paid) column to the same spend-tracking table rather than building a second rate-limit system — one Postgres-backed check with a tier-dependent threshold, not two systems that can drift out of sync (the exact anti-pattern Decision #9 already rejected Redis to avoid).
+  - Surfaced by: CEO Review Hardening — Spend cap; Foundational Decision #9 (no Redis); Decision #22 (monetization, amendment 2026-08-04)
+  - Files: rate-limit guard/interceptor, spend-tracking table + migration (now includes `tier` column)
+  - Verify: exceeding the cap returns a clear gated response, rest of app still works; a free-tier user hits the lower turn-count threshold while a paid/unlocked user hits the cost-based threshold, both via the same table
+  - Depends on: T15 (cost-model pass) — the free-tier threshold is a guess until T15's per-turn cost estimate exists; T22 (outside-voice pass 2026-08-04) — the tier-gating build shouldn't get ahead of the harness confirming the core loop is worth building around
+- [ ] **T4 (P1, human: ~4h / CC: ~1h)** — backend — Server-side turn idempotency key (Postgres unique constraint on turn_id). **Two short transactions, not one long span (corrected by outside-voice pass 2026-08-04, superseding this same review's earlier "combine into one transaction" note):** Transaction A, BEFORE the LLM chain runs — reserves the idempotency key and checks/decrements the rate limit (T3). Transaction B, AFTER narration/art-trigger complete — applies the actual state mutation, keyed by the same idempotency key for exactly-once guarantee. Never hold a DB transaction open across the resolve→rules-validate→narrate→art-trigger LLM chain (up to Decision #10's 8s budget) — doing so risks connection-pool exhaustion at Decision #8's 10-20 concurrent sessions, the exact failure mode already in this doc's own Error & Rescue Registry.
+  - Surfaced by: CEO Review Hardening — Turn idempotency; Eng Review (2026-08-04) — round-trip count was unspecified against the latency budget; outside-voice pass caught that the first fix's single-transaction approach introduced a pool-exhaustion risk
   - Files: turn resolution service, migration adding unique constraint
-  - Verify: replaying the same turn_id after a simulated WebSocket drop applies the mutation exactly once
+  - Verify: replaying the same turn_id after a simulated WebSocket drop applies the mutation exactly once; no single DB transaction spans the LLM call chain; a load test at ~15-20 concurrent turns does not exhaust the connection pool
 - [ ] **T5 (P2, human: ~2h / CC: ~30min)** — infra — Daily pg_dump + continuous WAL archiving, documented rollback procedure
   - Surfaced by: CEO Review Hardening — Backups; Foundational Decision #12
   - Files: deploy scripts, runbook doc
@@ -505,10 +607,10 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: CEO Review Hardening — Art-generation failure path
   - Files: art-generation service, frontend art-slot component
   - Verify: forced OpenRouter image-gen timeout still resolves the encounter with a placeholder, image swaps in later
-- [ ] **T7 (P1, human: ~3h / CC: ~45min)** — backend — Per-user JWT-scoped guard/decorator on all save/chronicle endpoints
-  - Surfaced by: CEO Review Hardening — Per-user scoping (IDOR)
-  - Files: shared NestJS guard, applied to all relevant controllers
-  - Verify: request with another user's resource ID returns 403, not the data
+- [ ] **T7 (P1, human: ~3h / CC: ~45min)** — backend — Per-user JWT-scoped guard/decorator on all save/chronicle endpoints AND the WebSocket connection handshake. **Extended (Eng review 2026-08-04, Issue 2):** the same JWT-scoping pattern must validate the WebSocket connection at handshake time (JWT passed in the connection query/header, validated before the socket is accepted and bound to a user_id) — not just HTTP routes, since turn narration streams over this same connection.
+  - Surfaced by: CEO Review Hardening — Per-user scoping (IDOR); Eng Review (2026-08-04) — WebSocket auth boundary was implicit, not written down
+  - Files: shared NestJS guard, applied to all relevant controllers; WebSocket Gateway connection handler
+  - Verify: request with another user's resource ID returns 403, not the data; a WebSocket connection attempt with a missing/invalid JWT is rejected at handshake, never reaches turn-resolution
 - [ ] **T8 (P2, human: ~3h / CC: ~45min)** — infra — Transactional email integration (Resend/Postmark) for verify/reset
   - Surfaced by: Outside Voice Hardening — Foundational Decision #11
   - Files: auth module, email provider adapter
@@ -544,3 +646,47 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: Foundational Decision #14 — Audience is 18+ exclusively, confirmed directly with user
   - Files: signup flow, auth module, landing page
   - Verify: signup rejects a DOB implying under-18; content rating is visible before signup, not buried
+- [ ] **T15 (P1, human: ~3h / CC: ~45min)** — backend — Cost-model pass on OpenRouter model selection for the `resolve`/`narrate` StateGraph nodes (Decision #19); output: per-turn cost estimate, feeds Decision #22's free-turn cap number
+  - Surfaced by: Decision #22 (monetization, amendment 2026-08-04) — ~100x cost variance between frontier and cheap models makes model selection the real cost lever, not pricing-tier design
+  - Files: new cost-modeling note, e.g. `docs/designs/cost-model.md`
+  - Verify: cost estimate per turn is documented with a specific model choice per node, not a range
+- [ ] **T16 (P2, human: ~1h / CC: ~15min)** — reconcile Decision #22's daily free-turn cap against the ~3-turn session-pacing target (V1 Launch Scope narration-design addition); confirm a free user can complete >=1 full session/day under the cap
+  - Surfaced by: Decision #22 — spend cap and session-pacing target must not silently contradict each other
+  - Files: same cost-modeling note as T15, or this doc's monetization section directly
+  - Verify: cap number × 1 turn's real cost, divided into a full ~3-turn session, still fits the daily allowance
+- [ ] **T17 (P2, human: ~2h / CC: ~30min)** — add cliffhanger/pacing prompt-injection slots to the `narrate` node's per-turn prompt template; build the session-end recap as a separate one-shot creative-model call fired at logout (shares the model/call path, not the per-turn node or its prompt template). **Fire-and-forget (CEO review 2026-08-04, Issue 2):** logout completes immediately without awaiting the recap call; on failure, drop it silently (logged) — a slow/failed LLM call must never make a user wait on or appear to hang during logout.
+  - Surfaced by: V1 Launch Scope narration-design addition (amendment 2026-08-04)
+  - Files: DM orchestration module (same module as T2/T14)
+  - Verify: a turn ending mid-scene reads as a deliberate hook, not a cutoff; recap call fires once at logout, not per-turn; logout latency is unaffected by a forced recap-call timeout
+- [x] **T18 (resolved 2026-08-04, no longer needed)** — ~~engine-choice + distribution validation prototype~~ — superseded by a direct decision: **Phaser/PixiJS stays** (chosen over DOM+CSS and over building the prototype first). No spike needed.
+  - Surfaced by: TODOS.md's deferred engine-choice item; resolved via `/plan-ceo-review` D3 chain, 2026-08-04
+- [ ] **T19 (P2, human: ~2-3h / CC: ~45min)** — backend — Build the `recall` node (post-v1): queries the NPC/consequence table by `user_id`, runs before `resolve` in the LangGraph StateGraph, injects a prompt slot so the DM's opening narration beat deterministically references a specific named NPC from a prior playthrough before any dice roll. **Fails open (CEO review 2026-08-04, Issue 1):** on query timeout/DB error, catch, log WARN (user_id + chronicle_id), return no NPC context, `resolve` proceeds normally — never blocks chronicle start on this non-critical enhancement.
+  - Surfaced by: Scope Decision #4 amendment (amendment 2026-08-04) — "named returning face" surfacing mechanic
+  - Files: DM-graph module (same as T14), Post-v1 persistent-memory phase work; **migration must index the NPC/consequence table on `user_id` (Eng review 2026-08-04, Issue 1)** — this node runs inline before every chronicle's first turn, an unindexed lookup directly eats into Decision #10's p95<8s budget
+  - Verify: starting a new chronicle after a playthrough that recorded a meaningfully-interacted NPC surfaces that NPC by name/fact in the opening beat, before the first dice roll; a forced NPC-table timeout still starts the chronicle (no callback, no error surfaced to player); the `user_id` lookup uses an index, not a table scan
+- [ ] **T20 (P2, human: ~2-3h / CC: ~30min)** — frontend/backend — Build the chronicle-ledger screen (post-v1): read-only, per-account page listing past chronicles' key outcomes in order, querying the same NPC/consequence table as T19 (same `user_id` index from T19 covers this query too)
+  - Surfaced by: Scope Decision #4 amendment (amendment 2026-08-04) — Dwarf Fortress Legends-mode-lite precedent
+  - Files: new frontend page/route, read-only query against existing Post-v1 schema
+  - Verify: page lists at least two past chronicles' outcomes in chronological order with no new writes/schema
+- [ ] **T21 (P3, human: ~1h / CC: ~15min)** — docs — Find-replace "Hunger" → "the Craving" across any future implementation docs/code comments/prompt templates as they're written (this plan doc and Implementation Notes already updated 2026-08-04)
+  - Surfaced by: Decision #1 amendment (naming flag, "Amended 2026-08-04 (6)") — V5's own load-bearing dice-pool mechanic name, renamed to keep Decision #1's "no VTM canon terms" rule consistent
+  - Files: none yet (zero implementation code exists) — this task is a guardrail for when implementation starts, not a rename to perform now
+  - Verify: no occurrence of "Hunger" as a game-mechanic term appears in any implementation-phase file (prompt templates, DB column names, UI strings)
+- [ ] **T22 (P1, human: ~1-2d / CC: ~3-4h)** — build the minimal internal validation harness the plan's own "Build order within B" text calls for: a script/page that fires DM turns end-to-end (`resolve` -> `narrate` -> `art-trigger`, no auth/DB/UI) to eyeball narration and generated-art quality BEFORE T1-T14's full-platform work starts. **Not throwaway (corrected by outside-voice pass 2026-08-04):** this is the seed of durable eval/test tooling, not a disposable script — T25's eval suite extends it directly rather than duplicating it.
+  - Surfaced by: Outside Voice review (2026-08-04) — "Build order within B" was prose-only intent with no task enforcing the sequencing it claimed to decide
+  - Files: new harness directory — durable, kept and extended by T25, not deleted after use (revised from the original "throwaway" framing, same spirit as the old T18 prototype otherwise)
+  - Verify: a handful of turns run through the harness produce narration and art that meet the bar described in the Vision/Platonic Ideal sections, before any auth/DB/deploy work begins
+- [ ] **T23 (P1, human: ~4-6h / CC: ~1h)** — backend — Short-lived access JWT + refresh token + revocation, replacing a single long-lived JWT
+  - Surfaced by: Eng Review (2026-08-04), Issue 1 — Foundational Decision #4 named JWT auth but never specified lifetime/refresh/revocation; a leaked token would stay valid until natural expiry with no recourse
+  - Files: auth module (access + refresh token issuance), Postgres table for revoked/refresh tokens, logout/password-change handlers
+  - Verify: access token expires quickly (~15-30min) and is rejected after expiry; refresh token successfully mints a new access token; logout or password-change immediately invalidates the refresh token (a reused old refresh token is rejected)
+  - Depends on: T22 (outside-voice pass 2026-08-04) — don't build full auth hardening until the harness confirms the core narration/art loop is worth hardening around
+- [ ] **T24 (P2, human: ~3-4h / CC: ~45min)** — infra — Basic CI/CD pipeline: build Docker image, run assert-based smoke tests, push to registry on merge to master
+  - Surfaced by: Eng Review (2026-08-04), Issue 3 — Architecture review's Distribution Architecture check; the Deployment sequence diagram's "push image" step was manual with no automated build/test gate
+  - Files: `.github/workflows/` (or equivalent CI config), references the same smoke tests already required per hardening fix
+  - Verify: a commit to master triggers an automated build + smoke-test run + image push, with a failing smoke test blocking the push
+  - Depends on: T22 (outside-voice pass 2026-08-04) — same build-order rationale as T23
+- [ ] **T25 (P1, human: ~1d / CC: ~2h)** — [→EVAL] eval suite for the `resolve`/`narrate` StateGraph nodes (T14): feeds known-bad inputs (malformed JSON, forced content refusal, a borderline rules-illegal mutation) through the graph and asserts the fallback chain actually fires, not just that the happy path resolves
+  - Surfaced by: Eng Review (2026-08-04), Test Review — T14 had no test case distinguishing the 3 LLM-call failure modes (malformed JSON, refusal, timeout) from manual-only verification; Decision #7's schema-validated GameEvents is the plan's core fairness guarantee and had no eval task
+  - Files: eval suite extending T22's harness directly (T22 is durable, not throwaway — see T22's corrected note), fixture inputs for each failure mode
+  - Verify: a malformed-JSON fixture triggers T1's rules-validator retry-then-safe-default path; a forced-refusal fixture triggers T2's alt-model-then-template path; both are asserted, not eyeballed
