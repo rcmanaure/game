@@ -68,6 +68,27 @@ across the genre to warrant the rename churn). Progressive bestiary
 familiarity tiers (Monster Hunter-style) evaluated and deferred to
 TODOS.md. See Implementation Tasks T15-T20 and TODOS.md for detail.
 
+**Amended 2026-08-05 (7)** — `/plan-ceo-review`, SELECTIVE EXPANSION, folds
+in findings from `docs/research/2026-08-05-character-portraits-and-story-
+reuse-research.md` (three questions: player-character creation, portrait
+evolution, cross-user story reuse). Foundational Decisions #23-24 added
+(predefined-character coterie assembly; portrait evolution via
+image-to-image edit). An independent outside-voice pass (Claude subagent,
+Codex CLI not installed this session) caught a real gap this review's own
+sections missed: the character-creation finding as first drafted ("pick one
+predefined character") contradicted this plan's own multi-member coterie/
+permadeath model — resolved by making character selection a **pick-N-of-4-8**
+step (coterie assembly), not a single-protagonist pick. The outside voice
+also flagged that the "story reuse across users" finding is close enough to
+the already-deferred Community almanac item (same "no demand signal yet"
+problem, even though the mechanism differs — internal snapshot table vs.
+public git export) that it should be held to the same deferral bar rather
+than built now. Story reuse is **not** new v1/post-v1 scope this pass — see
+TODOS.md's updated Community-almanac-adjacent entry for the full design
+record (structured-fields-only snapshot, IDOR check, seed-select mechanic,
+content-abuse-propagation gap) so it isn't lost if picked up later. See
+Implementation Tasks T26-T27 and TODOS.md for detail.
+
 **Supersedes:** `~/.gstack/projects/game/ceo-plans/archive/2026-08-03-vtm-chronicle.md`
 and premises 1-2 of the original office-hours design doc
 (`rcmanaure-master-design-20260803-183155.md`). That doc's core loop pattern
@@ -166,6 +187,8 @@ work. This is a build-order decision, not an architecture change.
 | 20 | Model calls via `@langchain/openrouter`'s `ChatOpenRouter` class (verified real, first-party LangChain package — not the older manual `ChatOpenAI` + custom `baseURL` workaround), not a hand-rolled OpenAI-compatible client | First-party maintained integration with tool calling, structured output, and streaming built in, for the exact provider already chosen (Decision: OpenRouter for both DM calls and, per the art-generation amendment, image models) — less code to maintain than wiring `configuration.baseURL` manually. **Verified 2026-08-03 (5):** `ChatOpenRouter` confirmed real, package `@langchain/openrouter`, talks to the OpenRouter REST API directly via `fetch`, supports tool calling/structured output/streaming. No image-generation output path on this class — the art-trigger node's OpenRouter image-model call (Decision #15) stays a plain REST call, not routed through `ChatOpenRouter`; nothing in the LangChain JS API surfaces an image-gen content type for it |
 | 21 | Checkpointing (amendment, 2026-08-03): LangGraph's `PostgresSaver` checkpointer (same Postgres already in the stack, no new service) handles server-crash recovery mid-turn (resumes an interrupted graph run). The existing Postgres idempotency-key gate (Section 4 hardening) stays as a SEPARATE, final check before any mutation is written to DB — checkpointing resumes interrupted server-side execution, the idempotency key deduplicates client-side retries; neither subsumes the other | User confirmed keeping both layers rather than collapsing to one. Removing the idempotency-key on the assumption that checkpointing covers it would silently reopen the exact permadeath double-mutation risk the Section 4 hardening fix closed. **Corrected 2026-08-03 (5):** `PostgresSaver` ships in a separate package, `@langchain/langgraph-checkpoint-postgres` (not bundled in `@langchain/langgraph` core) — install it explicitly. Constructor is `PostgresSaver.fromConnString(DB_URI)` (camelCase; Python's `from_conn_string` doesn't apply to JS), and `await checkpointer.setup()` must run once before first use (creates the checkpoint tables). Considered `UntrackedValue` (a new v1.1.0 primitive for graph-state channels that are never checkpointed) for the turn's idempotency key — not needed: the idempotency key is a Postgres unique-constraint check at the mutation-write step, outside the graph's checkpointed state entirely, so there's no channel to exclude |
 | 22 | Monetization (amendment, 2026-08-04): freemium model — capped free daily-turn allowance (2-3 turns/day), one-time purchase unlock (~$15-25, matching PC-indie pay-once convention). Subscription tier (~$5/mo) explicitly NOT accepted yet, deferred pending real conversion data (see TODOS.md). The free-turn cap number is not finalized here — it's contingent on T15's per-turn OpenRouter cost-model pass and must be reconciled (T16) against the ~3-turn session-pacing target so a free user can complete at least one full session/day | Genuine gap — no monetization decision existed in this plan despite a real, non-zero per-turn LLM+art-gen cost (Decision #9/#13's cost-consciousness already established this project treats spend as a first-class concern); pay-once matches PC-indie convention and avoids subscription churn risk this early; model selection (not pricing) is the actual cost lever per research (~100x cost variance between frontier and cheap models), hence gating the cap number on T15's cost pass rather than guessing it now |
+| 23 | Player character creation (amendment, 2026-08-05): ship v1 with a fixed roster of 4-8 AI-authored predefined characters, each tied to exactly one bloodline and each with **one** offline pre-generated reference portrait (same mental model as Decision #6's archetype art cache, applied to player characters). Player forms their starting **coterie** by picking N of the roster (e.g. 3-4) — not a single-protagonist pick — so the existing multi-member permadeath/Torpor model (Decision #5) has a real assembly mechanic instead of an implicit gap. Free-form player character creation with a live-generated portrait is explicitly deferred, not attempted in v1 | Research (`docs/research/2026-08-05-...md` §1) found no comparable shipped product keeps a *free-form* character's portrait consistent across independent generations — the Character Card ecosystem fixes the portrait once per character, the closest open-source architectural analog (NarrativeEngine-P) skips player portraits entirely. Predefined-with-portrait sidesteps a structural, not merely execution, problem. An outside-voice pass caught that a single-protagonist framing silently contradicted this plan's own coterie model — pick-N-of-roster resolves that without inventing a new NPC-recruitment system |
+| 24 | Portrait evolution (amendment, 2026-08-05): wound/gear updates to a coterie member edit that member's existing portrait via OpenRouter's `input_references` image-to-image parameter (already available on both Decision #15 models, same ~$0.04/image flat price as fresh generation for Seedream; Gemini's edit-mode input-reference cost is unverified pending T15, see extended T15 scope below) instead of generating a fresh image each time. **Drift mitigation:** every K edits (K tuned empirically in T22's harness), re-anchor the edit chain from the character's ORIGINAL reference portrait plus a text description of cumulative state, instead of always chaining edit-on-last-edit indefinitely — bounds identity drift to at most K edits deep between resets. This does not reopen Decision #15's Higgsfield deferral; Higgsfield's Soul ID (trained-identity mechanism, not a per-call reference) is named in TODOS.md as a concrete, differently-mechanized fallback only if drift proves unworkable at the chosen K | Research (§2) confirmed both chosen models document real image-to-image edit support at no cost premium — an implementation task, not a new provider/architecture decision. The real open risk (identity drift over many sequential edits) is empirical, not documented anywhere, so this decision commits to a bounded mitigation strategy (periodic re-anchor) rather than shipping unbounded chaining and hoping. An outside-voice pass caught that per-player edited portraits cannot cross-user cache-hit the way Decision #6's shared archetype cache does — a real new recurring cost, now explicitly routed into T15/T16 rather than assumed free by association with the archetype-cache pattern |
 
 **Approved STYLE FORMULA (Decision #18, frozen 2026-08-03 — insert byte-identical into every art-gen prompt):**
 
@@ -216,6 +239,12 @@ system, not two.
 - Phaser/PixiJS frontend with sprite animations (idle/attack frame states).
 - Email/password auth, user profiles, server-side session persistence.
 - Bloodline-flavored DM voice (prompt variants).
+- Predefined-character coterie assembly (amendment 2026-08-05, Foundational
+  Decision #23): 4-8 AI-authored characters, one bloodline + one reference
+  portrait each, player picks N to form the starting coterie.
+- Portrait evolution (amendment 2026-08-05, Foundational Decision #24):
+  wound/gear updates edit the existing portrait via image-to-image, bounded
+  identity-drift mitigation via periodic re-anchor to the original reference.
 - Shareable dossier image export.
 - Narration-design hooks (amendment 2026-08-04): mid-session cliffhangers
   (turns end on an unresolved hook, not closure), soft ~3-turn session
@@ -385,6 +414,8 @@ Save/chronicle query (any)       | user_id mismatch (IDOR attempt)| Y (new)  | 4
 Session-end recap call (T17)     | LLM call fails/times out       | Y (new, CEO review 2026-08-04) | Fire-and-forget — logout unaffected, recap silently dropped, logged
 WebSocket handshake (T7)         | Missing/invalid JWT            | Y (new, Eng review 2026-08-04) | Connection rejected at handshake, never reaches turn resolution
 Refresh token (T23)              | Reused after revocation        | Y (new, Eng review 2026-08-04) | Rejected, logged as a security event (same pattern as IDOR attempts)
+Portrait-edit call (T27)         | Timeout/error (image-to-image)| Y (new, CEO review 2026-08-05) | Same placeholder-then-swap path as T6, no new failure mode
+Portrait-edit chain (T27)        | Identity drift over many edits| Mitigated (new, CEO review 2026-08-05, outside-voice caught) | Not a crash — quality risk. Periodic re-anchor to original reference bounds it; K tuned in T22. No user-visible error, validated pre-ship in harness
 ```
 All rows are planned fixes (CEO Review Hardening + Outside Voice Hardening
 sections above). No CRITICAL GAPs remain unaddressed at the plan level.
@@ -405,6 +436,8 @@ Save/chronicle access           | Cross-user ID attempt   | Y        | Y*    | 4
 Session-end recap call (T17)    | Fails/times out         | Y        | Y*    | Logout unaffected  | Y
 WebSocket handshake (T7)        | Invalid/missing JWT     | Y        | Y*    | Connection rejected| Y
 Refresh token (T23)             | Reuse after revocation  | Y        | Y*    | Rejected, logged   | Y
+Portrait-edit call (T27)        | Timeout/error           | Y        | Y*    | Placeholder->async | Y
+Portrait-edit chain (T27)       | Identity drift          | Mitigated| Y*    | N/A (quality risk) | N/A
 ```
 *Y = test spec required at implementation time (assert-based smoke tests
 per hardening fix, per the carried-forward "minimal assert-based smoke
@@ -493,6 +526,97 @@ PLAYER ACTION (free text) --> [rate-limit check] --> [logic model call]
                                                         [Coterie run ends]
 ```
 
+**Portrait evolution edit chain (added 2026-08-05, Decision #24/T27;
+refined Eng review 2026-08-05 — async wiring, `coterie_members` instance
+table, Torpor/Death trigger):**
+```
+WOUND/GEAR event, OR Torpor/Final Death transition, applied to
+coterie member (writes to coterie_members row, NOT predefined_characters)
+        |
+        v
+turn resolves/narrates on fast path immediately (async from here on —
+                                    Decision #10's p95<8s budget unaffected)
+        |
+        v  [background]
+[edit count since last re-anchor >= K?]
+  no  --> edit(LAST coterie_members.current_portrait_url, "+change")
+          --> new portrait, count++
+  yes --> edit(predefined_characters.original_portrait_url,
+               "cumulative state: <wounds, gear, scars summary>")
+          --> new portrait, count reset to 0
+        |
+        v
+[OpenRouter call timeout/error?]
+  yes --> placeholder shown, real art async-swapped later (same as T6)
+  no  --> coterie_members.current_portrait_url updated,
+          replaces prior via existing WebSocket channel
+```
+
+**Coterie assembly (added 2026-08-05, Decision #23; refined Eng review
+2026-08-05 — per-chronicle scope, 2-4 size bounds):**
+```
+NEW CHRONICLE --> [character-select screen: full roster of 4-8
+                    predefined characters (Postgres table), each
+                    showing bloodline + reference portrait —
+                    includes characters who died in prior chronicles]
+        |
+        v
+  player picks N characters
+        |
+        v
+  [dedupe character IDs first]
+        |
+        v
+  [distinct count < 2 or > 4?] --yes--> 400, rejected (client AND server)
+        | no (2-4 distinct)
+        v
+  [coterie_members: one NEW row per (chronicle_id, character_id) —
+   predefined_characters template rows never mutated. N members,
+   each independently tracked — Torpor/Final Death per member
+   (Decision #5) applies to each, scoped to THIS chronicle only]
+        |
+        v
+  first turn begins (existing turn-resolution flow)
+```
+
+**Character-select screen design spec (added Design review, 2026-08-05):**
+
+Information architecture: (1) title/orientation banner (Cinzel) → (2) persistent
+status counter (Courier Prime, e.g. "2 OF 2-4 SELECTED") → (3) selection grid,
+3/2/1 columns per DESIGN.md's card-screen pattern, card-frame chrome per Decision
+#17 (portrait + name + bloodline tag per card, no icon-in-circle pattern) →
+(4) CTA + selected-names summary.
+
+Interaction states:
+```
+FEATURE            | 0-1 SELECTED         | 2-4 SELECTED    | 5th PICK ATTEMPTED
+--------------------|----------------------|------------------|--------------------
+Counter text        | "1 of 2-4 selected   | "N of 2-4        | (unchanged — 5th
+                     |  — pick at least     |  selected"       |  pick is a no-op)
+                     |  1 more"             |                  |
+CTA                 | disabled (dim)       | enabled (ochre)  | unchanged
+5th card click       | n/a                  | n/a              | no-op + brief
+                     |                      |                  | "Coterie is full
+                     |                      |                  | (4/4)" tooltip
+```
+No loading state needed for portraits — pre-generated offline (T26), already
+present before the screen renders, not fetched live.
+
+Motion: select/deselect uses DESIGN.md's **short** tier (200-300ms,
+`ease-in-out`) — a UI state change, not a significant reveal moment; "long"
+(400-700ms) stays reserved for card-reveal/dossier-export-tier moments.
+
+Keyboard & focus (extends DESIGN.md's existing W3C APG roving-tabindex grid
+pattern with the one interaction that pattern doesn't cover — selection, not
+just navigation): Tab/arrow keys move roving focus (thin ink-colored focus
+ring, WCAG 2.4.7); Enter/Space toggles the focused card's selection (ochre
+border + glow, same as mouse-click selection). Focus ring and selected
+styling are visually independent and stack — a card can show both
+simultaneously without ambiguity.
+
+Feeds directly into T11 (extend its scope, already amended by Eng review to
+include this screen) and T26 (implementation).
+
 **Error flow:** see Error & Rescue Registry table above — every failure
 mode terminates in either a safe no-op + logged event, a retry-then-
 fallback chain, or a user-visible generic error message. None terminate
@@ -535,6 +659,12 @@ session-end recap) are new diagram content added alongside them (Chronicle-
 start recall flow, new above), not corrections to existing diagrams. Nothing
 stale.
 
+**Checked 2026-08-05:** all prior diagrams (System architecture, Chronicle-
+start recall flow, Turn resolution data flow, State machine, Deployment
+sequence, Rollback flowchart) remain accurate — this pass's additions
+(Portrait evolution edit chain, Coterie assembly) are new diagram content,
+not corrections. Nothing stale.
+
 ## Worktree Parallelization Strategy (Eng Review, 2026-08-04)
 
 | Step | Modules touched | Depends on |
@@ -562,12 +692,14 @@ stale.
 | T20 (chronicle ledger, post-v1) | new frontend page, same table as T19 | T19 |
 | T21 (Hunger→Craving guardrail) | none yet | — |
 | T4 (idempotency, split transactions) | turn resolution service | T3 |
+| T26 (predefined chars + coterie select) | new character-select frontend, art-gen service | T13, T11 |
+| T27 (portrait-edit + drift mitigation) | art-generation service (same as T6/T13) | T26, T6/T13 |
 
 **Parallel lanes:**
 - **Lane A (core resolver):** T22 → T14 → T1 → T2 → T25 (sequential, shared `dm-graph`/orchestration module)
 - **Lane B (auth):** T7 → T23 (waits on T22 per build-order dependency) → T12 — independent module from Lane A
 - **Lane C (monetization):** T15 → T16, and T3 (waits on T15 + T22) — independent module, light coupling to Lane A only via the rate-limit check inside T4
-- **Lane D (art-gen):** T6 → T13 — independent module, called by Lane A's art-trigger node but no code overlap
+- **Lane D (art-gen):** T6 → T13 → T26 → T27 — independent module, called by Lane A's art-trigger node but no code overlap; T26/T27 (amendment 2026-08-05) extend the same art-gen service sequentially after T13 lands
 - **Lane E (infra/ops):** T5, T8, T24 (waits on T22) — fully independent, no shared module with A-D
 - **Lane F (frontend/design):** T9, T11, T17 (waits on T14), T20 (post-v1, waits on T19) — mostly independent, T17/T20 have single-task dependencies into Lane A/G
 - **Lane G (post-v1 memory):** T19 (waits on T14) → T20 — sequential, shared NPC/consequence table
@@ -624,8 +756,8 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: Outside Voice Hardening — Foundational Decision #13
   - Files: observability/logging config
   - Verify: a sampled turn's full input/output is retrievable from logs post-hoc
-- [ ] **T11 (P1, human: ~2-4h / CC: ~30-45min)** — design — Define interaction states (loading/empty/error/success/partial), accessibility basics, responsive layout, and retro card-frame chrome (Decision #17) for login/game/bestiary/dossier before implementation UI work
-  - Surfaced by: TODOS.md — UX inputs for /plan-design-review; Decision #17 — retro UI chrome
+- [ ] **T11 (P1, human: ~2-4h / CC: ~30-45min)** — design — Define interaction states (loading/empty/error/success/partial), accessibility basics, responsive layout, and retro card-frame chrome (Decision #17) for login/game/bestiary/dossier/**character-and-coterie-select (added amendment 2026-08-05, Decision #23)** before implementation UI work
+  - Surfaced by: TODOS.md — UX inputs for /plan-design-review; Decision #17 — retro UI chrome; Decision #23 — new character-select screen
   - Files: design doc, informs all frontend components
   - Verify: `/plan-design-review` run against the resulting design doc before UI implementation starts
 - [ ] **T13 (P2, human: ~1h / CC: ~15min)** — backend — Insert the approved STYLE FORMULA (Decision #18) byte-identical into every OpenRouter art-gen request; use STYLE TOKEN for length-limited fields
@@ -646,10 +778,10 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: Foundational Decision #14 — Audience is 18+ exclusively, confirmed directly with user
   - Files: signup flow, auth module, landing page
   - Verify: signup rejects a DOB implying under-18; content rating is visible before signup, not buried
-- [ ] **T15 (P1, human: ~3h / CC: ~45min)** — backend — Cost-model pass on OpenRouter model selection for the `resolve`/`narrate` StateGraph nodes (Decision #19); output: per-turn cost estimate, feeds Decision #22's free-turn cap number
-  - Surfaced by: Decision #22 (monetization, amendment 2026-08-04) — ~100x cost variance between frontier and cheap models makes model selection the real cost lever, not pricing-tier design
+- [ ] **T15 (P1, human: ~3h / CC: ~45min)** — backend — Cost-model pass on OpenRouter model selection for the `resolve`/`narrate` StateGraph nodes (Decision #19); output: per-turn cost estimate, feeds Decision #22's free-turn cap number. **Extended (amendment 2026-08-05, outside-voice pass):** also model the per-edit portrait-evolution cost (Decision #24) as its own recurring line item (scales with wound-events-per-session, does NOT cross-user cache-hit like Decision #6's shared archetype cache) rather than assuming it's free by association with the archetype pattern; and directly verify Gemini/Nano Banana's edit-mode cost (does passing an `input_references` image add input-token cost beyond the ~1290 output-token figure the $0.04 estimate is based on?) rather than assuming output-token-only pricing carries over to edit calls
+  - Surfaced by: Decision #22 (monetization, amendment 2026-08-04) — ~100x cost variance between frontier and cheap models makes model selection the real cost lever, not pricing-tier design; Decision #24 (amendment 2026-08-05) — portrait-edit recurring cost and Gemini edit-mode pricing were both unverified assumptions this review caught
   - Files: new cost-modeling note, e.g. `docs/designs/cost-model.md`
-  - Verify: cost estimate per turn is documented with a specific model choice per node, not a range
+  - Verify: cost estimate per turn is documented with a specific model choice per node, not a range; per-edit portrait cost is a separate documented line item; Gemini edit-mode cost is confirmed via a direct API test, not inferred from output-token pricing alone
 - [ ] **T16 (P2, human: ~1h / CC: ~15min)** — reconcile Decision #22's daily free-turn cap against the ~3-turn session-pacing target (V1 Launch Scope narration-design addition); confirm a free user can complete >=1 full session/day under the cap
   - Surfaced by: Decision #22 — spend cap and session-pacing target must not silently contradict each other
   - Files: same cost-modeling note as T15, or this doc's monetization section directly
@@ -672,10 +804,10 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: Decision #1 amendment (naming flag, "Amended 2026-08-04 (6)") — V5's own load-bearing dice-pool mechanic name, renamed to keep Decision #1's "no VTM canon terms" rule consistent
   - Files: none yet (zero implementation code exists) — this task is a guardrail for when implementation starts, not a rename to perform now
   - Verify: no occurrence of "Hunger" as a game-mechanic term appears in any implementation-phase file (prompt templates, DB column names, UI strings)
-- [ ] **T22 (P1, human: ~1-2d / CC: ~3-4h)** — build the minimal internal validation harness the plan's own "Build order within B" text calls for: a script/page that fires DM turns end-to-end (`resolve` -> `narrate` -> `art-trigger`, no auth/DB/UI) to eyeball narration and generated-art quality BEFORE T1-T14's full-platform work starts. **Not throwaway (corrected by outside-voice pass 2026-08-04):** this is the seed of durable eval/test tooling, not a disposable script — T25's eval suite extends it directly rather than duplicating it.
-  - Surfaced by: Outside Voice review (2026-08-04) — "Build order within B" was prose-only intent with no task enforcing the sequencing it claimed to decide
+- [ ] **T22 (P1, human: ~1-2d / CC: ~3-4h)** — build the minimal internal validation harness the plan's own "Build order within B" text calls for: a script/page that fires DM turns end-to-end (`resolve` -> `narrate` -> `art-trigger`, no auth/DB/UI) to eyeball narration and generated-art quality BEFORE T1-T14's full-platform work starts. **Not throwaway (corrected by outside-voice pass 2026-08-04):** this is the seed of durable eval/test tooling, not a disposable script — T25's eval suite extends it directly rather than duplicating it. **Extended (amendment 2026-08-05):** also validates T27's portrait-edit identity drift over N sequential edits, and is used to empirically tune Decision #24's re-anchor cadence (K).
+  - Surfaced by: Outside Voice review (2026-08-04) — "Build order within B" was prose-only intent with no task enforcing the sequencing it claimed to decide; Decision #24 (amendment 2026-08-05) — identity drift is an empirical question this harness must answer before the re-anchor cadence is finalized
   - Files: new harness directory — durable, kept and extended by T25, not deleted after use (revised from the original "throwaway" framing, same spirit as the old T18 prototype otherwise)
-  - Verify: a handful of turns run through the harness produce narration and art that meet the bar described in the Vision/Platonic Ideal sections, before any auth/DB/deploy work begins
+  - Verify: a handful of turns run through the harness produce narration and art that meet the bar described in the Vision/Platonic Ideal sections, before any auth/DB/deploy work begins; a portrait run through several sequential edits with the chosen re-anchor cadence K still reads as the same character at turn N
 - [ ] **T23 (P1, human: ~4-6h / CC: ~1h)** — backend — Short-lived access JWT + refresh token + revocation, replacing a single long-lived JWT
   - Surfaced by: Eng Review (2026-08-04), Issue 1 — Foundational Decision #4 named JWT auth but never specified lifetime/refresh/revocation; a leaked token would stay valid until natural expiry with no recourse
   - Files: auth module (access + refresh token issuance), Postgres table for revoked/refresh tokens, logout/password-change handlers
@@ -690,3 +822,35 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
   - Surfaced by: Eng Review (2026-08-04), Test Review — T14 had no test case distinguishing the 3 LLM-call failure modes (malformed JSON, refusal, timeout) from manual-only verification; Decision #7's schema-validated GameEvents is the plan's core fairness guarantee and had no eval task
   - Files: eval suite extending T22's harness directly (T22 is durable, not throwaway — see T22's corrected note), fixture inputs for each failure mode
   - Verify: a malformed-JSON fixture triggers T1's rules-validator retry-then-safe-default path; a forced-refusal fixture triggers T2's alt-model-then-template path; both are asserted, not eyeballed
+- [ ] **T26 (P1, human: ~1-1.5d / CC: ~2-3h)** — content/backend — Author 4-8 predefined player characters (Decision #23), each tied to one bloodline; pre-generate one reference portrait per character offline (reuses Decision #6 archetype-cache art-gen path, same STYLE FORMULA/T13); build the character-select screen letting the player pick N (2-4, server-validated) to form their starting coterie. **Amended (Eng review 2026-08-05):** roster is a `predefined_characters` Postgres table (seeded via migration, not a static fixture — chosen for future admin-editability); coterie is scoped **per-chronicle** — every new chronicle re-picks from the full roster (dead/Final-Death characters return to the pickable pool next chronicle; permadeath is scoped to the run, not the character template, per Decision #5's own "run ends" framing); coterie size is **enforced 2-4**, validated both client-side and server-side (a bare client bypass must still get a 400, same discipline as Decision #7's server-side mutation validation).
+  - Surfaced by: Decision #23 (amendment 2026-08-05) — predefined-character coterie assembly, resolving the outside-voice-caught single-protagonist/coterie contradiction; Eng review (2026-08-05) — data model, coterie lifespan, and size bounds were all unspecified
+  - Files: `predefined_characters` table + seed migration, portrait pre-gen script (reuses T6/T13's art-gen service), new frontend character-select screen (T11 scope), coterie-creation endpoint with server-side 2-4 bounds check
+  - Verify: roster of 4-8 characters each render with their pre-generated portrait and correct bloodline tag; picking N (2-4 DISTINCT character IDs — duplicates deduped before the bounds check) correctly initializes a coterie with N independently-trackable members (Decision #5's permadeath/Torpor model applies per member); a coterie-creation request with 0, 1, 5+, or a duplicate-only selection (e.g. the same character ID submitted twice) is rejected with a 400, not silently accepted; starting a second chronicle after a first chronicle's Final Death still shows the full 4-8 roster, and the re-picked character's portrait/state starts fresh (see T27's `coterie_members` table — a new instance row per chronicle, template row never mutated). **Design spec (added Design review 2026-08-05, see the "Character-select screen design spec" above the Coterie assembly diagram):** matches the stated IA, interaction-state table (0-1/2-4/5th-pick), 250ms short-tier select/deselect motion, and Enter/Space keyboard toggle with an independent focus-ring-vs-selected visual distinction
+  - Depends on: T13 (STYLE FORMULA, shared art-gen path), T11 (character-select screen design inputs)
+- [ ] **T27 (P1, human: ~1.5d / CC: ~2.5-3h)** — backend — Portrait evolution: on a wound/gear-changing GameEvent, **or a Torpor/Final Death state transition (Decision #5, added Eng review 2026-08-05 — a dormant/dead coterie member's portrait must reflect that, not show a stale healthy image on the dossier/ledger)**, trigger an image-to-image edit call (OpenRouter `input_references`, Decision #24) against the coterie member's last-generated portrait instead of a fresh text-to-image call; every K edits (K TBD, tuned in T22), re-anchor the edit chain from the character's ORIGINAL reference portrait (T26) plus a text description of cumulative state instead of chaining from the last edit. **Amended (Eng review 2026-08-05):** the edit call is **async, fire-and-forget** — same pattern as T6's placeholder-then-swap: the GameEvent mutation applies and the turn resolves/narrates on the fast path immediately, the portrait-edit call runs in the background and swaps in via the existing WebSocket channel when ready. Decision #10's p95<8s turn-latency budget is unaffected by edit-call time, exactly like every other art-gen call in this plan; the edit call does NOT run synchronously inside the `art-trigger` node's turn-blocking path. **Mutable state lives in a new `coterie_members` table (Eng review 2026-08-05, outside-voice pass — closes a data race):** one row per `(chronicle_id, predefined_character_id)`, holding the CURRENT portrait URL, edit count since last re-anchor, and Torpor/Dead status — `predefined_characters` (T26) stays the read-only template (name, bloodline, ORIGINAL reference portrait) and is never mutated by an edit call. This is what makes re-picking a Final-Death character in a later chronicle start fresh: a new `coterie_members` row, template untouched.
+  - Surfaced by: Decision #24 (amendment 2026-08-05) — portrait evolution is v1-feasible on the already-chosen art stack; drift-mitigation strategy needed a concrete decision, not just a validation task; Eng review (2026-08-05) — sync-vs-async wiring, the missing per-chronicle instance table (outside-voice caught a real data race: two concurrent chronicles reusing the same named character would otherwise clobber each other's portrait via a shared row), and the missing Torpor/Death trigger were all unspecified
+  - Files: art-generation service (same module as T6/T13), turn-resolution codepath (fire-and-forget trigger point on wound/gear/Torpor/Death mutations, after mutation commit — not inside the synchronous `art-trigger` node), new `coterie_members` table + migration
+  - Verify: a wound-triggering GameEvent produces an edited portrait (not a fresh unrelated image) without adding latency to the turn's own resolution/narration response; a Torpor or Final Death transition also produces an edited portrait; an edit chain that crosses the K-edit boundary re-anchors from the original reference instead of the immediately-prior edit; forced edit-call timeout/error falls back to the same placeholder-then-swap path as T6, no new failure mode invented; two concurrent chronicles using the same predefined character each maintain independent portrait state via separate `coterie_members` rows, with `predefined_characters.original_portrait_url` never mutated
+  - Depends on: T26 (needs the original reference portrait to re-anchor from, and the `predefined_characters` template table), T6/T13 (shared art-gen service)
+
+## Approved Mockups
+
+| Screen/Section | Mockup Path | Direction | Notes |
+|-----------------|-------------|-----------|-------|
+| Character-select screen | `~/.gstack/projects/game/designs/character-select-20260805/preview.html` | Static HTML preview (fallback path — OpenAI org verification gate blocked AI PNG mockup generation, same known account-level issue as DESIGN.md's 2026-08-04 entry) | 3-col card grid, painted-portrait placeholders, ochre selection glow + numbered badge, Courier Prime status counter, Cinzel/Spectral/Courier Prime type system, square corners with ornamented flourish corners (no rounded-app-card) |
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 4 | CLEAR | 2026-08-05 pass: 4 section findings (T20 scope, drift mitigation, cross-user PII, seed-select mechanic) + 3 cross-model tensions (coterie assembly, cost-model gap, story-reuse/almanac overlap) — all resolved, 0 unresolved |
+| Codex Review | `/codex review` | Independent 2nd opinion | 5 | ISSUES_FOUND | Codex CLI not installed all passes — outside voice ran as Claude subagent; CEO-review pass: 10 findings, 8 substantive. Eng-review pass: 5 findings, 1 P1 (missing per-chronicle instance table, a real data race). Design review pass: no outside-voice ran (single-model 7-pass review only) |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 2 | CLEAR (PLAN) | 2026-08-05 pass (fresh, supersedes the 43f3109 run): 4 section findings (T26 data model, T27 sync/async wiring, coterie lifespan, size bounds) + 2 cross-model tensions (missing `coterie_members` instance table — fixed, closes a cross-chronicle portrait data race; roster storage held as DB table) + 2 minor fixes (duplicate-ID dedupe, Torpor/Death portrait trigger) — all resolved, 0 unresolved |
+| Design Review | `/plan-design-review` | UI/UX gaps | 1 | CLEAR | 2026-08-05 pass (first ever on this project): score 5/10 → 9/10. 4 gaps found and resolved (information architecture, invalid-selection interaction states, select/deselect motion tier, keyboard toggle + focus-vs-selected visual distinction). HTML preview mockup generated (AI PNG blocked by the known OpenAI org-verification gate) |
+| DX Review | `/plan-devex-review` | Developer experience gaps | 0 | NOT RUN | Not applicable — no external SDK/API surface in this plan |
+
+**CROSS-MODEL:** Across the CEO and Eng passes, the outside-voice subagent caught 5 gaps neither review's own structured sections surfaced on their own: (CEO pass) single-protagonist/coterie contradiction, portrait-edit cost not routed into T15/T16, story-reuse's overlap with the deferred Community almanac; (Eng pass) the missing `coterie_members` per-chronicle instance table — the most severe finding of either pass, a genuine concurrent-write data race on a shared template row — and the DB-table-vs-fixture tension (held, not changed). All 5 resolved via explicit user decisions; none silently auto-applied. The Design Review pass ran single-model (no outside-voice offered by that skill for this session).
+
+**VERDICT:** CEO + ENG + DESIGN CLEARED (0 unresolved, 0 critical gaps) — ready to implement T26/T27. No DX review run; not applicable, not blocking per this project's review tiers.
+
+NO UNRESOLVED DECISIONS

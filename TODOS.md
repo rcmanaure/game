@@ -51,6 +51,74 @@
   the core loop is playtested and you know if flat reveal already feels
   satisfying.
 
+## Deferred from CEO review (2026-08-05, character-portraits-and-story-reuse
+## research pass — see `docs/research/2026-08-05-character-portraits-and-
+## story-reuse-research.md` and `docs/designs/ai-dm-platform.md` "Amended
+## 2026-08-05 (7)")
+
+- **Story reuse across users (flag a chronicle as a reusable starting
+  seed for other players)** — deferred, not built this pass, despite
+  having a real design (below). An outside-voice pass on this review
+  caught that it's close enough to the already-deferred **Community
+  almanac** item (deferred indefinitely, "revisit only if there's an
+  actual community asking for it") that it should be held to the same
+  "no demand signal yet" bar, even though the actual mechanism differs:
+  this would be an **internal** Postgres table read into a new
+  chronicle's prompt context (same shape as the `recall` node/T19), not
+  the almanac's public git-based export. **What:** a new table snapshots
+  a flagged chronicle's reusable narrative state; at new-chronicle-start,
+  a `seed-select` node auto-picks one eligible snapshot (no player-facing
+  browse UI — same automatic, invisible pattern as T19's "returning
+  face" NPC callback) and folds it into the `narrate` node's opening
+  beat. **Why:** replayability lever adjacent to Scope Decision #4's
+  persistent-memory work; the mechanism was fully designed this session,
+  just not scheduled. **Design record so it isn't lost:**
+  - Snapshot table stores **structured/fictional fields only** — NPC
+    name, NPC fact, bloodline, key outcome tag, archetype ref — **never**
+    raw narration text or raw player free-text (both can echo a
+    player's real-world PII into a *different* user's session; this was
+    a Section 3 finding this review caught).
+  - The "flag as reusable" write action needs the same per-user
+    JWT-scoped IDOR guard as every other save/chronicle endpoint (T7's
+    pattern) — verify the flagging user actually owns the chronicle
+    being flagged. The outside-voice pass caught this was unspecified.
+  - Needs a flag/unflag toggle (retraction path) — flagging isn't
+    permanent.
+  - Structured "NPC fact" fields are still LLM-derived from the
+    original player's free-text input and would get auto-served into a
+    stranger's session with **zero moderation** — a genuinely new
+    user-to-user content-propagation surface that Foundational Decision
+    #13's content-abuse gate (currently scoped as origin-user-only
+    logging, pre-launch keyword/model filter) never anticipated. Whoever
+    picks this up needs to decide whether that's an accepted risk at
+    hobby scale or needs its own lightweight filter before shipping.
+  - If it ever gets a UI surface for the *flagging* side specifically
+    (not the consumption side, which stays UI-less per the seed-select
+    design above), hang it off the existing Chronicle Ledger screen
+    (Scope Decision #4/T20) rather than building a dedicated screen —
+    T20 would need its "read-only, no new writes/schema" verify
+    criteria amended to note the one write action.
+  - **Effort estimate:** M (human ~2-3d / CC ~4-5h) — new table +
+    migration, seed-select graph node (same shape as T19), flag/unflag
+    endpoint with IDOR guard, T20 scope amendment.
+  - **Priority:** P3 — revisit once Scope Decision #4's persistent-
+    memory phase (T19/T20) is actually underway, same timing rationale
+    as the rest of that phase, not before.
+  - **Depends on:** T19/T20 (shares the same phase and design pattern —
+    build alongside, not ahead of, that work).
+
+- **Higgsfield Soul ID as a portrait-drift fallback** — not adopted now
+  (Decision #24 ships periodic re-anchor-to-original-reference as the
+  drift mitigation instead), but named here as a concrete fallback if
+  T22's harness shows re-anchoring isn't enough: Soul ID trains a
+  reusable identity once per character (20+ reference photos, ~3-5min
+  training) instead of re-submitting a reference image per call — a
+  materially different, costlier ($0.09-$0.23/image range, reseller-
+  quoted, not first-party-confirmed), platform-locked mechanism. Revisit
+  only if T22's drift validation shows the cheaper re-anchor approach
+  genuinely doesn't hold up — does not reopen Decision #15's existing
+  Higgsfield deferral for anything else.
+
 ## Launch gate, not deferred work (tracked so it doesn't get missed)
 
 - **Pre-launch content-abuse moderation system** — Foundational Decision #13
