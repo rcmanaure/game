@@ -31,6 +31,17 @@ export function creativeModel() {
   });
 }
 
+// T2: alt-model retry target for content-refusal fallback — a different
+// provider/model than CREATIVE_MODEL so a refusal rooted in one provider's
+// content policy has a real chance of not repeating on retry.
+export function creativeAltModel() {
+  return new ChatOpenRouter({
+    apiKey: apiKey(),
+    model: process.env.CREATIVE_MODEL_ALT ?? "nvidia/nemotron-3-super-120b-a12b:free",
+    temperature: 0.8,
+  });
+}
+
 export function imageModelId(): string {
   return process.env.IMAGE_MODEL ?? "google/gemini-2.5-flash-image";
 }

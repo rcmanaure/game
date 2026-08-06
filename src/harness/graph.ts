@@ -12,7 +12,8 @@ import {
 import { ATTRIBUTES, CharacterSchema } from "./character.js";
 import { resolveCheck, rejectedEvent, OPPONENT_TIERS } from "./rules.js";
 import { applyMutation } from "./validator.js";
-import { logicModel, creativeModel } from "./models.js";
+import { logicModel, creativeModel, creativeAltModel } from "./models.js";
+import { narrateWithFallback } from "./narration.js";
 import { generateArt } from "./art.js";
 
 const State = new StateSchema({
@@ -87,9 +88,13 @@ const rulesValidate: GraphNode<typeof State> = async (state) => {
   return { gameEvent: event, character: result.character };
 };
 
+// T2: content-refusal handling (CEO Review Hardening) — violent/dark content
+// refusal is expected for this genre, not a rare edge case. Never a silent
+// no-op: retry with an alt-provider model, then fall back to a deterministic
+// template. narrateWithFallback (narration.ts) does the retry-then-template
+// logic; this node only wires it to the two real ChatOpenRouter calls.
 const narrate: GraphNode<typeof State> = async (state) => {
   const event = state.gameEvent!;
-  const model = creativeModel();
   const outcome = event.success
     ? event.criticalTier === "critical" || event.criticalTier === "cravingCritical"
       ? "a resounding, decisive success"
@@ -109,11 +114,12 @@ const narrate: GraphNode<typeof State> = async (state) => {
       ? `your roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs the opponent's roll ${event.opponentRoll} (${event.opponentTier} difficulty)`
       : `roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs target ${event.targetNumber}`;
   const prompt = `You are the AI Dungeon Master for a dark-fantasy coterie-sim. Narrate this beat in 2-4 sentences, second person, moody gothic-fantasy tone, in the same language as the player's action. Player action: "${state.playerAction}". What was attempted: ${event.summary}. Mechanical outcome: ${outcome} (${rollDetail}).${cravingNote} Never contradict the outcome — if it failed, do not narrate success, and vice versa.`;
-  const response = await model.invoke(prompt);
-  const narration =
-    typeof response.content === "string"
-      ? response.content
-      : JSON.stringify(response.content);
+
+  const narration = await narrateWithFallback({
+    event,
+    invokePrimary: () => creativeModel().invoke(prompt),
+    invokeAlt: () => creativeAltModel().invoke(prompt),
+  });
   return { narration };
 };
 
