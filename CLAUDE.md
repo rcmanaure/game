@@ -1,153 +1,31 @@
 ## graphify
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+Quick: `graphify query "<question>"` for scoped subgraphs. Use `graphify path` for relationships, `graphify explain` for concepts. Run `graphify update .` after code changes.
 
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+## AI Game Studio
 
-## Skill routing
+Studio: `@game-dev/game-lead` (orchestrator) + 5 specialists.
 
-When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
+**Principles:** Ship fun. Clean code. No over-engineering. Simple solutions.
 
-Key routing rules:
-- Product ideas/brainstorming → invoke /office-hours
-- Strategy/scope → invoke /plan-ceo-review
-- Architecture → invoke /plan-eng-review
-- Design system/plan review → invoke /design-consultation or /plan-design-review
-- Full review pipeline → invoke /autoplan
-- Bugs/errors → invoke /investigate
-- QA/testing site behavior → invoke /qa or /qa-only
-- Code review/diff check → invoke /review
-- Visual polish → invoke /design-review
-- Ship/deploy/PR → invoke /ship or /land-and-deploy
-- Save progress → invoke /context-save
-- Resume context → invoke /context-restore
-- Author a backlog-ready spec/issue → invoke /spec
+**Decision flow:** Analyze → Classify (design/code/perf/bug) → Delegate → Synthesize → Recommend.
 
-## AI Game Studio Rules (2026-08-06)
+**Code policy:** Analyze → Explain → Propose → Sign-off → Implement.
 
-This project uses specialized Claude Code subagents for game development decisions.
-
-### Studio Principles
-
-1. **Ship a fun game** — Quality > velocity. Fun is non-negotiable.
-2. **Maintain clean architecture** — Code lives 5+ years; maintenance cost matters.
-3. **Avoid unnecessary complexity** — YAGNI. Speculative abstractions = waste.
-4. **Prefer simple solutions** — Boring > clever. Clever requires 3am debugging.
-
-### Agent Roles
-
-**For game design decisions:** Use `@game-dev/game-lead`
-- Routes to specialized agents (designer, engineer, researcher)
-- Orchestrates complex decisions
-- Synthesizes findings, recommends actions
-
-**For core loop / mechanics / balance:** Use `@game-dev/gameplay-designer`
-- Fun factor, progression, player motivation, replayability
-
-**For code review / architecture / bugs:** Use `@game-dev/gameplay-engineer`
-- Code quality, design patterns, scalability, maintainability
-- Refactoring guidance, system design
-
-**For performance issues:** Use `@game-dev/performance-engineer`
-- CPU/GPU bottlenecks, memory, rendering, loading times
-- Quick wins first, then medium, then major refactors
-
-**For QA / player experience:** Use `@game-dev/qa-tester`
-- Bug hunting, exploits, edge cases, soft-lock prevention
-- Confusing mechanics, poor feedback loops
-
-**For industry research:** Use `@game-dev/game-researcher`
-- Precedent from shipped games, design patterns
-- GDC talks, postmortems, competitive landscape
-
-### Decision Process
-
-Before major changes:
-
-1. **Analyze** impact, risks, alternatives
-2. **Classify** (design? code? perf? bug?)
-3. **Delegate** to right specialist(s)
-4. **Synthesize** findings
-5. **Recommend** next steps with trade-offs
-
-**Never blindly implement ideas.** Challenge assumptions first.
-
-### Code Policy
-
-- Do not edit files until proposal is approved
-- First: analyze → explain → propose
-- Then: implement after sign-off
-- Avoid over-engineering; prefer simple solutions
-
-### Example Workflows
-
-```
-Design decision: "Should we add permadeath?"
-→ @game-dev/game-lead (routes to designer + researcher)
-
-Code issue: "Turn resolution is slow"
-→ @game-dev/performance-engineer (+ gameplay-engineer if needed)
-
-Bug report: "Players can exploit the economy"
-→ @game-dev/qa-tester (+ designer if balance-related)
-
-Architecture review: "Is this scalable to 10k concurrent players?"
-→ @game-dev/gameplay-engineer (+ game-lead for strategy)
-```
+See `docs/RECREATE_GAME_DEV_STUDIO.md` for full setup.  
+See `~/.claude/agents/game-dev/docs/USAGE_GUIDE.md` for workflows.
 
 ---
 
 ## Design System
-Always read docs/DESIGN.md before making any visual or UI decisions.
-All font choices, colors, spacing, and aesthetic direction are defined there.
-Do not deviate without explicit user approval.
-In QA mode, flag any code that doesn't match docs/DESIGN.md.
+Always read docs/DESIGN.md before visual/UI decisions. Font, color, spacing defined there. No deviation without approval.
 
-## Quality > Velocity (2026-08-06)
+## Tech Stack (Locked)
+- Frontend: DOM + CSS + Motion.dev (Phaser research: game-engines-lightweight.md ruled it out)
+- LLM: LangGraph.js (proven, no refactor needed)
+- Narrative: Ink + inkjs (narration consistency + permadeath v1)
 
-**User's principle**: When trade-off between ship-fast and ship-right arises, default to quality. Extended timelines acceptable.
-
-**Implications for decisions**:
-- Ink + inkjs: NOW in T14 (narration consistency > speed)
-- Candidate re-evaluations: Decision #22 (monetization), Decision #15 (art quality), Scope #4 (NPC recall timing)
-- Scope discipline still applies (YAGNI), but in-scope features done well
-
-## Tech Strategy (2026-08-06 Research Validation)
-
-### Frontend Architecture: DOM+CSS-first (not Phaser)
-- **Rationale** (research: game-engines-lightweight.md): Phaser (71+ KB gzipped) solves physics/collision/tilemap — zero of which this game needs. Text + card UI are DOM's native sweet spot.
-- **Stack**: Vanilla DOM + CSS + Motion.dev (5 KB optional for tweens)
-- **Bundle impact**: 5–10 KB vs Phaser 71+ KB
-- **Decision**: Decision #19-21 locked Phaser/PixiJS; this research is a candidate amendment for future review, not immediate override. If animation becomes bottleneck, escalate to Konva.js (55 KB) or Pixi.js (90 KB), not Phaser full build.
-- **Post-v1 option**: If sprite count explodes (100+), switch to Pixi.js as pure renderer, keep DOM for UI.
-
-### LLM Orchestration: LangGraph.js (no change)
-- **Rationale** (research: llm-orchestration-frameworks.md): Already using, works well. No urgency to refactor.
-- **Alternatives evaluated**: Anthropic Agent SDK (simpler if starting fresh), raw async/await (viable only if linear forever, but T14 branches). 
-- **Decision**: Stay course.
-
-### Narrative Templating: Ink + inkjs (NOW, v1 scope)
-- **What it is** (research: narrative-frameworks.md): Narrative DSL (4.8k stars, MIT, actively maintained 2026-05-05) with proven LLM integration pattern (poltergink library).
-- **Why it matters**: T14's `narrate` node uses Ink templates (not raw LLM) to structure narration — cliffhang/recap/stakes beats guaranteed. Ink's game-side function architecture designed exactly for LLM calls.
-- **Scope**: v1. T14 effort +1-2d (2-3d human / 5-7h CC total, not 1-2d raw).
-- **Decision**: LOCKED (2026-08-06). Quality > velocity: narration consistency enables permadeath to feel intentional. No post-v1 refactor needed if done right first time.
-
-### NPC Recall (T19): Pulled to v1 scope (Decision 2026-08-06)
-- **What it is** (Scope Decision #4): `recall` node queries NPC/consequence table by user_id before resolve. Deterministically surfaces named NPC from prior playthrough in opening narration beat (before dice roll).
-- **Why now** (quality > velocity): Permadeath only feels real if world remembers your choices. v1 permadeath + recall = stakes are intentional, not random.
-- **Scope**: v1, sequenced after T14/T22 validate core narration. Effort: ~2-3h CC (indexed lookup, fail-open, no latency risk). No new schema (reuses T20's table).
-- **T20 (chronicle ledger UI)** stays post-v1 (read-only legend screen). Only T19's backend `recall` node in v1.
-- **Decision**: PULLED (2026-08-06). Blocks nothing, enables quality.
-
-### Competitive Landscape (2026-08-06 AI Platforms Research)
-- **Shipped competitors**: AI Dungeon (red ocean), NovelAI (NSFW niche), Character.AI (red ocean, 20M users), Hidden Door (licensed fiction social), Voyage (Latitude, April 2026 beta, **direct competitor**).
-- **Voyage threat**: Multiplayer, world memory, freemium model. If hits traction 2H 2026, will capture early adopters. Mitigation: v1 ships DM quality + permadeath stakes; post-v1 `recall` node (cross-playthrough NPC persistence) is genuine differentiator nobody else ships.
-- **Our differentiators** (post-v1): NPC recall across separate campaigns (novel), permadeath as intentional design (not accident), art-cache taxonomy (bounded archetype keys, unbounded narration), frozen STYLE FORMULA + dark-fantasy coherence.
-- **One-time-unlock risk**: Decision #22's $15–$25 unlock bets against freemium/subscription industry. If conversion falls short, may need pivot to freemium. Monitor post-launch conversion data before v1.1 roadmap.
+Detailed rationale: See `docs/research/` directory. Tech decisions are locked; research amendments go there, not inline.
 
 ## Research Docs Convention
 All framework/platform/engine research lives in `docs/research/` with `YYYY-MM-DD-topic.md` naming.
