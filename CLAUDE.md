@@ -27,6 +27,80 @@ Key routing rules:
 - Resume context → invoke /context-restore
 - Author a backlog-ready spec/issue → invoke /spec
 
+## AI Game Studio Rules (2026-08-06)
+
+This project uses specialized Claude Code subagents for game development decisions.
+
+### Studio Principles
+
+1. **Ship a fun game** — Quality > velocity. Fun is non-negotiable.
+2. **Maintain clean architecture** — Code lives 5+ years; maintenance cost matters.
+3. **Avoid unnecessary complexity** — YAGNI. Speculative abstractions = waste.
+4. **Prefer simple solutions** — Boring > clever. Clever requires 3am debugging.
+
+### Agent Roles
+
+**For game design decisions:** Use `@game-dev/game-lead`
+- Routes to specialized agents (designer, engineer, researcher)
+- Orchestrates complex decisions
+- Synthesizes findings, recommends actions
+
+**For core loop / mechanics / balance:** Use `@game-dev/gameplay-designer`
+- Fun factor, progression, player motivation, replayability
+
+**For code review / architecture / bugs:** Use `@game-dev/gameplay-engineer`
+- Code quality, design patterns, scalability, maintainability
+- Refactoring guidance, system design
+
+**For performance issues:** Use `@game-dev/performance-engineer`
+- CPU/GPU bottlenecks, memory, rendering, loading times
+- Quick wins first, then medium, then major refactors
+
+**For QA / player experience:** Use `@game-dev/qa-tester`
+- Bug hunting, exploits, edge cases, soft-lock prevention
+- Confusing mechanics, poor feedback loops
+
+**For industry research:** Use `@game-dev/game-researcher`
+- Precedent from shipped games, design patterns
+- GDC talks, postmortems, competitive landscape
+
+### Decision Process
+
+Before major changes:
+
+1. **Analyze** impact, risks, alternatives
+2. **Classify** (design? code? perf? bug?)
+3. **Delegate** to right specialist(s)
+4. **Synthesize** findings
+5. **Recommend** next steps with trade-offs
+
+**Never blindly implement ideas.** Challenge assumptions first.
+
+### Code Policy
+
+- Do not edit files until proposal is approved
+- First: analyze → explain → propose
+- Then: implement after sign-off
+- Avoid over-engineering; prefer simple solutions
+
+### Example Workflows
+
+```
+Design decision: "Should we add permadeath?"
+→ @game-dev/game-lead (routes to designer + researcher)
+
+Code issue: "Turn resolution is slow"
+→ @game-dev/performance-engineer (+ gameplay-engineer if needed)
+
+Bug report: "Players can exploit the economy"
+→ @game-dev/qa-tester (+ designer if balance-related)
+
+Architecture review: "Is this scalable to 10k concurrent players?"
+→ @game-dev/gameplay-engineer (+ game-lead for strategy)
+```
+
+---
+
 ## Design System
 Always read docs/DESIGN.md before making any visual or UI decisions.
 All font choices, colors, spacing, and aesthetic direction are defined there.
