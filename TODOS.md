@@ -1,5 +1,14 @@
 # TODOS
 
+## Completed (2026-08-06, eng review + T14a/b/d build)
+
+- ✅ **T14a**: Postgres entities (User/Chronicle/Turn/Npc), migrations, turn status enum, PostgresSaver installed
+- ✅ **T14b**: TurnReservationService (atomic INSERT/UPDATE), GraphService (invoke+persist+async-art), startup sweep, CORS env fix, WS integration, narrateWithFallback error handling
+- ✅ **T14d**: turnNumber field, recall node NPC query setup, state schema DRY (removed HarnessStateSchema duplicate)
+- ✅ **T14c pre-step**: knot-count scoping — 7 narration branches needed, under +1-2d estimate
+- ✅ **T-art-tests**: full coverage (placeholder, network error, non-200, malformed, valid responses, b64, reference URLs) — 52 tests passing
+- ✅ **eng-review fixes**: atomic reservation race, crash reconciliation sweep, async art-trigger, CORS env scoping, LLM error resilience
+
 ## Deferred from CEO review (2026-08-06, HOLD SCOPE — 11-section deep review
 ## of the T14/T19/Ink build-readiness, see `docs/designs/ai-dm-platform.md`
 ## and the GSTACK REVIEW REPORT; outside-voice pass via Claude subagent,
