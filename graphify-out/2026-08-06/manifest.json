@@ -1,4 +1,69 @@
 {
+  ".agents/skills/higgsfield-game-generation/scripts/fbx2glb.py": {
+    "mtime": 1785802500.4893396,
+    "ast_hash": "62208e1e0cd622172eb1ab6dfe138623",
+    "semantic_hash": "62208e1e0cd622172eb1ab6dfe138623"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/glb_inspect.py": {
+    "mtime": 1785802500.4894986,
+    "ast_hash": "5c1dad2384edf6c0107c3f866872ac56",
+    "semantic_hash": "5c1dad2384edf6c0107c3f866872ac56"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/glb_merge_anims.py": {
+    "mtime": 1785802500.4896371,
+    "ast_hash": "64a570a59cffcacb160d8ebdc2b59f02",
+    "semantic_hash": "64a570a59cffcacb160d8ebdc2b59f02"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/glb_patch.py": {
+    "mtime": 1785802500.489572,
+    "ast_hash": "2b0f5b103e6988d6b3728c113161a38b",
+    "semantic_hash": "2b0f5b103e6988d6b3728c113161a38b"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/merge_anim_glbs.py": {
+    "mtime": 1785802500.4896371,
+    "ast_hash": "dd786d9b023e46c9d6281f2ed01d9559",
+    "semantic_hash": "dd786d9b023e46c9d6281f2ed01d9559"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/pipeline.py": {
+    "mtime": 1785802500.4900084,
+    "ast_hash": "aa728d382b902e55ccd6486e8bcf8f52",
+    "semantic_hash": "aa728d382b902e55ccd6486e8bcf8f52"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/proc_anim_dragon.py": {
+    "mtime": 1785802500.4898176,
+    "ast_hash": "833722062cf268cf7014d90d0ea552cd",
+    "semantic_hash": "833722062cf268cf7014d90d0ea552cd"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/proc_rig_dragon.py": {
+    "mtime": 1785802500.4900084,
+    "ast_hash": "637895ff0f531bf4905497a3cfde44b6",
+    "semantic_hash": "637895ff0f531bf4905497a3cfde44b6"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/proc_weights.py": {
+    "mtime": 1785802500.4900084,
+    "ast_hash": "53d0e58784496cfb0708241d939fcc17",
+    "semantic_hash": "53d0e58784496cfb0708241d939fcc17"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/rig_transfer.py": {
+    "mtime": 1785802500.4907103,
+    "ast_hash": "8169f8e80fc6f9cf2363b5d9e9979f2e",
+    "semantic_hash": "8169f8e80fc6f9cf2363b5d9e9979f2e"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/seamless.py": {
+    "mtime": 1785802500.4903371,
+    "ast_hash": "c44eee93e0a68f95f2c840c23699a236",
+    "semantic_hash": "c44eee93e0a68f95f2c840c23699a236"
+  },
+  ".claude/settings.json": {
+    "mtime": 1785794648.0100102,
+    "ast_hash": "3aaf407dd1bf94cf153a01d32ddf639a",
+    "semantic_hash": "3aaf407dd1bf94cf153a01d32ddf639a"
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1786037065.097593,
+    "ast_hash": "c31a819882a78254539d9dbcfc053187",
+    "semantic_hash": "c31a819882a78254539d9dbcfc053187"
+  },
   "install.sh": {
     "mtime": 1785883438.0087607,
     "ast_hash": "6c8779bab2a79a769483c90365b3c7fc",
@@ -35,9 +100,9 @@
     "semantic_hash": "999cc5281853014b17d8849167dbc078"
   },
   "src/backend/auth/jwt-ws.gateway.ts": {
-    "mtime": 1786046073.2111778,
-    "ast_hash": "8fac4404ef943fdd41a569314bb48cb2",
-    "semantic_hash": ""
+    "mtime": 1786036060.328133,
+    "ast_hash": "fe99d586b8daa704a6d75ed4cfb36837",
+    "semantic_hash": "fe99d586b8daa704a6d75ed4cfb36837"
   },
   "src/backend/auth/jwt.strategy.ts": {
     "mtime": 1786021867.1004503,
@@ -75,14 +140,14 @@
     "semantic_hash": "643c7e6aabf0195329e35172c90a4408"
   },
   "src/backend/entities/user.entity.ts": {
-    "mtime": 1786045823.3719635,
-    "ast_hash": "9a261268feb3cb90714aa7c0fe95110e",
-    "semantic_hash": ""
+    "mtime": 1786033897.2366242,
+    "ast_hash": "a0b51d5efe246b24067333ecc1ec40d5",
+    "semantic_hash": "a0b51d5efe246b24067333ecc1ec40d5"
   },
   "src/backend/graph/graph.service.ts": {
-    "mtime": 1786046066.5810394,
-    "ast_hash": "7d4ed6a00e7aa127b1992067003e8d01",
-    "semantic_hash": ""
+    "mtime": 1786036204.778239,
+    "ast_hash": "655b10191b50f81def22d5e85bae9fb1",
+    "semantic_hash": "655b10191b50f81def22d5e85bae9fb1"
   },
   "src/backend/graph/turn-reservation.service.ts": {
     "mtime": 1786035964.098064,
@@ -150,9 +215,9 @@
     "semantic_hash": "01d099bfb09ca2ca42820e440ab3c72d"
   },
   "src/harness/env.ts": {
-    "mtime": 1786046234.931551,
-    "ast_hash": "3e9eaaa426b66e033d39ec04689c3aa4",
-    "semantic_hash": ""
+    "mtime": 1785974354.9535644,
+    "ast_hash": "382609085d1d35ba3f97b64d58857eeb",
+    "semantic_hash": "382609085d1d35ba3f97b64d58857eeb"
   },
   "src/harness/graph.ts": {
     "mtime": 1786036162.781336,
@@ -204,10 +269,90 @@
     "ast_hash": "67e2177f9233df148a335db5e8900d0b",
     "semantic_hash": "67e2177f9233df148a335db5e8900d0b"
   },
+  ".agents/skills/game-engine/SKILL.md": {
+    "mtime": 1785802465.2456183,
+    "ast_hash": "389c6b7fd60287765b97e89f94eb85a3",
+    "semantic_hash": "389c6b7fd60287765b97e89f94eb85a3"
+  },
+  ".agents/skills/game-engine/references/algorithms.md": {
+    "mtime": 1785802465.2469137,
+    "ast_hash": "17aec55055a768a5c162d58b6e8b9140",
+    "semantic_hash": "17aec55055a768a5c162d58b6e8b9140"
+  },
+  ".agents/skills/game-engine/references/basics.md": {
+    "mtime": 1785802465.2472498,
+    "ast_hash": "5a299af84fda0622d5ec15e788045df6",
+    "semantic_hash": "5a299af84fda0622d5ec15e788045df6"
+  },
+  ".agents/skills/game-engine/references/game-engine-core-principles.md": {
+    "mtime": 1785802465.247315,
+    "ast_hash": "e22884f941f6536dd790c2b84e6577d0",
+    "semantic_hash": "e22884f941f6536dd790c2b84e6577d0"
+  },
+  ".agents/skills/game-engine/references/techniques.md": {
+    "mtime": 1785802465.247709,
+    "ast_hash": "f815fc8844c22cbf73514b7f75e14c13",
+    "semantic_hash": "f815fc8844c22cbf73514b7f75e14c13"
+  },
+  ".agents/skills/game-engine/references/terminology.md": {
+    "mtime": 1785802465.2474341,
+    "ast_hash": "fdefa8601fcbbd424189ad2201d95124",
+    "semantic_hash": "fdefa8601fcbbd424189ad2201d95124"
+  },
+  ".agents/skills/game-engine/references/web-apis.md": {
+    "mtime": 1785802465.24753,
+    "ast_hash": "ca1130f8a6793cd9df10d12ed508fc59",
+    "semantic_hash": "ca1130f8a6793cd9df10d12ed508fc59"
+  },
+  ".agents/skills/game-ui-design/SKILL.md": {
+    "mtime": 1785802573.3677447,
+    "ast_hash": "72632687d3638e17c235769f8d1d00de",
+    "semantic_hash": "72632687d3638e17c235769f8d1d00de"
+  },
+  ".agents/skills/game-ui-design/references/patterns.md": {
+    "mtime": 1785802573.368429,
+    "ast_hash": "c439ba6300909a9e540c7973de5ce7e5",
+    "semantic_hash": "c439ba6300909a9e540c7973de5ce7e5"
+  },
+  ".agents/skills/higgsfield-game-generation/SKILL.md": {
+    "mtime": 1785802500.4841514,
+    "ast_hash": "2cb08dcb53d98c77a5a3b0874e4c37dd",
+    "semantic_hash": "2cb08dcb53d98c77a5a3b0874e4c37dd"
+  },
+  ".agents/skills/higgsfield-game-generation/references/2d-animation.md": {
+    "mtime": 1785802500.4877713,
+    "ast_hash": "04e3fe4ebc43929c82e6ebf66d45319a",
+    "semantic_hash": "04e3fe4ebc43929c82e6ebf66d45319a"
+  },
+  ".agents/skills/higgsfield-game-generation/references/game-design-system.md": {
+    "mtime": 1785802500.4886441,
+    "ast_hash": "7736b3977c1aab753f9118f47b928dd4",
+    "semantic_hash": "7736b3977c1aab753f9118f47b928dd4"
+  },
+  ".agents/skills/higgsfield-game-generation/references/stylization.md": {
+    "mtime": 1785802500.4904926,
+    "ast_hash": "2bda244f9fa2caeafce452bf6f7c1e4c",
+    "semantic_hash": "2bda244f9fa2caeafce452bf6f7c1e4c"
+  },
   "CLAUDE.md": {
-    "mtime": 1786050182.763844,
-    "ast_hash": "63f60ab6d5a7391c5a9bc9040389783e",
-    "semantic_hash": ""
+    "mtime": 1786025091.4242024,
+    "ast_hash": "ff474a5245cf254e7d45f9424d741de3",
+    "semantic_hash": "ff474a5245cf254e7d45f9424d741de3"
+  },
+  "DESIGN.md": {
+    "mtime": 1785895550.2602303,
+    "ast_hash": "c6500f8cdd17d357a7d6607d35dc023d",
+    "semantic_hash": "c6500f8cdd17d357a7d6607d35dc023d"
+  },
+  "docs/RESEARCH_SYNTHESIS.md": {
+    "mtime": 1786025096.3362658,
+    "ast_hash": "c800d7c6da3f4f26f0af84a8abe4caf2",
+    "semantic_hash": "c800d7c6da3f4f26f0af84a8abe4caf2"
+  },
+  "docs/designs/ai-dm-platform.md": {
+    "mtime": 1786025159.9200866,
+    "ast_hash": "7282a05c99c03c696668c8482f4fe55b",
+    "semantic_hash": "7282a05c99c03c696668c8482f4fe55b"
   },
   "docs/research/2026-08-03-game-design-inspiration.md": {
     "mtime": 1785810281.5498872,
@@ -254,104 +399,14 @@
     "ast_hash": "d3080a672bb0fe5bfcc7e1c25a47c959",
     "semantic_hash": "d3080a672bb0fe5bfcc7e1c25a47c959"
   },
+  "docs/research/narrative-frameworks.md": {
+    "mtime": 1786022436.3909128,
+    "ast_hash": "efc78d9360345ad75530d39b49c61ab8",
+    "semantic_hash": "efc78d9360345ad75530d39b49c61ab8"
+  },
   "src/backend/AUTH.md": {
     "mtime": 1786021890.904769,
     "ast_hash": "b0a2565e1d02e829b0dd33d7a29e4667",
     "semantic_hash": "b0a2565e1d02e829b0dd33d7a29e4667"
-  },
-  "src/backend/graph/__tests__/graph.service.test.ts": {
-    "mtime": 1786046196.1157415,
-    "ast_hash": "4fa88f5839088206d722b8872197e3fe",
-    "semantic_hash": ""
-  },
-  "src/backend/graph/__tests__/turn-reservation.service.test.ts": {
-    "mtime": 1786046177.7443583,
-    "ast_hash": "8535a46226051a72578bbc41d5e58947",
-    "semantic_hash": ""
-  },
-  "src/backend/migrations/1786046005821-AddActiveChronicleIdToUser.ts": {
-    "mtime": 1786046013.1909254,
-    "ast_hash": "9b60eb557f4e512e87b5df6f864c0021",
-    "semantic_hash": ""
-  },
-  "README.md": {
-    "mtime": 1786047123.244689,
-    "ast_hash": "7d25ec8fa5d493661c66856f1076894b",
-    "semantic_hash": ""
-  },
-  "TEST_RESULTS_TEMPLATE.md": {
-    "mtime": 1786053808.9932582,
-    "ast_hash": "5981590a55bfcd6a0420445509f1cf1d",
-    "semantic_hash": ""
-  },
-  "docker-compose.yml": {
-    "mtime": 1785983963.7758973,
-    "ast_hash": "dacd67210d97be338082da7145513bb6",
-    "semantic_hash": ""
-  },
-  "docs/CONTRIBUTING.md": {
-    "mtime": 1786045316.649365,
-    "ast_hash": "6d5fcaaea60426e47013f69f2be1d157",
-    "semantic_hash": ""
-  },
-  "docs/DELEGACION_GAME_LEAD.md": {
-    "mtime": 1786053248.0048382,
-    "ast_hash": "d6e4072f8eba326deacdbd54c135e8b5",
-    "semantic_hash": ""
-  },
-  "docs/DEPLOYMENT.md": {
-    "mtime": 1786045278.7255697,
-    "ast_hash": "f601007fe4fe02bcb120280d06b89f17",
-    "semantic_hash": ""
-  },
-  "docs/DESIGN.md": {
-    "mtime": 1785895550.2602303,
-    "ast_hash": "c6500f8cdd17d357a7d6607d35dc023d",
-    "semantic_hash": ""
-  },
-  "docs/GAME_DEV_MEJORAS.md": {
-    "mtime": 1786053371.2086587,
-    "ast_hash": "d1cc581a248955026dadc33c0b3b5af5",
-    "semantic_hash": ""
-  },
-  "docs/GAME_DEV_START.md": {
-    "mtime": 1786053518.0165112,
-    "ast_hash": "1c939b2adbddd58d24cb51eb0709be01",
-    "semantic_hash": ""
-  },
-  "docs/GAME_DEV_TEST_CASES.md": {
-    "mtime": 1786053738.559858,
-    "ast_hash": "0fd062a3fe5e0fba8b9d1cf873c620d1",
-    "semantic_hash": ""
-  },
-  "docs/GAME_DEV_USAGE.md": {
-    "mtime": 1786052647.207634,
-    "ast_hash": "b903f2ae388f1137da56c55ac2e0c459",
-    "semantic_hash": ""
-  },
-  "docs/GAME_DEV_VALIDATION.md": {
-    "mtime": 1786053774.2355669,
-    "ast_hash": "e9435ac11808225f6e7455bd20296db3",
-    "semantic_hash": ""
-  },
-  "docs/GAME_LEAD_EJEMPLOS.md": {
-    "mtime": 1786053333.068925,
-    "ast_hash": "67446ab527bd4929d1deaabbcb296e5a",
-    "semantic_hash": ""
-  },
-  "docs/RECREATE_GAME_DEV_STUDIO.md": {
-    "mtime": 1786050040.304889,
-    "ast_hash": "5b0ca8606776f57db045a84cda82251f",
-    "semantic_hash": ""
-  },
-  "docs/research/2026-08-06-blockchain-npcs-for-retention-viability.md": {
-    "mtime": 1786054728.538796,
-    "ast_hash": "f4f70e0193a8ad63b8db538d519d8881",
-    "semantic_hash": ""
-  },
-  "docs/research/2026-08-06-t15-cost-model-reevaluation.md": {
-    "mtime": 1786045390.0159023,
-    "ast_hash": "6622128dd233fc0ce609106c251c2d7c",
-    "semantic_hash": ""
   }
 }

@@ -1,0 +1,226 @@
+---
+status: RESEARCH (not a decision)
+date: 2026-08-06
+scope: on-chain NPC state viability for retention in AI Dungeon Master coterie-sim
+---
+
+# Research: Blockchain NPCs (On-Chain AI State) for Retention Viability
+
+**Question:** Are blockchain NPCs (AI stored on-chain) a viable retention lever for the AI DM game?
+
+**Short answer:** Not viable. On-chain NPC state introduces latency, cost, and UX friction that actively harm retention without addressing what actually drives it. The game's retention strategy already depends on narrative continuity and emergent choices—both better served by centralized persistence.
+
+---
+
+## Context: What We're Optimizing For
+
+From `2026-08-04-platform-and-business-research.md`, the current retention strategy relies on:
+
+1. **Narrative continuity** — NPCs remember prior choices
+2. **Emergent consequence webs** — early choices resurface as complications
+3. **Slow, contemplative pacing** — multi-second LLM latency is acceptable
+4. **Session continuity** — player state persists across logins
+
+On-chain storage would mean:
+- Storing NPC memory/state in a smart contract
+- Settling NPC interactions on L1, L2, or sidechain
+- Using transaction finality as proof of "NPC interaction happened"
+
+This is fundamentally misaligned with what the game does.
+
+---
+
+## Finding 1: Blockchain Games Have Modest Retention; It's Driven by Speculation, Not Narrative
+
+**Retention data for blockchain games (2025-2026):**
+
+- Monthly retention: **35%** (competitive with traditional mobile games; comparable to social/competitive games at 30-45%)
+- Weekly engagement: 12-16 hours
+- But: 97% of gaming token launches underperformed in 2025; 36% DAU decline year-over-year
+
+**Retention drivers for blockchain games:**
+- Token/asset appreciation (speculative)
+- Play-to-earn economics (financial incentive)
+- Provable ownership (for trading/communities)
+
+**Retention drivers for narrative indie games:**
+- Emergent storytelling (choices matter)
+- Character attachment (NPC memory)
+- Session pacing (cliffhangers, recaps)
+- Permadeath stakes (consequences)
+
+**The mismatch:** Blockchain's retention value is financial. The AI DM game's retention value is narrative. Putting NPC state on-chain doesn't improve narrative retention — it only adds cost and friction around it.
+
+Sources:
+- [Blockchain Gaming Market Statistics 2026](https://www.companieshistory.com/blockchain-gaming-market)
+- [Blockchain Gaming Live Ops vs Token Launches](https://cryptodaily.co.uk/2026/05/blockchain-gaming-live-ops-vs-token-launches)
+
+---
+
+## Finding 2: Latency Kills the Slow-Paced Narrative Experience
+
+**Current game design:**
+- Multi-second LLM calls per turn are expected (narration, resolution)
+- Player mindset is contemplative, not twitch
+- Session pacing emphasizes reflection over action
+
+**On-chain latency penalties:**
+
+| Layer | Block time | Finality | Per-tx cost (Polygon/L2) | Practical impact |
+|-------|------------|----------|-------------------------|------------------|
+| Ethereum L1 | 12-15s | 12+ min | $0.50-2.00 | Not viable for real-time state |
+| Polygon PoS (L2-like) | ~2s | 128 blocks (~4 min) | $0.0001-0.01 | Still adds seconds to player actions |
+| Arbitrum/Optimism (L2) | 2-4s | 7-10 min for security | $0.001-0.01 | Multiple seconds overhead |
+
+**For NPC recall, this means:**
+- Player takes an action (button click)
+- Client calls backend, which calls LLM
+- Backend *also* needs to settle NPC state on-chain
+- Settle call waits for block confirmation (2-4s minimum on L2, longer for finality)
+- Player sees result only after settlement
+
+Current flow: **Player action → 3-8s LLM call → Result.** 
+With on-chain NPC: **Player action → 3-8s LLM call → 2-10s blockchain settlement → Result.**
+
+The blockchain step adds nothing to narrative quality; it only delays feedback. For a contemplative game, this is a feature loss, not a feature gain.
+
+Sources:
+- [Polygon vs Ethereum Statistics 2026](https://coinlaw.io/polygon-vs-ethereum-statistics/)
+- [Ethereum L2 Networks Comparison](https://coinbureau.com/analysis/what-is-the-best-layer-2)
+- [Transaction Costs and Speed in Ethereum Ecosystem](https://arxiv.org/html/2606.22206v1)
+
+---
+
+## Finding 3: Wallet UX Remains a Massive Barrier, Even with Embedded Wallets
+
+**Wallet onboarding friction (2025-2026):**
+
+- Manual wallet setup (seed phrases, external apps): **70% abandonment rate**
+- Embedded wallet (social login, gasless): **80%+ completion rate, 340% higher retention than external**
+- Current status: Embedded wallet tech exists but requires integration work and player education
+
+**For the AI DM game:**
+- Target platforms: itch.io, Steam (per `ai-dm-platform.md` Scope Decision #7)
+- Player expectations: No wallet, no seed phrases, no gas tokens
+- Adding blockchain would require:
+  - Embedded wallet SDK integration (~1-2 sprints)
+  - Player education on "why NPC state is on-chain" (confusing for narrative game)
+  - Wallet recovery/security UX (if player loses wallet, they lose NPC history?)
+
+**The UX cost is real:** Even optimistic embedded-wallet paths impose security/recovery complexity that narrative games don't need.
+
+**Concrete friction point:** If a player's device resets and they lose their wallet, do they lose all NPC memory? A centralized DB with auth simply re-fetches it on login. On-chain means either:
+  - Player must recover wallet (complex)
+  - You maintain a centralized backup anyway (defeating the point)
+
+Sources:
+- [Blockchain Gaming UX in 2026: Shift to Invisible Infrastructure](https://chainplay.gg/blog/why-2026-is-the-year-blockchain-gaming-goes-mainstream/)
+- [Web3 Gaming Wallet-First Onboarding Problem](https://cryptodaily.co.uk/2026/05/web3-gaming-wallet-first-onboarding)
+- [Embedded Wallets 2026 Developer Guide](https://www.openfort.io/blog/embedded-wallet-explained)
+
+---
+
+## Finding 4: No Shipping Games Store NPC AI State On-Chain
+
+**On-chain gaming in 2026:**
+- Established games: Pirate Nation, Parallel, Axie Infinity, Gods Unchained
+- What they store on-chain: **Assets, ownership, rewards, high-value state changes, governance**
+- What they keep off-chain: **Real-time logic, matchmaking, physics, AI/NPC behavior**
+
+**Why?** Smart contracts are good at:
+- Verifiable ownership (who owns what)
+- Provable settlement (reward distribution)
+- Deterministic rules (D20 rolls)
+
+Smart contracts are bad at:
+- LLM inference (AI state, narrative generation)
+- Complex state mutations (NPC personality, memory updates)
+- Dynamic logic (branches, conditions, AI thinking)
+
+**Evidence:** Zero shipping games found that store dynamic NPC AI state on-chain. Why? Because it's expensive (gas), slow (block time), and doesn't add value (player can't trade NPC memories or prove them elsewhere).
+
+---
+
+## Finding 5: Cost Analysis Shows Centralized DB Wins on Every Axis
+
+**Scenario: One turn = player action → NPC state update + narration**
+
+### On-chain NPC update cost:
+
+- Smart contract call to update NPC memory: ~1-2M gas (L2 Arbitrum/Optimism)
+- Cost at current prices: **~$0.001-0.003 per turn**
+- Annual cost for 1000 active players, 10 turns/week: **~$2000-6000**
+
+### Centralized DB cost:
+
+- Postgres row insert/update (NPC memory): < 1ms, negligible CPU
+- Backend inference cost (OpenRouter narration): **~$0.01-0.04 per turn** (LLM dominates)
+- Annual cost for same 1000 players: **Narration model (~$5000-15000) dominates; DB is rounding error**
+
+### Infrastructure cost:
+- On-chain: Add blockchain complexity, bridge risk, validator fee exposure, need to maintain backup DB anyway
+- Centralized: Postgres is already in the stack; no additional infrastructure
+
+**Winner:** Centralized by massive margin. The blockchain cost is small compared to the LLM cost, but it adds complexity for zero narrative benefit.
+
+---
+
+## Finding 6: No Cross-Game NPC Trading/Interop Use Case Exists
+
+**The only real blockchain retention advantage would be:**
+- NPCs are interoperable across games (player trades their pet NPC to another player's game)
+- NPC history is portable (verifiable on-chain, player can prove "this NPC remembers my choices")
+
+**Reality for AI DM:**
+- Single game (not a platform)
+- NPC memories are game-specific (tied to a specific chronicle/playthrough)
+- Players don't want to trade NPCs; they want emergent stories
+- No planned interop with other games
+
+**In other words:** The feature that would justify blockchain NPC state (cross-game portability) doesn't exist in this product. The state is only valuable within one game, which is exactly where centralized DB shines.
+
+---
+
+## Verdict: Not Viable
+
+**Blockchain NPCs for retention are not viable because:**
+
+1. ✗ **Latency:** Adds 2-10 seconds of blockchain settlement overhead to turns that already span 3-8 seconds of LLM time. No narrative benefit; pure friction.
+
+2. ✗ **Retention drivers are mismatched:** Blockchain retention is financial (speculation, P2E); AI DM retention is narrative (choice, consequence, pacing). We're optimizing the wrong dimension.
+
+3. ✗ **Wallet UX still a barrier:** Even with embedded wallets, integration cost and player confusion outweigh benefits for a game that doesn't need blockchain.
+
+4. ✗ **Cost:** Blockchain adds cost for zero value. Centralized DB + OpenRouter narration is simpler and cheaper.
+
+5. ✗ **No interop use case:** NPCs are game-specific; no cross-game trading justifies on-chain storage.
+
+6. ✗ **Precedent:** No shipping narrative game uses on-chain NPC AI state. Blockchain games that are successful use on-chain storage for *assets*, not *logic*.
+
+---
+
+## Recommendation
+
+**Keep NPC persistence centralized (Postgres + backend).**
+
+The current plan (2026-08-04 retention research) already has it right:
+- NPC memory stored in Postgres (fast, cheap, owned)
+- Consequence webs tracked in `consequence` table (deterministic, queryable)
+- Session-end recap + mid-session cliffhangers (pure UX, no infrastructure needed)
+
+This addresses retention drivers without blockchain overhead.
+
+**If future cross-game interop becomes a goal,** reconsider on-chain NPC registry at that time — but only for portability metadata, not for live AI state.
+
+---
+
+## Sources Cited
+
+1. [Blockchain Gaming Market Statistics 2026](https://www.companieshistory.com/blockchain-gaming-market)
+2. [Blockchain Gaming: Live Ops vs Token Launches](https://cryptodaily.co.uk/2026/05/blockchain-gaming-live-ops-vs-token-launches)
+3. [Polygon vs Ethereum Statistics 2026](https://coinlaw.io/polygon-vs-ethereum-statistics/)
+4. [Best Ethereum Layer 2 Projects 2026](https://coinbureau.com/analysis/what-is-the-best-layer-2)
+5. [Transaction Costs and Speed in Ethereum Ecosystem](https://arxiv.org/html/2606.22206v1)
+6. [Blockchain Gaming UX: The Shift to Invisible Infrastructure](https://chainplay.gg/blog/why-2026-is-the-year-blockchain-gaming-goes-mainstream/)
+7. [Web3 Gaming Wallet-First Onboarding Problem](https://cryptodaily.co.uk/2026/05/web3-gaming-wallet-first-onboarding)
+8. [Embedded Wallets Explained: 2026 Developer Guide](https://www.openfort.io/blog/embedded-wallet-explained)
