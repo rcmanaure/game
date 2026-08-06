@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ATTRIBUTES } from "./character.js";
+import { ATTRIBUTES, CharacterSchema } from "./character.js";
 import { OPPONENT_TIERS } from "./rules.js";
 
 // --- LOGIC MODEL INTENT ---
@@ -137,9 +137,13 @@ export const SAFE_DEFAULT_INTENT: LogicIntent = {
   cravingElevated: false,
 };
 
+// Documents the harness graph's state shape (graph.ts defines its own
+// StateGraph StateSchema separately — LangGraph's StateSchema isn't a
+// plain zod object — this mirrors it for anyone importing the type without
+// pulling in the graph itself).
 export const HarnessStateSchema = z.object({
   playerAction: z.string(),
-  characterId: z.string(), // which SAMPLE_CHARACTERS entry is acting
+  character: CharacterSchema, // caller-supplied, mutated by rulesValidate
   gameEvent: ResolvedEventSchema.nullable().default(null),
   narration: z.string().nullable().default(null),
   artUrl: z.string().nullable().default(null),

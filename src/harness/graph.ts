@@ -9,14 +9,15 @@ import {
   sanitizeIntent,
   type LogicIntent,
 } from "./state.js";
-import { ATTRIBUTES, SAMPLE_CHARACTERS } from "./character.js";
-import { resolveCheck, OPPONENT_TIERS } from "./rules.js";
+import { ATTRIBUTES, CharacterSchema } from "./character.js";
+import { resolveCheck, rejectedEvent, OPPONENT_TIERS } from "./rules.js";
+import { applyMutation } from "./validator.js";
 import { logicModel, creativeModel } from "./models.js";
 import { generateArt } from "./art.js";
 
 const State = new StateSchema({
   playerAction: z.string(),
-  characterId: z.string(),
+  character: CharacterSchema, // caller-supplied; rulesValidate may return an updated one
   gameEvent: ResolvedEventSchema.nullable().default(null),
   narration: z.string().nullable().default(null),
   artUrl: z.string().nullable().default(null),
@@ -33,10 +34,7 @@ const State = new StateSchema({
 // verdict. The actual roll, modifier, success, and critical tier are all
 // computed server-side by rules.ts, never trusted from the model.
 const resolve: GraphNode<typeof State> = async (state) => {
-  const character = SAMPLE_CHARACTERS[state.characterId];
-  if (!character) {
-    throw new Error(`Unknown characterId: ${state.characterId}`);
-  }
+  const character = state.character;
 
   // withStructuredOutput needs the schema handed to it to be JSON-Schema-
   // representable (a transform/preprocess step throws building the tool
@@ -69,6 +67,24 @@ const resolve: GraphNode<typeof State> = async (state) => {
 
   const gameEvent = resolveCheck(character, intent);
   return { gameEvent };
+};
+
+// T1: server-side rules validator (Decision #7 — "schema-valid is not the
+// same as rules-legal"). resolveCheck() already bounds individual VALUES;
+// this node gates the STATE TRANSITION the resolved event would cause
+// (validator.ts's Decision #5 lifecycle: Active -> Torpor -> Dead). An
+// illegal transition (e.g. any mutation targeting an already-dead
+// character) never reaches the character sheet — the event downstream of
+// this node becomes a safe no-op, matching the plan's own Error & Rescue
+// Registry row for this exact case.
+const rulesValidate: GraphNode<typeof State> = async (state) => {
+  const event = state.gameEvent!;
+  const result = applyMutation(state.character, event);
+
+  if (result.rejected) {
+    return { gameEvent: rejectedEvent(result.reason, event), character: result.character };
+  }
+  return { gameEvent: event, character: result.character };
 };
 
 const narrate: GraphNode<typeof State> = async (state) => {
@@ -111,10 +127,12 @@ const artTrigger: GraphNode<typeof State> = async (state) => {
 
 export const harnessGraph = new StateGraph(State)
   .addNode("resolve", resolve)
+  .addNode("rulesValidate", rulesValidate)
   .addNode("narrate", narrate)
   .addNode("artTrigger", artTrigger)
   .addEdge(START, "resolve")
-  .addEdge("resolve", "narrate")
+  .addEdge("resolve", "rulesValidate")
+  .addEdge("rulesValidate", "narrate")
   .addEdge("narrate", "artTrigger")
   .addEdge("artTrigger", END)
   .compile();

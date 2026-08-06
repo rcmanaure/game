@@ -110,6 +110,15 @@ export function resolveCheck(
 
     const statDeltas: Record<string, number> = {};
     if (intent.cravingElevated) statDeltas.craving = CRAVING_COST;
+    if (intent.eventType === "combat" && !success) {
+      // A failed combat opposedCheck (e.g. a defense/dodge contest) means
+      // the character took a hit — damage to the ACTOR's own hp, not the
+      // opponent's. This is what gives T1's rules-validator (validator.ts)
+      // real material to gate: an actor's own hp/status transition.
+      // Placeholder band, same bounded-not-LLM-supplied discipline as the
+      // attack-success damage below.
+      statDeltas.hp = -(TIER_MODIFIERS[opponentTier] + 2);
+    }
 
     return {
       ...base,
@@ -146,6 +155,27 @@ export function resolveCheck(
     success,
     criticalTier,
     statDeltas,
+  };
+}
+
+/**
+ * Builds the "safe no-op" ResolvedEvent for a rules-illegal mutation
+ * (Decision #7's Error & Rescue Registry row: "Schema-valid but
+ * rules-illegal -> Rejected by rules validator, safe no-op event"). The
+ * roll already happened (kept for transparency/debugging), but the
+ * mutation itself never applies — reflected here as success:false with no
+ * statDeltas.
+ */
+export function rejectedEvent(
+  reason: string,
+  resolved: ResolvedEvent,
+): ResolvedEvent {
+  return {
+    ...resolved,
+    success: false,
+    criticalTier: "none",
+    statDeltas: {},
+    summary: reason,
   };
 }
 

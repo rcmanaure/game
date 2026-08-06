@@ -4,9 +4,12 @@ loadEnv();
 import { harnessGraph } from "./graph.js";
 import { SAMPLE_CHARACTERS } from "./character.js";
 
-// T22: fire a handful of turns end-to-end (resolve -> narrate -> art-trigger,
-// no auth/DB/UI) and print the result for eyeballing narration/art quality
-// before T1-T14's full-platform work starts.
+// T22: fire a handful of turns end-to-end (resolve -> rulesValidate ->
+// narrate -> art-trigger, no auth/DB/UI) and print the result for
+// eyeballing narration/art quality before T1-T14's full-platform work
+// starts. T1's rules-validator needs a mutating character to gate against
+// — the character now persists ACROSS turns within one CLI invocation
+// (in-memory only, no DB per T22's scope; T4/T14 own real persistence).
 async function main() {
   const [characterFlag, ...rest] = process.argv.slice(2);
   let characterId = "mira-ashgrave";
@@ -25,9 +28,12 @@ async function main() {
     process.exit(1);
   }
 
+  let character = SAMPLE_CHARACTERS[characterId];
+
   for (const [i, playerAction] of actions.entries()) {
     console.log(`\n=== Turn ${i + 1} (${characterId}): "${playerAction}" ===`);
-    const result = await harnessGraph.invoke({ playerAction, characterId });
+    const result = await harnessGraph.invoke({ playerAction, character });
+    character = result.character; // carry any mutation into the next turn
 
     const e = result.gameEvent!;
     const vsDetail =
@@ -42,11 +48,17 @@ async function main() {
     if (Object.keys(e.statDeltas).length) {
       console.log(`Stat deltas: ${JSON.stringify(e.statDeltas)}`);
     }
+    console.log(`Character: ${character.hp}/${character.maxHp} hp, status=${character.status}, craving=${character.craving}`);
     console.log(`Narration: ${result.narration}`);
     if (result.artUrl) {
       console.log(`Art: ${result.artUrl}`);
     } else {
       console.log(`Art FAILED: ${result.artError}`);
+    }
+
+    if (character.status === "dead") {
+      console.log(`\n${character.name} has met Final Death — no further turns can be taken.`);
+      break;
     }
   }
 }

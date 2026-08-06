@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 // Attribute names, kept generic-English (Strength/Charisma etc. aren't VTM
 // IP — Decision #1 only bars VTM's proprietary lore terms like "Kindred").
 // Exact scale/naming is an open design question per the RPG-mechanics
@@ -13,21 +15,33 @@ export const ATTRIBUTES = [
 ] as const;
 export type Attribute = (typeof ATTRIBUTES)[number];
 
-export interface Skill {
-  attribute: Attribute;
-  proficient: boolean; // adds a flat proficiency bonus, D&D SRD 5.1 p.76
-}
+export const SkillSchema = z.object({
+  attribute: z.enum(ATTRIBUTES),
+  proficient: z.boolean(), // adds a flat proficiency bonus, D&D SRD 5.1 p.76
+});
+export type Skill = z.infer<typeof SkillSchema>;
 
-export interface Character {
-  id: string;
-  name: string;
-  attributeModifiers: Record<Attribute, number>; // -5..+10, D&D SRD 5.1 p.76 range
-  skills: Record<string, Skill>;
-  proficiencyBonus: number;
-  hp: number;
-  maxHp: number;
-  craving: number; // 0-5, VTM V5's Hunger — the Craving's substrate
-}
+// Decision #5's coterie-member lifecycle (Active -> Torpor -> Dead), the
+// state T1's rules-validator exists to gate transitions between.
+export const CHARACTER_STATUSES = ["active", "torpor", "dead"] as const;
+export const CharacterStatusSchema = z.enum(CHARACTER_STATUSES);
+export type CharacterStatus = z.infer<typeof CharacterStatusSchema>;
+
+// zod-defined (not just a TS interface) so it can be threaded through the
+// LangGraph StateGraph's state (T1's rules-validator needs to carry the
+// mutated character forward from `rulesValidate` to whatever fires next).
+export const CharacterSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  attributeModifiers: z.record(z.enum(ATTRIBUTES), z.number()), // -5..+10, D&D SRD 5.1 p.76 range
+  skills: z.record(z.string(), SkillSchema),
+  proficiencyBonus: z.number(),
+  hp: z.number(),
+  maxHp: z.number(),
+  craving: z.number(), // 0-5, VTM V5's Hunger — the Craving's substrate
+  status: CharacterStatusSchema,
+});
+export type Character = z.infer<typeof CharacterSchema>;
 
 const ATTR_MOD_MIN = -5;
 const ATTR_MOD_MAX = 10;
@@ -80,6 +94,7 @@ export const SAMPLE_CHARACTERS: Record<string, Character> = {
     hp: 12,
     maxHp: 12,
     craving: 1,
+    status: "active",
   },
   "toren-vale": {
     id: "toren-vale",
@@ -100,5 +115,6 @@ export const SAMPLE_CHARACTERS: Record<string, Character> = {
     hp: 16,
     maxHp: 16,
     craving: 0,
+    status: "active",
   },
 };
