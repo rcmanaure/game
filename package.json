@@ -8,11 +8,15 @@
     "harness:drift": "tsx src/harness/drift.ts",
     "test": "node --import tsx --test src/harness/__tests__/*.test.ts",
     "backend:dev": "ts-node -P tsconfig.backend.json src/backend/main.ts",
+    "migration:generate": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:generate -d src/backend/data-source.ts",
+    "migration:run": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:run -d src/backend/data-source.ts",
+    "migration:revert": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:revert -d src/backend/data-source.ts",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down"
   },
   "dependencies": {
     "@langchain/langgraph": "^1.1.0",
+    "@langchain/langgraph-checkpoint-postgres": "^1.0.4",
     "@langchain/openrouter": "^0.1.0",
     "@nestjs/common": "^11.1.28",
     "@nestjs/config": "^4.0.4",
@@ -23,6 +27,7 @@
     "@nestjs/platform-ws": "^11.1.28",
     "@nestjs/typeorm": "^11.0.3",
     "@nestjs/websockets": "^11.1.28",
+    "dotenv": "^17.4.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.22.0",

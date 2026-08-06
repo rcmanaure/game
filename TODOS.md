@@ -1,5 +1,50 @@
 # TODOS
 
+## Deferred from CEO review (2026-08-06, HOLD SCOPE — 11-section deep review
+## of the T14/T19/Ink build-readiness, see `docs/designs/ai-dm-platform.md`
+## and the GSTACK REVIEW REPORT; outside-voice pass via Claude subagent,
+## Codex CLI not installed this session)
+
+- **Re-evaluate T15's cost-model pass under quality>velocity principle** —
+  T15 currently optimizes DM model selection purely for OpenRouter cost
+  (~100x variance across models per prior research). Ink (Decision #26)
+  and T19 (recall) both got a quality override this week; model
+  SELECTION (the actual narration substance, not just Ink's structure)
+  didn't. Outside-voice review flagged this as the larger untouched
+  quality lever. Depends on T14's narration pipeline actually running —
+  need real narration-quality signal to compare against cost, so this
+  can't be scoped properly until after T14 ships. Effort: M (human
+  ~1-2d / CC ~2-3h). Priority: P2, should land before Decision #22's
+  monetization free-turn-cap numbers are finalized.
+- **Verify itch.io embed origin matches FRONTEND_URL CORS config before
+  first deploy** — the WS gateway's CORS check (fixed 2026-08-06 to
+  read a `FRONTEND_URL` env var instead of a wildcard) assumes a single
+  origin string. Itch.io serves embedded HTML5 games from a proxy
+  subdomain, not the developer's own domain — if the CORS origin
+  doesn't match itch.io's actual embed pattern, the WS handshake fails
+  for every itch.io player, silently, in production. Scope Decision #7
+  already commits to itch.io-first distribution, so this is a known
+  future blocker, not hypothetical scope. Effort: S (human ~1-2h / CC
+  ~20min) once itch.io's real embed URL pattern is confirmed (needs a
+  test upload or itch.io docs check). Priority: P2 — blocks nothing
+  now, but is a launch blocker for the itch.io-first plan. Depends on
+  T9 (deployment) / an actual itch.io test upload.
+- **Checkpoint before building T27 (portrait-edit drift mitigation) —
+  validate core loop first** — consider a deliberate pause point after
+  T14 ships (DM narration + recall working end-to-end) to validate the
+  core loop feels right before building T26/T27 (predefined-character
+  coterie assembly + portrait evolution), both already flagged by prior
+  research (`docs/research/2026-08-05-character-portraits-and-story-
+  reuse-research.md`) as structurally novel/unproven — no comparable
+  shipped product keeps free-form portraits consistent across
+  generations. HOLD SCOPE mode this session correctly did not reverse
+  any locked scope decision (#23/#24/#26 + T19 stay v1) — this is a
+  sequencing question between already-accepted phases, not a scope
+  question. Effort: S (a go/no-go review, not new code). Priority: P2,
+  worth raising at the next CEO review once T14 ships, not a blocker
+  now.
+
+
 ## Deferred from CEO review (2026-08-03, IP-agnostic rewrite after the
 ## VTM->original-IP pivot — see ~/.gstack/projects/game/ceo-plans/2026-08-03-ai-dm-platform.md)
 
