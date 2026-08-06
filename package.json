@@ -1,0 +1,21 @@
+{
+  "name": "ai-dm-platform",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "harness": "tsx src/harness/run.ts",
+    "harness:drift": "tsx src/harness/drift.ts",
+    "test": "node --import tsx --test src/harness/__tests__/*.test.ts"
+  },
+  "dependencies": {
+    "@langchain/langgraph": "^1.1.0",
+    "@langchain/openrouter": "^0.1.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

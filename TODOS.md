@@ -1,5 +1,13 @@
 # TODOS
 
+## Operational, blocking T22 verify (2026-08-05)
+
+- **Add OPENROUTER_API_KEY** — copy `.env.example` to `.env`, fill in a real
+  key from https://openrouter.ai/keys. Blocks T22's actual verify step (live
+  turns through `npm run harness`, drift-cadence tuning via
+  `npm run harness:drift`) — the harness code is built and passes its
+  assert-based smoke tests, but no live LLM/art-gen call has been made yet.
+
 ## Deferred from CEO review (2026-08-03, IP-agnostic rewrite after the
 ## VTM->original-IP pivot — see ~/.gstack/projects/game/ceo-plans/2026-08-03-ai-dm-platform.md)
 
