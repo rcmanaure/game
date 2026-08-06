@@ -33,6 +33,15 @@ All font choices, colors, spacing, and aesthetic direction are defined there.
 Do not deviate without explicit user approval.
 In QA mode, flag any code that doesn't match DESIGN.md.
 
+## Quality > Velocity (2026-08-06)
+
+**User's principle**: When trade-off between ship-fast and ship-right arises, default to quality. Extended timelines acceptable.
+
+**Implications for decisions**:
+- Ink + inkjs: NOW in T14 (narration consistency > speed)
+- Candidate re-evaluations: Decision #22 (monetization), Decision #15 (art quality), Scope #4 (NPC recall timing)
+- Scope discipline still applies (YAGNI), but in-scope features done well
+
 ## Tech Strategy (2026-08-06 Research Validation)
 
 ### Frontend Architecture: DOM+CSS-first (not Phaser)
@@ -47,11 +56,18 @@ In QA mode, flag any code that doesn't match DESIGN.md.
 - **Alternatives evaluated**: Anthropic Agent SDK (simpler if starting fresh), raw async/await (viable only if linear forever, but T14 branches). 
 - **Decision**: Stay course.
 
-### Narrative Templating: Ink + inkjs (Post-T14, candidate adoption)
+### Narrative Templating: Ink + inkjs (NOW, v1 scope)
 - **What it is** (research: narrative-frameworks.md): Narrative DSL (4.8k stars, MIT, actively maintained 2026-05-05) with proven LLM integration pattern (poltergink library).
-- **Why it matters**: T14's `narrate` node could use Ink templates instead of raw LLM calls. Ink's game-side function architecture is built for LLM calls.
-- **Scope**: Post-v1 optimization. T14 ships with raw prompts; Ink adoption is an optional refactor if narration quality needs structuring.
-- **Decision**: Monitor. Not blocking, but flag for T14 design review.
+- **Why it matters**: T14's `narrate` node uses Ink templates (not raw LLM) to structure narration — cliffhang/recap/stakes beats guaranteed. Ink's game-side function architecture designed exactly for LLM calls.
+- **Scope**: v1. T14 effort +1-2d (2-3d human / 5-7h CC total, not 1-2d raw).
+- **Decision**: LOCKED (2026-08-06). Quality > velocity: narration consistency enables permadeath to feel intentional. No post-v1 refactor needed if done right first time.
+
+### NPC Recall (T19): Pulled to v1 scope (Decision 2026-08-06)
+- **What it is** (Scope Decision #4): `recall` node queries NPC/consequence table by user_id before resolve. Deterministically surfaces named NPC from prior playthrough in opening narration beat (before dice roll).
+- **Why now** (quality > velocity): Permadeath only feels real if world remembers your choices. v1 permadeath + recall = stakes are intentional, not random.
+- **Scope**: v1, sequenced after T14/T22 validate core narration. Effort: ~2-3h CC (indexed lookup, fail-open, no latency risk). No new schema (reuses T20's table).
+- **T20 (chronicle ledger UI)** stays post-v1 (read-only legend screen). Only T19's backend `recall` node in v1.
+- **Decision**: PULLED (2026-08-06). Blocks nothing, enables quality.
 
 ### Competitive Landscape (2026-08-06 AI Platforms Research)
 - **Shipped competitors**: AI Dungeon (red ocean), NovelAI (NSFW niche), Character.AI (red ocean, 20M users), Hidden Door (licensed fiction social), Voyage (Latitude, April 2026 beta, **direct competitor**).

@@ -1,6 +1,11 @@
 # Research Synthesis: Tech Stack Validation (2026-08-06)
 
-## Status: VALIDATED. No breaks needed. Candidate optimizations identified.
+## Status: UPDATED 2026-08-06 (post-agent-review). Quality > Velocity principle locked. Ink + inkjs NOW. T19 pulled to v1.
+
+**Decisions locked this session**:
+- Ink + inkjs in T14 scope now (not post-v1): +1-2d for narration consistency
+- T19 (recall node) pulled to v1: quality enabler for permadeath
+- DISABLE_IMAGE_GEN=true stays (drift testing deferred)
 
 ---
 
