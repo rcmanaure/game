@@ -2,13 +2,15 @@ import { StateGraph, StateSchema, START, END } from "@langchain/langgraph";
 import type { GraphNode } from "@langchain/langgraph";
 import { z } from "zod";
 import {
-  LogicIntentSchema,
+  LogicIntentRawSchema,
   ResolvedEventSchema,
   SAFE_DEFAULT_INTENT,
+  needsTargetNumber,
+  sanitizeIntent,
   type LogicIntent,
 } from "./state.js";
 import { ATTRIBUTES, SAMPLE_CHARACTERS } from "./character.js";
-import { resolveCheck } from "./rules.js";
+import { resolveCheck, OPPONENT_TIERS } from "./rules.js";
 import { logicModel, creativeModel } from "./models.js";
 import { generateArt } from "./art.js";
 
@@ -36,19 +38,33 @@ const resolve: GraphNode<typeof State> = async (state) => {
     throw new Error(`Unknown characterId: ${state.characterId}`);
   }
 
-  const model = logicModel().withStructuredOutput(LogicIntentSchema);
-  const prompt = `You are the logic/resolver model for a dark-fantasy coterie-sim TTRPG. The character "${character.name}" took this action: "${state.playerAction}". Decide: what kind of check this is (a plain check, an opposed check, or an attack), which attribute (one of ${ATTRIBUTES.join(", ")}) and skill (or null) governs it, how difficult the target number should be (5=very easy, 10=easy, 15=medium, 20=hard, 25=very hard, 30=nearly impossible), and whether the character is pushing their Craving to gain an edge (cravingElevated). You do NOT decide success or roll any dice — that happens server-side. Also emit an eventType, an archetype tag (short kebab-case, keys art generation), and a one-sentence factual summary of the attempt (not the outcome).`;
+  // withStructuredOutput needs the schema handed to it to be JSON-Schema-
+  // representable (a transform/preprocess step throws building the tool
+  // definition — confirmed live), so the raw schema stays loose (targetNumber
+  // accepts number|string|null) and sanitizeIntent() coerces + validates
+  // strictly afterward, inside the same try so a sanitize failure counts
+  // toward the same retry-once-then-safe-default budget as a parse failure.
+  const model = logicModel().withStructuredOutput(LogicIntentRawSchema);
+  const prompt = `You are the logic/resolver model for a dark-fantasy coterie-sim TTRPG. The character "${character.name}" took this action: "${state.playerAction}". Decide: what kind of check this is (a plain check, an opposed check against another creature/NPC, or an attack), which attribute (one of ${ATTRIBUTES.join(", ")}) and skill (or null) governs it, and whether the character is pushing their Craving to gain an edge (cravingElevated). You do NOT decide success or roll any dice — that happens server-side. For "check"/"attack", set targetNumber (5=very easy, 10=easy, 15=medium, 20=hard, 25=very hard, 30=nearly impossible) and leave opponentTier null. For "opposedCheck" (a contest against an opposing creature/NPC), set opponentTier to one of ${OPPONENT_TIERS.join(", ")} instead, and leave targetNumber null — there is no target number in a contest, only two sides' rolls. Use JSON null (never the string "None") for any field you're leaving empty. Also emit an eventType, an archetype tag (short kebab-case, keys art generation, describes the SCENE not the opponent's difficulty), and a one-sentence factual summary of the attempt (not the outcome).`;
 
   let intent: LogicIntent;
   try {
-    intent = await model.invoke(prompt);
+    intent = sanitizeIntent(await model.invoke(prompt));
   } catch (firstErr) {
     try {
       const retryPrompt = `${prompt}\n\nYour previous response was not valid: ${(firstErr as Error).message}. Try again, strictly matching the schema.`;
-      intent = await model.invoke(retryPrompt);
+      intent = sanitizeIntent(await model.invoke(retryPrompt));
     } catch {
       intent = SAFE_DEFAULT_INTENT;
     }
+  }
+
+  // Schema-valid but semantically incomplete (e.g. a "check" with no
+  // targetNumber) doesn't get a retry — the model already proved it can
+  // emit valid JSON, so a malformed *value* isn't something a retry
+  // reliably fixes. Straight to safe-default instead.
+  if (needsTargetNumber(intent) && intent.targetNumber == null) {
+    intent = SAFE_DEFAULT_INTENT;
   }
 
   const gameEvent = resolveCheck(character, intent);
@@ -72,7 +88,11 @@ const narrate: GraphNode<typeof State> = async (state) => {
         ? " The character's hunger causes a bestial complication — narrate it as part of the failure."
         : "";
 
-  const prompt = `You are the AI Dungeon Master for a dark-fantasy coterie-sim. Narrate this beat in 2-4 sentences, second person, moody gothic-fantasy tone, in the same language as the player's action. Player action: "${state.playerAction}". What was attempted: ${event.summary}. Mechanical outcome: ${outcome} (roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs target ${event.targetNumber}).${cravingNote} Never contradict the outcome — if it failed, do not narrate success, and vice versa.`;
+  const rollDetail =
+    event.rollType === "opposedCheck"
+      ? `your roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs the opponent's roll ${event.opponentRoll} (${event.opponentTier} difficulty)`
+      : `roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs target ${event.targetNumber}`;
+  const prompt = `You are the AI Dungeon Master for a dark-fantasy coterie-sim. Narrate this beat in 2-4 sentences, second person, moody gothic-fantasy tone, in the same language as the player's action. Player action: "${state.playerAction}". What was attempted: ${event.summary}. Mechanical outcome: ${outcome} (${rollDetail}).${cravingNote} Never contradict the outcome — if it failed, do not narrate success, and vice versa.`;
   const response = await model.invoke(prompt);
   const narration =
     typeof response.content === "string"

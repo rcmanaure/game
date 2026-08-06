@@ -78,6 +78,7 @@ test("resolveCheck: modifier is the real character-sheet value, never LLM-suppli
     attribute: "charisma",
     skill: "persuasion",
     targetNumber: 15,
+    opponentTier: null,
     cravingElevated: false,
   });
   const event = resolveCheck(mira, intent);
@@ -85,7 +86,7 @@ test("resolveCheck: modifier is the real character-sheet value, never LLM-suppli
   assert.equal(event.cravingDie, null);
   assert.equal(
     event.success,
-    event.roll + event.modifier >= event.targetNumber,
+    event.roll + event.modifier >= event.targetNumber!,
   ); // recomputable, per Decision #7
 });
 
@@ -99,6 +100,7 @@ test("resolveCheck: out-of-range targetNumber gets clamped to 5-30", () => {
     attribute: "charisma",
     skill: null,
     targetNumber: 40,
+    opponentTier: null,
     cravingElevated: false,
   });
   const event = resolveCheck(mira, intent);
@@ -115,6 +117,7 @@ test("resolveCheck: cravingElevated rolls a second die and costs 1 Craving", () 
     attribute: "charisma",
     skill: "persuasion",
     targetNumber: 15,
+    opponentTier: null,
     cravingElevated: true,
   });
   const event = resolveCheck(mira, intent);
@@ -133,6 +136,7 @@ test("resolveCheck: successful attack applies bounded negative HP delta", () => 
     attribute: "strength",
     skill: "athletics",
     targetNumber: 5, // minimum legal DC, near-guaranteed hit with +6 modifier
+    opponentTier: null,
     cravingElevated: false,
   });
   // Run several times since the roll is random — DC 5 with modifier 6 only
@@ -143,4 +147,95 @@ test("resolveCheck: successful attack applies bounded negative HP delta", () => 
     assert.equal(event.success, true);
     assert.ok(event.statDeltas.targetHp! < 0);
   }
+});
+
+test("resolveCheck: opposedCheck has null targetNumber, rolls an opponent d20", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
+  const intent = LogicIntentSchema.parse({
+    eventType: "social",
+    archetype: "guard-standoff",
+    summary: "tries to stare down the guard",
+    rollType: "opposedCheck",
+    attribute: "charisma",
+    skill: "persuasion",
+    targetNumber: null,
+    opponentTier: "moderate",
+    cravingElevated: false,
+  });
+  const event = resolveCheck(mira, intent);
+  assert.equal(event.targetNumber, null);
+  assert.ok(event.opponentRoll !== null && event.opponentRoll >= 1 && event.opponentRoll <= 20);
+  assert.equal(event.opponentTier, "moderate");
+  // recomputable independent of the LLM, per Decision #7
+  const playerTotal = event.roll + event.modifier;
+  const opponentTotal = event.opponentRoll! + 4; // moderate = +4
+  assert.equal(event.success, playerTotal > opponentTotal);
+});
+
+test("resolveCheck: opposedCheck falls back to moderate tier when opponentTier is null", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
+  const intent = LogicIntentSchema.parse({
+    eventType: "social",
+    archetype: "guard-standoff",
+    summary: "tries to stare down the guard",
+    rollType: "opposedCheck",
+    attribute: "charisma",
+    skill: "persuasion",
+    targetNumber: null,
+    opponentTier: null,
+    cravingElevated: false,
+  });
+  const event = resolveCheck(mira, intent);
+  assert.equal(event.opponentTier, "moderate");
+});
+
+test("resolveCheck: opposedCheck tie is a non-success with no statDeltas, not a loss", () => {
+  // Deterministic tie: trivial tier (+0 modifier) vs a character with 0
+  // attribute modifier and no skill — force it by checking many trials
+  // for the specific tie case (playerTotal === opponentTotal).
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
+  const intent = LogicIntentSchema.parse({
+    eventType: "social",
+    archetype: "guard-standoff",
+    summary: "tries to stare down the guard",
+    rollType: "opposedCheck",
+    attribute: "intelligence", // Mira's intelligence modifier is 0
+    skill: null,
+    targetNumber: null,
+    opponentTier: "trivial", // +0 modifier
+    cravingElevated: false,
+  });
+  // With both modifiers at 0, playerTotal === opponentTotal exactly when
+  // both d20s land the same — run enough trials to hit it at least once.
+  let sawTie = false;
+  for (let i = 0; i < 500 && !sawTie; i++) {
+    const event = resolveCheck(mira, intent);
+    if (event.roll === event.opponentRoll) {
+      sawTie = true;
+      assert.equal(event.success, false);
+      assert.deepEqual(event.statDeltas, {});
+    }
+  }
+  assert.ok(sawTie, "expected at least one tie in 500 trials");
+});
+
+test("resolveCheck: opposedCheck Craving only ever affects the player's roll", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
+  const intent = LogicIntentSchema.parse({
+    eventType: "social",
+    archetype: "guard-standoff",
+    summary: "pushes the Craving during a standoff",
+    rollType: "opposedCheck",
+    attribute: "charisma",
+    skill: "persuasion",
+    targetNumber: null,
+    opponentTier: "moderate",
+    cravingElevated: true,
+  });
+  const event = resolveCheck(mira, intent);
+  assert.ok(event.cravingDie !== null); // player's side got a second die
+  assert.equal(event.statDeltas.craving, 1);
+  // opponentRoll is a single plain d20 — no craving mechanic on that side,
+  // nothing in resolveCheck ever rolls a second die for the opponent.
+  assert.ok(event.opponentRoll! >= 1 && event.opponentRoll! <= 20);
 });

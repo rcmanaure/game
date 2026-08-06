@@ -30,10 +30,14 @@ async function main() {
     const result = await harnessGraph.invoke({ playerAction, characterId });
 
     const e = result.gameEvent!;
+    const vsDetail =
+      e.rollType === "opposedCheck"
+        ? `vs opponent roll=${e.opponentRoll} (${e.opponentTier})`
+        : `vs DC ${e.targetNumber}`;
     console.log(
       `Check: ${e.rollType} ${e.attribute}${e.skillOrDiscipline ? `+${e.skillOrDiscipline}` : ""} ` +
         `roll=${e.roll}${e.cravingDie ? ` craving=${e.cravingDie}` : ""} mod=${e.modifier} ` +
-        `vs DC ${e.targetNumber} -> ${e.success ? "SUCCESS" : "FAIL"} (${e.criticalTier})`,
+        `${vsDetail} -> ${e.success ? "SUCCESS" : "FAIL"} (${e.criticalTier})`,
     );
     if (Object.keys(e.statDeltas).length) {
       console.log(`Stat deltas: ${JSON.stringify(e.statDeltas)}`);

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { LogicIntentSchema, HarnessStateSchema } from "../state.js";
+import { LogicIntentSchema, HarnessStateSchema, sanitizeIntent } from "../state.js";
 import { STYLE_FORMULA, STYLE_TOKEN } from "../style-formula.js";
 
 // Assert-based smoke tests only — no live API calls (those cost money and
@@ -16,12 +16,58 @@ const VALID_INTENT = {
   attribute: "strength" as const,
   skill: null,
   targetNumber: 15,
+  opponentTier: null,
   cravingElevated: false,
 };
 
 test("LogicIntentSchema accepts a well-formed intent", () => {
   const intent = LogicIntentSchema.parse(VALID_INTENT);
   assert.equal(intent.eventType, "combat");
+});
+
+test("LogicIntentSchema accepts an opposedCheck intent with opponentTier, null targetNumber", () => {
+  const intent = LogicIntentSchema.parse({
+    ...VALID_INTENT,
+    rollType: "opposedCheck",
+    targetNumber: null,
+    opponentTier: "dangerous",
+  });
+  assert.equal(intent.opponentTier, "dangerous");
+});
+
+test("LogicIntentSchema rejects an illegal opponentTier", () => {
+  assert.throws(() =>
+    LogicIntentSchema.parse({ ...VALID_INTENT, opponentTier: "impossible" }),
+  );
+});
+
+test("sanitizeIntent coerces Python-style \"None\" string to real null", () => {
+  // Observed live (2026-08-05): a free-tier model emitted the string
+  // "None" instead of JSON null for targetNumber on an opposedCheck,
+  // failing withStructuredOutput's strict schema 3/3 times. This is the
+  // fix — the raw (loose) schema accepts it, sanitizeIntent coerces it.
+  const intent = sanitizeIntent({
+    ...VALID_INTENT,
+    rollType: "opposedCheck",
+    targetNumber: "None",
+    opponentTier: "dangerous",
+  });
+  assert.equal(intent.targetNumber, null);
+});
+
+test("sanitizeIntent coerces \"null\"/\"N/A\" strings too, case-insensitively", () => {
+  const a = sanitizeIntent({ ...VALID_INTENT, targetNumber: "null" });
+  const b = sanitizeIntent({ ...VALID_INTENT, targetNumber: "N/A" });
+  const c = sanitizeIntent({ ...VALID_INTENT, skill: "NONE" });
+  assert.equal(a.targetNumber, null);
+  assert.equal(b.targetNumber, null);
+  assert.equal(c.skill, null);
+});
+
+test("sanitizeIntent still rejects genuinely invalid values after coercion", () => {
+  assert.throws(() =>
+    sanitizeIntent({ ...VALID_INTENT, opponentTier: "not-a-real-tier" }),
+  );
 });
 
 test("LogicIntentSchema rejects an illegal eventType", () => {
