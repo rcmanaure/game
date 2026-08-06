@@ -1,39 +1,52 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { GameEventSchema, HarnessStateSchema } from "../state.js";
+import { LogicIntentSchema, HarnessStateSchema } from "../state.js";
 import { STYLE_FORMULA, STYLE_TOKEN } from "../style-formula.js";
 
 // Assert-based smoke tests only — no live API calls (those cost money and
 // need OPENROUTER_API_KEY; narration/art quality is eyeballed manually via
-// `npm run harness`, per T22's actual verify criteria).
+// `npm run harness`, per T22's actual verify criteria). Battle-logic
+// correctness (rolls, modifiers, critical tiers) is covered in rules.test.ts.
 
-test("GameEventSchema accepts a well-formed event", () => {
-  const event = GameEventSchema.parse({
-    eventType: "combat",
-    archetype: "cornered-wretch",
-    summary: "the wretch lunges and is repelled",
-  });
-  assert.equal(event.eventType, "combat");
+const VALID_INTENT = {
+  eventType: "combat" as const,
+  archetype: "cornered-wretch",
+  summary: "the wretch lunges and is repelled",
+  rollType: "attack" as const,
+  attribute: "strength" as const,
+  skill: null,
+  targetNumber: 15,
+  cravingElevated: false,
+};
+
+test("LogicIntentSchema accepts a well-formed intent", () => {
+  const intent = LogicIntentSchema.parse(VALID_INTENT);
+  assert.equal(intent.eventType, "combat");
 });
 
-test("GameEventSchema rejects an illegal eventType", () => {
+test("LogicIntentSchema rejects an illegal eventType", () => {
   assert.throws(() =>
-    GameEventSchema.parse({
-      eventType: "not-a-real-type",
-      archetype: "x",
-      summary: "y",
-    }),
+    LogicIntentSchema.parse({ ...VALID_INTENT, eventType: "not-a-real-type" }),
   );
 });
 
-test("GameEventSchema rejects a missing archetype", () => {
+test("LogicIntentSchema rejects an illegal attribute", () => {
   assert.throws(() =>
-    GameEventSchema.parse({ eventType: "combat", summary: "y" }),
+    LogicIntentSchema.parse({ ...VALID_INTENT, attribute: "luck" }),
+  );
+});
+
+test("LogicIntentSchema rejects a missing archetype", () => {
+  assert.throws(() =>
+    LogicIntentSchema.parse({ ...VALID_INTENT, archetype: undefined }),
   );
 });
 
 test("HarnessStateSchema defaults gameEvent/narration/art fields to null", () => {
-  const state = HarnessStateSchema.parse({ playerAction: "look around" });
+  const state = HarnessStateSchema.parse({
+    playerAction: "look around",
+    characterId: "mira-ashgrave",
+  });
   assert.equal(state.gameEvent, null);
   assert.equal(state.narration, null);
   assert.equal(state.artUrl, null);
