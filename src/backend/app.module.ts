@@ -1,14 +1,16 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
+import { APP_GUARD } from "@nestjs/core";
 import { HealthController } from "./health/health.controller";
+import { JwtStrategy } from "./auth/jwt.strategy";
+import { JwtAuthGuard } from "./auth/jwt-auth.guard";
+import { RolesGuard } from "./auth/roles.guard";
+import { AuthService } from "./auth/auth.service";
+import { JwtWsGateway } from "./auth/jwt-ws.gateway";
 
-// Scaffold only (per Decision #19: "existing NestJS backend/Docker Compose
-// on the Hostinger VPS") — T3/T4/T7/T14 build real modules/entities on top
-// of this. No entities yet, so autoLoadEntities has nothing to load; that's
-// expected until the first real module (T3's rate-limit table) adds one.
-// synchronize is always false — schema changes are migrations, never
-// auto-sync, per the plan's own migration-tested-before-VPS discipline.
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,7 +23,27 @@ import { HealthController } from "./health/health.controller";
         synchronize: false,
       }),
     }),
+    PassportModule.register({ defaultStrategy: "jwt" }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.getOrThrow<string>("JWT_SECRET"),
+        signOptions: {
+          expiresIn: "15m",
+          issuer: "ai-dm-platform",
+          audience: "ai-dm-platform-client",
+        },
+      }),
+    }),
   ],
   controllers: [HealthController],
+  providers: [
+    JwtStrategy,
+    AuthService,
+    JwtWsGateway,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
 })
 export class AppModule {}
