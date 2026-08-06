@@ -8,3 +8,6 @@ build/
 drift-output-*/
 .agents/skills
 .claude
+.github
+.cursor
+AGENTS.md

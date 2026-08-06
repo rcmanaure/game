@@ -64,7 +64,7 @@ npm run harness "action 1" "action 2"
 - **Game Loop:** `src/harness/graph.ts` (LangGraph state machine)
 - **Backend:** `src/backend/app.module.ts`, `src/backend/auth/`, `src/backend/graph/`
 - **Entities:** `src/backend/entities/` (User, Chronicle, Turn, Npc)
-- **Design System:** `DESIGN.md` (typography, colors, layout constraints)
+- **Design System:** `docs/DESIGN.md` (typography, colors, layout constraints)
 - **CEO Plan:** `docs/designs/ai-dm-platform.md` (full scope + decisions)
 
 ## Environment Variables
@@ -93,10 +93,10 @@ Current coverage: harness rules, character validation, narration fallback, art g
 
 ## Docs
 
-- **Design System:** `DESIGN.md` — typography, color, layout, motion, accessibility
+- **Design System:** `docs/DESIGN.md` — typography, color, layout, motion, accessibility
 - **CEO Plan:** `docs/designs/ai-dm-platform.md` — full scope, decisions, roadmap
 - **Research:** `docs/research/` — tech stack validation, competitor analysis, narrative frameworks
-- **Roadmap:** `TODOS.md` — completed tasks, deferred scope, P2 items
+- **Roadmap:** `docs/TODOS.md` — completed tasks, deferred scope, P2 items
 
 ## Development Conventions
 
@@ -113,7 +113,7 @@ Current coverage: harness rules, character validation, narration fallback, art g
 
 ## Support / Issues
 
-See `TODOS.md` for known deferred items, P2 blockers before launch, and post-v1 roadmap.
+See `docs/TODOS.md` for known deferred items, P2 blockers before launch, and post-v1 roadmap.
 
 ---
 
