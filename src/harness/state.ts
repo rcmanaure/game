@@ -137,16 +137,7 @@ export const SAFE_DEFAULT_INTENT: LogicIntent = {
   cravingElevated: false,
 };
 
-// Documents the harness graph's state shape (graph.ts defines its own
-// StateGraph StateSchema separately — LangGraph's StateSchema isn't a
-// plain zod object — this mirrors it for anyone importing the type without
-// pulling in the graph itself).
-export const HarnessStateSchema = z.object({
-  playerAction: z.string(),
-  character: CharacterSchema, // caller-supplied, mutated by rulesValidate
-  gameEvent: ResolvedEventSchema.nullable().default(null),
-  narration: z.string().nullable().default(null),
-  artUrl: z.string().nullable().default(null),
-  artError: z.string().nullable().default(null),
-});
-export type HarnessState = z.infer<typeof HarnessStateSchema>;
+// HarnessState type: import from graph.ts as HarnessGraphState.
+// Eng review 2026-08-06: deleted duplicate HarnessStateSchema that stayed
+// out of sync with graph.ts's State (missed lastReferenceUrl, turnNumber).
+// Use graph.ts's State as single source of truth.

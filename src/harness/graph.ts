@@ -24,6 +24,7 @@ const State = new StateSchema({
   artUrl: z.string().nullable().default(null),
   artError: z.string().nullable().default(null),
   lastReferenceUrl: z.string().nullable().default(null), // set by caller for T27 edit-chain runs
+  turnNumber: z.number().int().default(1), // T14d recall gating: query Npc on turn 1 only
 });
 
 // Decision #19: resolve node emits JSON intent; conditional edge on schema

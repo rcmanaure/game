@@ -53,6 +53,24 @@ export class GraphService implements OnModuleInit {
       return { success: false, error: 'Turn already processed or in progress' };
     }
 
+    // T14d recall: query NPC by userId on turn 1 only (fail-open if DB fails)
+    // Query happens outside graph, result threaded into state for narrate
+    let npcContext: Record<string, unknown> | null = null;
+    if (true) { // TODO(T14d): replace with actual turnNumber === 1 check
+      try {
+        const npc = await this.npcRepo.findOne({
+          where: { userId: input.userId },
+          order: { createdAt: 'DESC' },
+        });
+        if (npc) {
+          npcContext = { id: npc.id, name: npc.name, fact: npc.fact };
+        }
+      } catch (err) {
+        console.error(`[${input.turnId}] recall query failed:`, err);
+        // Fail-open: continue without NPC context
+      }
+    }
+
     // Graph invocation (NO open DB transaction for slow LLM calls)
     // turn_id doubles as thread_id for PostgresSaver checkpointing
     let graphResult: HarnessGraphState;
@@ -66,6 +84,7 @@ export class GraphService implements OnModuleInit {
           artUrl: null,
           artError: null,
           lastReferenceUrl: input.lastReferenceUrl || null,
+          turnNumber: 1, // Placeholder: actual turn number will come from chronicle context
         },
         { configurable: { thread_id: input.turnId } },
       );
