@@ -123,12 +123,15 @@ const narrate: GraphNode<typeof State> = async (state) => {
   return { narration };
 };
 
+// T14b: artTrigger returns placeholder immediately (Decision #6 hardening:
+// "encounters never block waiting on art generation"). Real art generation
+// fires asynchronously in GraphService.runTurn() and pushes the real URL
+// over WS when it completes. This keeps the critical path (graph.invoke)
+// fast and the DB transaction short.
 const artTrigger: GraphNode<typeof State> = async (state) => {
   const event = state.gameEvent!;
-  const refs = state.lastReferenceUrl ? [state.lastReferenceUrl] : undefined;
-  const result = await generateArt(event.archetype, refs);
-  if ("error" in result) return { artError: result.error };
-  return { artUrl: result.url };
+  const placeholder = `https://picsum.photos/seed/${encodeURIComponent(event.archetype)}/512/512`;
+  return { artUrl: placeholder };
 };
 
 export const harnessGraph = new StateGraph(State)

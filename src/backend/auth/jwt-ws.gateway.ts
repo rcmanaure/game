@@ -13,10 +13,18 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Socket, Server } from 'socket.io';
 import { JwtPayload } from './auth.service';
+import { GraphService } from '../graph/graph.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Configure per environment
+    origin: (origin, callback) => {
+      const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3001';
+      if (!origin || origin === allowedOrigin) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS not allowed'), false);
+      }
+    },
   },
 })
 @Injectable()
@@ -30,6 +38,7 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
+    private graphService: GraphService,
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
@@ -64,18 +73,44 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('turn')
-  handleTurn(
+  async handleTurn(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: unknown,
-  ): void {
+  ): Promise<void> {
     const user = client.data.user as JwtPayload;
     if (!user) {
       throw new WsException('Unauthorized');
     }
 
-    // Route to turn handler
-    this.logger.debug(`Turn received from ${user.email}`);
-    // TODO: Emit to narration listener after LLM processes
+    // Parse turn request
+    const turnData = data as Record<string, unknown>;
+    const turnId = turnData.turnId as string;
+    const playerAction = turnData.playerAction as string;
+    const character = turnData.character;
+
+    if (!turnId || !playerAction || !character) {
+      throw new WsException('Missing required fields: turnId, playerAction, character');
+    }
+
+    // TODO(T14b): get chronicleId from user context (current active chronicle)
+    const chronicleId = turnData.chronicleId as string || 'placeholder-chronicle-id';
+
+    // Run the turn through GraphService
+    const result = await this.graphService.runTurn({
+      turnId,
+      userId: user.sub,
+      chronicleId,
+      playerAction,
+      character,
+      lastReferenceUrl: turnData.lastReferenceUrl as string | undefined,
+    });
+
+    if (!result.success) {
+      client.emit('turn:error', { turnId, error: result.error });
+      return;
+    }
+
+    client.emit('turn:complete', { turnId });
   }
 
   private extractToken(client: Socket): string | undefined {

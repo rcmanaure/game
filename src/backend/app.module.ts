@@ -10,6 +10,8 @@ import { JwtAuthGuard } from "./auth/jwt-auth.guard";
 import { RolesGuard } from "./auth/roles.guard";
 import { AuthService } from "./auth/auth.service";
 import { JwtWsGateway } from "./auth/jwt-ws.gateway";
+import { TurnReservationService } from "./graph/turn-reservation.service";
+import { GraphService } from "./graph/graph.service";
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { JwtWsGateway } from "./auth/jwt-ws.gateway";
   providers: [
     JwtStrategy,
     AuthService,
+    TurnReservationService,
+    GraphService,
     JwtWsGateway,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },

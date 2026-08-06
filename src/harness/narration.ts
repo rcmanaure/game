@@ -60,11 +60,20 @@ export async function narrateWithFallback(params: {
 }): Promise<string> {
   const { event, invokePrimary, invokeAlt } = params;
 
-  const primary = await invokePrimary();
-  if (!isRefusal(primary)) return contentToString(primary);
+  // CEO Review Hardening (2026-08-06): catch thrown LLM errors, not just refusals
+  try {
+    const primary = await invokePrimary();
+    if (!isRefusal(primary)) return contentToString(primary);
+  } catch (err) {
+    console.error('Primary narration invoke failed:', err);
+  }
 
-  const alt = await invokeAlt();
-  if (!isRefusal(alt)) return contentToString(alt);
+  try {
+    const alt = await invokeAlt();
+    if (!isRefusal(alt)) return contentToString(alt);
+  } catch (err) {
+    console.error('Alt narration invoke failed:', err);
+  }
 
   return deterministicNarration(event);
 }
