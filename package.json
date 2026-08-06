@@ -6,15 +6,28 @@
   "scripts": {
     "harness": "tsx src/harness/run.ts",
     "harness:drift": "tsx src/harness/drift.ts",
-    "test": "node --import tsx --test src/harness/__tests__/*.test.ts"
+    "test": "node --import tsx --test src/harness/__tests__/*.test.ts",
+    "backend:dev": "ts-node -P tsconfig.backend.json src/backend/main.ts",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down"
   },
   "dependencies": {
     "@langchain/langgraph": "^1.1.0",
     "@langchain/openrouter": "^0.1.0",
+    "@nestjs/common": "^11.1.28",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.1.28",
+    "@nestjs/platform-express": "^11.1.28",
+    "@nestjs/typeorm": "^11.0.3",
+    "pg": "^8.22.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "typeorm": "^0.3.31",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }
