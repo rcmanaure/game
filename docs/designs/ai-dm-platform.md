@@ -372,14 +372,32 @@ detail not already stated there:
 ## What already exists
 
 **Updated 2026-08-05 — no longer greenfield.** T22's harness (`src/harness/`)
-is built, tested (30 assert-based tests), and verified live against the free
+is built, tested (46 assert-based tests), and verified live against the free
 LOGIC_MODEL/CREATIVE_MODEL picks: a working LangGraph.js StateGraph
-(`resolve` -> `narrate` -> `artTrigger`), a server-authoritative d20 resolver
+(`resolve` -> `rulesValidate` -> `narrate` -> `artTrigger`, now matching
+Decision #19's real node shape), a server-authoritative d20 resolver
 (`rules.ts`) implementing Decision #25's check/attack/opposedCheck mechanic,
-and a minimal character-sheet module (`character.ts`, placeholder sample
-data, not Decision #23's real roster). This is real, kept code — not a
-throwaway prototype (see T22's own "not throwaway" note) — and T14's full
-production StateGraph should extend it, not replace it from scratch.
+T1's rules validator (`validator.ts`) gating Decision #5's Active/Torpor/Dead
+lifecycle, T2's content-refusal fallback chain (`narration.ts`), and a
+character-sheet module (`character.ts`, now zod-schema-backed with a real
+`status` field; still placeholder sample data, not Decision #23's real
+roster). This is real, kept code — not a throwaway prototype (see T22's own
+"not throwaway" note) — and T14's full production StateGraph should extend
+it, not replace it from scratch.
+
+**Also as of 2026-08-05: a minimal NestJS + Postgres backend is scaffolded**
+(`src/backend/`, `docker-compose.yml`) — `AppModule` + a `/health` endpoint
+proving real Postgres connectivity, `synchronize: false` (migrations only,
+never auto-sync). No entities/modules beyond the health check yet; this
+exists so T3/T4/T7/T14 (all of which need a real backend, not just the
+harness sandbox) have somewhere to build. Run via `npm run db:up` +
+`npm run backend:dev`. Runtime note for whoever builds on this: the root
+package is ESM (`"type": "module"`, for the tsx-run harness) but tsx/esbuild
+does not emit real TS decorator metadata, which silently breaks NestJS
+constructor DI — confirmed live with a throwaway probe. `src/backend/` is
+therefore its own nested CommonJS package (`src/backend/package.json`) built
+via `tsconfig.backend.json` + `ts-node` (real `tsc`, not esbuild) instead of
+tsx; keep new backend code in that subtree, not mixed into `src/harness/`.
 
 Superseded-plan carryover (still design-only, not yet built): the original
 resolver pattern (Attribute+Skill/Discipline vs roll -> event -> narration
@@ -724,14 +742,14 @@ not corrections. Nothing stale.
 Synthesized from this review's findings. Each task derives from a specific
 finding above. Run with Claude Code or Codex; checkbox as you ship.
 
-- [ ] **T1 (P1, human: ~1d / CC: ~2h)** — backend — Build server-side rules validator for logic-model JSON GameEvents (delta bounds, legal transitions)
+- [x] **T1 (P1, human: ~1d / CC: ~2h)** — backend — Build server-side rules validator for logic-model JSON GameEvents (delta bounds, legal transitions)
   - Surfaced by: CEO Review Hardening — Mutation trust
-  - Files: new NestJS module (e.g. `src/game/rules-validator/`)
-  - Verify: unit test rejects an out-of-bounds/illegal mutation; accepts a legal one
-- [ ] **T2 (P1, human: ~4h / CC: ~1h)** — backend — Content-refusal detection + alt-model retry + deterministic template fallback
+  - **Done 2026-08-05, built in the harness, not a new NestJS module** — `src/harness/validator.ts`'s `validateTransition()`/`applyMutation()`, wired as a `rulesValidate` node between `resolve` and `narrate` in `graph.ts` (T22's harness graph now matches Decision #19's real shape). Implements Decision #5's Active→Torpor→Dead lifecycle as an actual state machine (`character.ts`'s new `status` field); any mutation targeting an already-dead character is rejected as a safe no-op (`rejectedEvent()` in `rules.ts`), matching the Error & Rescue Registry row below. T14 should extend this module into the real NestJS backend (now scaffolded, see "What already exists") rather than rewrite it.
+  - Verify: **passed** — `src/harness/__tests__/validator.test.ts` (8 tests: legal hp loss stays active, hp-bottom-out transitions active→torpor and torpor→dead, any mutation against a dead character rejected, `applyMutation` never mutates its input). Live-verified via `npm run harness`: a multi-turn dodge/opposedCheck run drove a character 12/12 → 6/12 (active) → 0/12 (torpor) → 0/12 (dead), correctly halting before any further turn could run against the dead character.
+- [x] **T2 (P1, human: ~4h / CC: ~1h)** — backend — Content-refusal detection + alt-model retry + deterministic template fallback
   - Surfaced by: CEO Review Hardening — Content-refusal handling
-  - Files: DM orchestration module, prompt/template config
-  - Verify: forced-refusal test case resolves to a non-empty narration, never a silent no-op
+  - **Done 2026-08-05, built in the harness** — `src/harness/narration.ts`: `isRefusal()` detects OpenRouter's structured `finish_reason: "content_filter"` signal plus soft-refusal (empty content, refusal-phrase heuristics — free models often just apologize in prose instead of setting the structured signal); `narrateWithFallback()` is the retry-then-template chain itself, written against injectable invoke functions (not tied to `ChatOpenRouter` directly) so it's unit-testable without a live API call; `deterministicNarration()` is the guaranteed-non-empty last resort. `models.ts` adds `creativeAltModel()` (new `CREATIVE_MODEL_ALT` env var, a different provider than `CREATIVE_MODEL`) as the retry target. `graph.ts`'s `narrate` node now calls `narrateWithFallback` instead of a single unguarded `model.invoke()`.
+  - Verify: **passed** — `src/harness/__tests__/narration.test.ts` (8 tests, directly covering the verify criterion: a forced-refusal fixture resolves to non-empty narration via the alt-model path, and via the deterministic template when both models refuse). Live-verified the happy (non-refused) path still narrates normally through the new wiring.
 - [ ] **T3 (P1, human: ~4h / CC: ~1h)** — backend — Postgres-backed rate limit + daily spend cap gating DM access. **Extended (CEO review 2026-08-04, Issue 3) to also gate Decision #22's free-turn cap:** add a `tier` (free/paid) column to the same spend-tracking table rather than building a second rate-limit system — one Postgres-backed check with a tier-dependent threshold, not two systems that can drift out of sync (the exact anti-pattern Decision #9 already rejected Redis to avoid).
   - Surfaced by: CEO Review Hardening — Spend cap; Foundational Decision #9 (no Redis); Decision #22 (monetization, amendment 2026-08-04)
   - Files: rate-limit guard/interceptor, spend-tracking table + migration (now includes `tier` column)
