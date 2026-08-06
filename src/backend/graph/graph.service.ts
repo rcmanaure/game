@@ -41,7 +41,7 @@ export class GraphService implements OnModuleInit {
     playerAction: string;
     character: any; // CharacterSchema type from harness
     lastReferenceUrl?: string;
-  }): Promise<{ success: boolean; error?: string }> {
+  }, onArtReady?: (url: string) => void): Promise<{ success: boolean; error?: string }> {
     // Fast transaction 1: reserve the turn
     const reserved = await this.reservationService.reserve(
       input.turnId,
@@ -56,7 +56,7 @@ export class GraphService implements OnModuleInit {
     // T14d recall: query NPC by userId on turn 1 only (fail-open if DB fails)
     // Query happens outside graph, result threaded into state for narrate
     let npcContext: Record<string, unknown> | null = null;
-    if (true) { // TODO(T14d): replace with actual turnNumber === 1 check
+    if (input.turnNumber === 1) {
       try {
         const npc = await this.npcRepo.findOne({
           where: { userId: input.userId },
@@ -132,8 +132,13 @@ export class GraphService implements OnModuleInit {
     }
 
     // Fire art generation asynchronously (no await, no blocking)
-    // Result will be pushed over WS via a separate callback when complete
-    this.generateArtAsync(input.turnId, input.userId, graphResult).catch((err) => {
+    // Callback will be invoked when art is ready (passed by caller, e.g. WS gateway)
+    this.generateArtAsync(
+      input.turnId,
+      input.userId,
+      graphResult,
+      onArtReady,
+    ).catch((err) => {
       console.error(`[${input.turnId}] art generation failed:`, err);
     });
 
@@ -144,6 +149,7 @@ export class GraphService implements OnModuleInit {
     turnId: string,
     userId: string,
     graphResult: HarnessGraphState,
+    onArtReady?: (url: string) => void,
   ): Promise<void> {
     if (!graphResult.gameEvent?.archetype) return;
 
@@ -159,7 +165,9 @@ export class GraphService implements OnModuleInit {
       { artUrl: result.url },
     );
 
-    // TODO(T14b): emit WS event to push the real artUrl to the client
-    // This will be wired in jwt-ws.gateway.ts handleTurn callback
+    // Invoke callback to emit WS event (wired in handleTurn)
+    if (onArtReady) {
+      onArtReady(result.url);
+    }
   }
 }

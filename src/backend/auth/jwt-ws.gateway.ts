@@ -11,8 +11,11 @@ import {
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Socket, Server } from 'socket.io';
 import { JwtPayload } from './auth.service';
+import { UserEntity } from '../entities/user.entity';
 import { GraphService } from '../graph/graph.service';
 
 @WebSocketGateway({
@@ -39,6 +42,8 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private jwtService: JwtService,
     private configService: ConfigService,
     private graphService: GraphService,
+    @InjectRepository(UserEntity)
+    private userRepo: Repository<UserEntity>,
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
@@ -92,18 +97,33 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException('Missing required fields: turnId, playerAction, character');
     }
 
-    // TODO(T14b): get chronicleId from user context (current active chronicle)
-    const chronicleId = turnData.chronicleId as string || 'placeholder-chronicle-id';
+    // Get chronicleId: prefer client-provided, fallback to user's activeChronicleId, then placeholder
+    let chronicleId = turnData.chronicleId as string;
+    if (!chronicleId) {
+      try {
+        const userRecord = await this.userRepo.findOne({ where: { id: user.sub } });
+        chronicleId = userRecord?.activeChronicleId || 'placeholder-chronicle-id';
+      } catch (err) {
+        this.logger.error(`Failed to fetch user ${user.sub}: ${(err as Error).message}`);
+        chronicleId = 'placeholder-chronicle-id';
+      }
+    }
 
     // Run the turn through GraphService
-    const result = await this.graphService.runTurn({
-      turnId,
-      userId: user.sub,
-      chronicleId,
-      playerAction,
-      character,
-      lastReferenceUrl: turnData.lastReferenceUrl as string | undefined,
-    });
+    // Pass callback for async art generation completion
+    const result = await this.graphService.runTurn(
+      {
+        turnId,
+        userId: user.sub,
+        chronicleId,
+        playerAction,
+        character,
+        lastReferenceUrl: turnData.lastReferenceUrl as string | undefined,
+      },
+      (artUrl: string) => {
+        client.emit('art:ready', { turnId, url: artUrl });
+      }
+    );
 
     if (!result.success) {
       client.emit('turn:error', { turnId, error: result.error });

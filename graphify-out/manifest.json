@@ -1,0 +1,412 @@
+{
+  ".agents/skills/higgsfield-game-generation/scripts/fbx2glb.py": {
+    "mtime": 1785802500.4893396,
+    "ast_hash": "62208e1e0cd622172eb1ab6dfe138623",
+    "semantic_hash": "62208e1e0cd622172eb1ab6dfe138623"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/glb_inspect.py": {
+    "mtime": 1785802500.4894986,
+    "ast_hash": "5c1dad2384edf6c0107c3f866872ac56",
+    "semantic_hash": "5c1dad2384edf6c0107c3f866872ac56"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/glb_merge_anims.py": {
+    "mtime": 1785802500.4896371,
+    "ast_hash": "64a570a59cffcacb160d8ebdc2b59f02",
+    "semantic_hash": "64a570a59cffcacb160d8ebdc2b59f02"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/glb_patch.py": {
+    "mtime": 1785802500.489572,
+    "ast_hash": "2b0f5b103e6988d6b3728c113161a38b",
+    "semantic_hash": "2b0f5b103e6988d6b3728c113161a38b"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/merge_anim_glbs.py": {
+    "mtime": 1785802500.4896371,
+    "ast_hash": "dd786d9b023e46c9d6281f2ed01d9559",
+    "semantic_hash": "dd786d9b023e46c9d6281f2ed01d9559"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/pipeline.py": {
+    "mtime": 1785802500.4900084,
+    "ast_hash": "aa728d382b902e55ccd6486e8bcf8f52",
+    "semantic_hash": "aa728d382b902e55ccd6486e8bcf8f52"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/proc_anim_dragon.py": {
+    "mtime": 1785802500.4898176,
+    "ast_hash": "833722062cf268cf7014d90d0ea552cd",
+    "semantic_hash": "833722062cf268cf7014d90d0ea552cd"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/proc_rig_dragon.py": {
+    "mtime": 1785802500.4900084,
+    "ast_hash": "637895ff0f531bf4905497a3cfde44b6",
+    "semantic_hash": "637895ff0f531bf4905497a3cfde44b6"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/proc_weights.py": {
+    "mtime": 1785802500.4900084,
+    "ast_hash": "53d0e58784496cfb0708241d939fcc17",
+    "semantic_hash": "53d0e58784496cfb0708241d939fcc17"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/rig_transfer.py": {
+    "mtime": 1785802500.4907103,
+    "ast_hash": "8169f8e80fc6f9cf2363b5d9e9979f2e",
+    "semantic_hash": "8169f8e80fc6f9cf2363b5d9e9979f2e"
+  },
+  ".agents/skills/higgsfield-game-generation/scripts/seamless.py": {
+    "mtime": 1785802500.4903371,
+    "ast_hash": "c44eee93e0a68f95f2c840c23699a236",
+    "semantic_hash": "c44eee93e0a68f95f2c840c23699a236"
+  },
+  ".claude/settings.json": {
+    "mtime": 1785794648.0100102,
+    "ast_hash": "3aaf407dd1bf94cf153a01d32ddf639a",
+    "semantic_hash": "3aaf407dd1bf94cf153a01d32ddf639a"
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1786037065.097593,
+    "ast_hash": "c31a819882a78254539d9dbcfc053187",
+    "semantic_hash": "c31a819882a78254539d9dbcfc053187"
+  },
+  "install.sh": {
+    "mtime": 1785883438.0087607,
+    "ast_hash": "6c8779bab2a79a769483c90365b3c7fc",
+    "semantic_hash": "6c8779bab2a79a769483c90365b3c7fc"
+  },
+  "package.json": {
+    "mtime": 1786034048.8168697,
+    "ast_hash": "4ae0cfd251a77bebbf31109f20e043d7",
+    "semantic_hash": "4ae0cfd251a77bebbf31109f20e043d7"
+  },
+  "skills-lock.json": {
+    "mtime": 1785802573.390721,
+    "ast_hash": "f4d5e4ec96949b7d13f0ca1ec5c9e52c",
+    "semantic_hash": "f4d5e4ec96949b7d13f0ca1ec5c9e52c"
+  },
+  "src/backend/app.module.ts": {
+    "mtime": 1786036040.6227095,
+    "ast_hash": "d1440c96646b3653375673b5fece975b",
+    "semantic_hash": "d1440c96646b3653375673b5fece975b"
+  },
+  "src/backend/auth/auth.decorators.ts": {
+    "mtime": 1786021717.9004238,
+    "ast_hash": "79a9e3a5c13c592f5657b84f9958651a",
+    "semantic_hash": "79a9e3a5c13c592f5657b84f9958651a"
+  },
+  "src/backend/auth/auth.service.ts": {
+    "mtime": 1786021693.8150904,
+    "ast_hash": "798466d5fece36eb44a6853cc3b8f38d",
+    "semantic_hash": "798466d5fece36eb44a6853cc3b8f38d"
+  },
+  "src/backend/auth/jwt-auth.guard.ts": {
+    "mtime": 1786021705.9372585,
+    "ast_hash": "999cc5281853014b17d8849167dbc078",
+    "semantic_hash": "999cc5281853014b17d8849167dbc078"
+  },
+  "src/backend/auth/jwt-ws.gateway.ts": {
+    "mtime": 1786036060.328133,
+    "ast_hash": "fe99d586b8daa704a6d75ed4cfb36837",
+    "semantic_hash": "fe99d586b8daa704a6d75ed4cfb36837"
+  },
+  "src/backend/auth/jwt.strategy.ts": {
+    "mtime": 1786021867.1004503,
+    "ast_hash": "403373c0446ab50641b10cd7f8b8e974",
+    "semantic_hash": "403373c0446ab50641b10cd7f8b8e974"
+  },
+  "src/backend/auth/roles.guard.ts": {
+    "mtime": 1786021712.759353,
+    "ast_hash": "a899e6582400d92c2f47418723eb4cf7",
+    "semantic_hash": "a899e6582400d92c2f47418723eb4cf7"
+  },
+  "src/backend/common/all-exceptions.filter.ts": {
+    "mtime": 1786021838.9980729,
+    "ast_hash": "128a04925938154092ef014103702702",
+    "semantic_hash": "128a04925938154092ef014103702702"
+  },
+  "src/backend/data-source.ts": {
+    "mtime": 1786033929.9193237,
+    "ast_hash": "8813685f09db1547a50cddbadc4f5977",
+    "semantic_hash": "8813685f09db1547a50cddbadc4f5977"
+  },
+  "src/backend/entities/chronicle.entity.ts": {
+    "mtime": 1786033902.685741,
+    "ast_hash": "0e7269ffb65f01329bbecd16e4c086fa",
+    "semantic_hash": "0e7269ffb65f01329bbecd16e4c086fa"
+  },
+  "src/backend/entities/npc.entity.ts": {
+    "mtime": 1786034020.7922695,
+    "ast_hash": "7b464bab47f5fbfa0bf316d2088a86f9",
+    "semantic_hash": "7b464bab47f5fbfa0bf316d2088a86f9"
+  },
+  "src/backend/entities/turn.entity.ts": {
+    "mtime": 1786033914.881002,
+    "ast_hash": "643c7e6aabf0195329e35172c90a4408",
+    "semantic_hash": "643c7e6aabf0195329e35172c90a4408"
+  },
+  "src/backend/entities/user.entity.ts": {
+    "mtime": 1786033897.2366242,
+    "ast_hash": "a0b51d5efe246b24067333ecc1ec40d5",
+    "semantic_hash": "a0b51d5efe246b24067333ecc1ec40d5"
+  },
+  "src/backend/graph/graph.service.ts": {
+    "mtime": 1786036204.778239,
+    "ast_hash": "655b10191b50f81def22d5e85bae9fb1",
+    "semantic_hash": "655b10191b50f81def22d5e85bae9fb1"
+  },
+  "src/backend/graph/turn-reservation.service.ts": {
+    "mtime": 1786035964.098064,
+    "ast_hash": "cafa221d0e2326fdf439aba9d646c3ac",
+    "semantic_hash": "cafa221d0e2326fdf439aba9d646c3ac"
+  },
+  "src/backend/health/health.controller.ts": {
+    "mtime": 1785983977.5766075,
+    "ast_hash": "aa7dd2ac2f036b83389f87b0d89f04ec",
+    "semantic_hash": "aa7dd2ac2f036b83389f87b0d89f04ec"
+  },
+  "src/backend/main.ts": {
+    "mtime": 1786021844.886152,
+    "ast_hash": "6d7bcb80d0f5c14314927f0b85c2108a",
+    "semantic_hash": "6d7bcb80d0f5c14314927f0b85c2108a"
+  },
+  "src/backend/migrations/1786034027189-InitSchema.ts": {
+    "mtime": 1786034030.010467,
+    "ast_hash": "14b633e23a81b76fb9656a71d4cc4907",
+    "semantic_hash": "14b633e23a81b76fb9656a71d4cc4907"
+  },
+  "src/backend/package.json": {
+    "mtime": 1785983938.6070397,
+    "ast_hash": "df9ffc6aa3f78a5491736d441c4258a8",
+    "semantic_hash": "df9ffc6aa3f78a5491736d441c4258a8"
+  },
+  "src/harness/__tests__/art.test.ts": {
+    "mtime": 1786036344.0472333,
+    "ast_hash": "43eb380d8a03301049daa1a064a3cd9b",
+    "semantic_hash": "43eb380d8a03301049daa1a064a3cd9b"
+  },
+  "src/harness/__tests__/narration.test.ts": {
+    "mtime": 1785983443.7402318,
+    "ast_hash": "797d7041c38e4f8aaf7ce91b880a5c03",
+    "semantic_hash": "797d7041c38e4f8aaf7ce91b880a5c03"
+  },
+  "src/harness/__tests__/rules.test.ts": {
+    "mtime": 1785980307.0881147,
+    "ast_hash": "70a1978d4562cf0726be98920c57261f",
+    "semantic_hash": "70a1978d4562cf0726be98920c57261f"
+  },
+  "src/harness/__tests__/smoke.test.ts": {
+    "mtime": 1786036226.9417155,
+    "ast_hash": "bac5abf6537180a98c3da3bdb36c2077",
+    "semantic_hash": "bac5abf6537180a98c3da3bdb36c2077"
+  },
+  "src/harness/__tests__/validator.test.ts": {
+    "mtime": 1785982644.177645,
+    "ast_hash": "bed65c4efee3815197813702c1f66910",
+    "semantic_hash": "bed65c4efee3815197813702c1f66910"
+  },
+  "src/harness/art.ts": {
+    "mtime": 1785977645.5778606,
+    "ast_hash": "c12f4dd00a2abeccb496c40bffe10384",
+    "semantic_hash": "c12f4dd00a2abeccb496c40bffe10384"
+  },
+  "src/harness/character.ts": {
+    "mtime": 1785982225.2330887,
+    "ast_hash": "8b7018f02d99464ae64224bff15d63d3",
+    "semantic_hash": "8b7018f02d99464ae64224bff15d63d3"
+  },
+  "src/harness/drift.ts": {
+    "mtime": 1785974378.7152839,
+    "ast_hash": "01d099bfb09ca2ca42820e440ab3c72d",
+    "semantic_hash": "01d099bfb09ca2ca42820e440ab3c72d"
+  },
+  "src/harness/env.ts": {
+    "mtime": 1785974354.9535644,
+    "ast_hash": "382609085d1d35ba3f97b64d58857eeb",
+    "semantic_hash": "382609085d1d35ba3f97b64d58857eeb"
+  },
+  "src/harness/graph.ts": {
+    "mtime": 1786036162.781336,
+    "ast_hash": "dd763c0e2f5f13ad1659273ad9eabe8e",
+    "semantic_hash": "dd763c0e2f5f13ad1659273ad9eabe8e"
+  },
+  "src/harness/models.ts": {
+    "mtime": 1785983411.3335721,
+    "ast_hash": "9c9d916225d08c8d1c7dc1f41545f300",
+    "semantic_hash": "9c9d916225d08c8d1c7dc1f41545f300"
+  },
+  "src/harness/narration.ts": {
+    "mtime": 1786036014.796154,
+    "ast_hash": "3084f6bc4869ca733c8e1fb77158372e",
+    "semantic_hash": "3084f6bc4869ca733c8e1fb77158372e"
+  },
+  "src/harness/rules.ts": {
+    "mtime": 1785982240.0999303,
+    "ast_hash": "7bdd1ed196a49466308be8d47afe9f6e",
+    "semantic_hash": "7bdd1ed196a49466308be8d47afe9f6e"
+  },
+  "src/harness/run.ts": {
+    "mtime": 1785982284.606456,
+    "ast_hash": "42bf704558b3c242eeac0521a715e312",
+    "semantic_hash": "42bf704558b3c242eeac0521a715e312"
+  },
+  "src/harness/state.ts": {
+    "mtime": 1786036180.7497222,
+    "ast_hash": "8ac4a31783de0252652253967e101c0b",
+    "semantic_hash": "8ac4a31783de0252652253967e101c0b"
+  },
+  "src/harness/style-formula.ts": {
+    "mtime": 1785974209.5043335,
+    "ast_hash": "eaf5d6369532062dba16a7a426055471",
+    "semantic_hash": "eaf5d6369532062dba16a7a426055471"
+  },
+  "src/harness/validator.ts": {
+    "mtime": 1785982170.0116782,
+    "ast_hash": "824ed9d807f00c441848181476315074",
+    "semantic_hash": "824ed9d807f00c441848181476315074"
+  },
+  "tsconfig.backend.json": {
+    "mtime": 1785983921.8492153,
+    "ast_hash": "25893b88edd194a7ebda95802051c469",
+    "semantic_hash": "25893b88edd194a7ebda95802051c469"
+  },
+  "tsconfig.json": {
+    "mtime": 1785984035.0179615,
+    "ast_hash": "67e2177f9233df148a335db5e8900d0b",
+    "semantic_hash": "67e2177f9233df148a335db5e8900d0b"
+  },
+  ".agents/skills/game-engine/SKILL.md": {
+    "mtime": 1785802465.2456183,
+    "ast_hash": "389c6b7fd60287765b97e89f94eb85a3",
+    "semantic_hash": "389c6b7fd60287765b97e89f94eb85a3"
+  },
+  ".agents/skills/game-engine/references/algorithms.md": {
+    "mtime": 1785802465.2469137,
+    "ast_hash": "17aec55055a768a5c162d58b6e8b9140",
+    "semantic_hash": "17aec55055a768a5c162d58b6e8b9140"
+  },
+  ".agents/skills/game-engine/references/basics.md": {
+    "mtime": 1785802465.2472498,
+    "ast_hash": "5a299af84fda0622d5ec15e788045df6",
+    "semantic_hash": "5a299af84fda0622d5ec15e788045df6"
+  },
+  ".agents/skills/game-engine/references/game-engine-core-principles.md": {
+    "mtime": 1785802465.247315,
+    "ast_hash": "e22884f941f6536dd790c2b84e6577d0",
+    "semantic_hash": "e22884f941f6536dd790c2b84e6577d0"
+  },
+  ".agents/skills/game-engine/references/techniques.md": {
+    "mtime": 1785802465.247709,
+    "ast_hash": "f815fc8844c22cbf73514b7f75e14c13",
+    "semantic_hash": "f815fc8844c22cbf73514b7f75e14c13"
+  },
+  ".agents/skills/game-engine/references/terminology.md": {
+    "mtime": 1785802465.2474341,
+    "ast_hash": "fdefa8601fcbbd424189ad2201d95124",
+    "semantic_hash": "fdefa8601fcbbd424189ad2201d95124"
+  },
+  ".agents/skills/game-engine/references/web-apis.md": {
+    "mtime": 1785802465.24753,
+    "ast_hash": "ca1130f8a6793cd9df10d12ed508fc59",
+    "semantic_hash": "ca1130f8a6793cd9df10d12ed508fc59"
+  },
+  ".agents/skills/game-ui-design/SKILL.md": {
+    "mtime": 1785802573.3677447,
+    "ast_hash": "72632687d3638e17c235769f8d1d00de",
+    "semantic_hash": "72632687d3638e17c235769f8d1d00de"
+  },
+  ".agents/skills/game-ui-design/references/patterns.md": {
+    "mtime": 1785802573.368429,
+    "ast_hash": "c439ba6300909a9e540c7973de5ce7e5",
+    "semantic_hash": "c439ba6300909a9e540c7973de5ce7e5"
+  },
+  ".agents/skills/higgsfield-game-generation/SKILL.md": {
+    "mtime": 1785802500.4841514,
+    "ast_hash": "2cb08dcb53d98c77a5a3b0874e4c37dd",
+    "semantic_hash": "2cb08dcb53d98c77a5a3b0874e4c37dd"
+  },
+  ".agents/skills/higgsfield-game-generation/references/2d-animation.md": {
+    "mtime": 1785802500.4877713,
+    "ast_hash": "04e3fe4ebc43929c82e6ebf66d45319a",
+    "semantic_hash": "04e3fe4ebc43929c82e6ebf66d45319a"
+  },
+  ".agents/skills/higgsfield-game-generation/references/game-design-system.md": {
+    "mtime": 1785802500.4886441,
+    "ast_hash": "7736b3977c1aab753f9118f47b928dd4",
+    "semantic_hash": "7736b3977c1aab753f9118f47b928dd4"
+  },
+  ".agents/skills/higgsfield-game-generation/references/stylization.md": {
+    "mtime": 1785802500.4904926,
+    "ast_hash": "2bda244f9fa2caeafce452bf6f7c1e4c",
+    "semantic_hash": "2bda244f9fa2caeafce452bf6f7c1e4c"
+  },
+  "CLAUDE.md": {
+    "mtime": 1786025091.4242024,
+    "ast_hash": "ff474a5245cf254e7d45f9424d741de3",
+    "semantic_hash": "ff474a5245cf254e7d45f9424d741de3"
+  },
+  "DESIGN.md": {
+    "mtime": 1785895550.2602303,
+    "ast_hash": "c6500f8cdd17d357a7d6607d35dc023d",
+    "semantic_hash": "c6500f8cdd17d357a7d6607d35dc023d"
+  },
+  "docs/RESEARCH_SYNTHESIS.md": {
+    "mtime": 1786025096.3362658,
+    "ast_hash": "c800d7c6da3f4f26f0af84a8abe4caf2",
+    "semantic_hash": "c800d7c6da3f4f26f0af84a8abe4caf2"
+  },
+  "docs/designs/ai-dm-platform.md": {
+    "mtime": 1786025159.9200866,
+    "ast_hash": "7282a05c99c03c696668c8482f4fe55b",
+    "semantic_hash": "7282a05c99c03c696668c8482f4fe55b"
+  },
+  "docs/research/2026-08-03-game-design-inspiration.md": {
+    "mtime": 1785810281.5498872,
+    "ast_hash": "e9c10c578699631957af17df212073b5",
+    "semantic_hash": "e9c10c578699631957af17df212073b5"
+  },
+  "docs/research/2026-08-04-platform-and-business-research.md": {
+    "mtime": 1785882565.567749,
+    "ast_hash": "f3ac4f16876b80b8f55ae68677e872eb",
+    "semantic_hash": "f3ac4f16876b80b8f55ae68677e872eb"
+  },
+  "docs/research/2026-08-04-text-format-tooling-research.md": {
+    "mtime": 1785885639.950988,
+    "ast_hash": "ed75c9dfb9afbf837293bec88e2907ce",
+    "semantic_hash": "ed75c9dfb9afbf837293bec88e2907ce"
+  },
+  "docs/research/2026-08-05-character-portraits-and-story-reuse-research.md": {
+    "mtime": 1785951049.5564861,
+    "ast_hash": "ebf5b15ee695d9ea6382411e5f1b8cb5",
+    "semantic_hash": "ebf5b15ee695d9ea6382411e5f1b8cb5"
+  },
+  "docs/research/2026-08-05-openrouter-free-model-candidates-research.md": {
+    "mtime": 1785978598.9526122,
+    "ast_hash": "5bb1e2918a4371b462b03df9013bb3fd",
+    "semantic_hash": "5bb1e2918a4371b462b03df9013bb3fd"
+  },
+  "docs/research/2026-08-05-rpg-battle-and-stat-resolution-mechanics-research.md": {
+    "mtime": 1785975941.891555,
+    "ast_hash": "443bffb20b5e0e4d47dbad23fcc85dbe",
+    "semantic_hash": "443bffb20b5e0e4d47dbad23fcc85dbe"
+  },
+  "docs/research/ai-game-platforms.md": {
+    "mtime": 1786022567.587612,
+    "ast_hash": "e92324878da037cfb19f6f565305f25e",
+    "semantic_hash": "e92324878da037cfb19f6f565305f25e"
+  },
+  "docs/research/game-engines-lightweight.md": {
+    "mtime": 1786022569.066631,
+    "ast_hash": "2957cf64a487a378d8a2c6eae8f595c2",
+    "semantic_hash": "2957cf64a487a378d8a2c6eae8f595c2"
+  },
+  "docs/research/llm-orchestration-frameworks.md": {
+    "mtime": 1786022889.7737772,
+    "ast_hash": "d3080a672bb0fe5bfcc7e1c25a47c959",
+    "semantic_hash": "d3080a672bb0fe5bfcc7e1c25a47c959"
+  },
+  "docs/research/narrative-frameworks.md": {
+    "mtime": 1786022436.3909128,
+    "ast_hash": "efc78d9360345ad75530d39b49c61ab8",
+    "semantic_hash": "efc78d9360345ad75530d39b49c61ab8"
+  },
+  "src/backend/AUTH.md": {
+    "mtime": 1786021890.904769,
+    "ast_hash": "b0a2565e1d02e829b0dd33d7a29e4667",
+    "semantic_hash": "b0a2565e1d02e829b0dd33d7a29e4667"
+  }
+}

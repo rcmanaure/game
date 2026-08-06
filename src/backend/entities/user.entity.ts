@@ -11,6 +11,9 @@ export class UserEntity {
   @Column()
   passwordHash!: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  activeChronicleId?: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 }
