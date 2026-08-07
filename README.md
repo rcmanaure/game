@@ -64,8 +64,8 @@ npm run harness "action 1" "action 2"
 - **Game Loop:** `src/harness/graph.ts` (LangGraph state machine)
 - **Backend:** `src/backend/app.module.ts`, `src/backend/auth/`, `src/backend/graph/`
 - **Entities:** `src/backend/entities/` (User, Chronicle, Turn, Npc)
-- **Design System:** `docs/DESIGN.md` (typography, colors, layout constraints)
-- **CEO Plan:** `docs/designs/ai-dm-platform.md` (full scope + decisions)
+- **Design System:** `docs/reference/DESIGN.md` (typography, colors, layout constraints)
+- **Roadmap:** `docs/production/ROADMAP.md` (scope + decisions + timeline)
 
 ## Environment Variables
 
@@ -93,10 +93,10 @@ Current coverage: harness rules, character validation, narration fallback, art g
 
 ## Docs
 
-- **Design System:** `docs/DESIGN.md` — typography, color, layout, motion, accessibility
-- **CEO Plan:** `docs/designs/ai-dm-platform.md` — full scope, decisions, roadmap
+- **Design System:** `docs/reference/DESIGN.md` — typography, color, layout, motion, accessibility
+- **Roadmap:** `docs/production/ROADMAP.md` — scope, decisions, T-numbers, timeline
 - **Research:** `docs/research/` — tech stack validation, competitor analysis, narrative frameworks
-- **Roadmap:** `docs/TODOS.md` — completed tasks, deferred scope, P2 items
+- **Quality:** `docs/testing/TEST_RESULTS_FINAL.md` — test coverage snapshot, known issues
 
 ## Development Conventions
 
@@ -107,13 +107,13 @@ Current coverage: harness rules, character validation, narration fallback, art g
 
 ## Deployment
 
-**Target:** Itch.io + Steam (post-v1). See `docs/designs/ai-dm-platform.md` Scope Decision #7.
+**Target:** Itch.io + Steam (post-v1). See `docs/production/ROADMAP.md` for deployment timeline.
 
 **Current:** Local dev + Docker Compose for testing.
 
 ## Support / Issues
 
-See `docs/TODOS.md` for known deferred items, P2 blockers before launch, and post-v1 roadmap.
+See `docs/production/ROADMAP.md` for blockers, deferred scope, and P2 items before launch.
 
 ---
 
