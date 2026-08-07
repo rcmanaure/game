@@ -11,8 +11,8 @@
 | T-Number | Feature | Status | Blocker |
 |----------|---------|--------|---------|
 | **T19** | NPC Recall (turn 2+) | ✅ Fixed | None |
-| **T14** | Narration Engine | 🟢 Shipped | None (volume test pending T15) |
-| **T15** | Model Cost Re-eval | ⏳ Blocked | Need T14 run with 1000+ turnos |
+| **T14** | Narration Engine | 🟢 Shipped | Volume test complete — see T15 finding |
+| **T15** | Model Cost Re-eval | ✅ Decision made | Free-tier models disqualified — see below |
 | **T25** | Permadeath UI | ⏳ Backlog | Design (post-T19) |
 | **T27** | Art Edit Chain | ⏳ Research | Reference image handling |
 
@@ -26,6 +26,23 @@
 - Recall now executes turn 2+ with correct context
 
 See `docs/production/P0_FIX_PLAN.md` for detail.
+
+---
+
+## T15 Finding — Free-Tier Models Disqualified (2026-08-07)
+
+**Test:** 100-turn volume run via `npm run test:volume` (LOGIC_MODEL/CREATIVE_MODEL both `:free` tier on OpenRouter).
+
+**Results:**
+- Success: 100/100 (100%) — masked by fail-open fallback (deterministic template), not a real pass
+- Latency: min 11.9s, max 134.6s, **avg 36.9s/turn** — unacceptable for real-time gameplay
+- Primary narration model failed intermittently: `TypeError: Cannot read properties of undefined (reading '0')` in `@langchain/openrouter`'s `_generate()` — package doesn't guard against `data.choices` being absent
+
+**Root cause:** Free-tier OpenRouter models return malformed/error payloads under rate-limit pressure (no `choices` field, HTTP 200). Not a bug in our code — `narrateWithFallback` already catches and falls back correctly (by design, CEO Review Hardening 2026-08-06).
+
+**Decision:** Free-tier models (`nvidia/nemotron-3-*:free`) disqualified for production. Need paid-tier model or dedicated quota before launch. Latency alone (avg 37s/turn) rules them out regardless of reliability.
+
+**Next step:** Re-run `npm run test:volume` with a paid-tier `CREATIVE_MODEL`/`LOGIC_MODEL` to get real latency/cost baseline before picking final model.
 
 ---
 
