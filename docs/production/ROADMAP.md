@@ -12,7 +12,7 @@
 |----------|---------|--------|---------|
 | **T19** | NPC Recall (turn 2+) | ✅ Fixed | None |
 | **T14** | Narration Engine | 🟢 Shipped | Volume test complete — see T15 finding |
-| **T15** | Model Cost Re-eval | ✅ Decision made | Free-tier models disqualified — see below |
+| **T15** | Model Cost Re-eval | 🟡 Risk accepted | Staying free-tier for now, revisit pre-launch — see below |
 | **T25** | Permadeath UI | ⏳ Backlog | Design (post-T19) |
 | **T27** | Art Edit Chain | ⏳ Research | Reference image handling |
 
@@ -40,9 +40,9 @@ See `docs/production/P0_FIX_PLAN.md` for detail.
 
 **Root cause:** Free-tier OpenRouter models return malformed/error payloads under rate-limit pressure (no `choices` field, HTTP 200). Not a bug in our code — `narrateWithFallback` already catches and falls back correctly (by design, CEO Review Hardening 2026-08-06).
 
-**Decision:** Free-tier models (`nvidia/nemotron-3-*:free`) disqualified for production. Need paid-tier model or dedicated quota before launch. Latency alone (avg 37s/turn) rules them out regardless of reliability.
+**Decision:** Staying on free-tier for now (dev cost = $0 while iterating on gameplay/design). Known risk accepted: avg 37s/turn latency and intermittent narration failures until switch to paid tier. Not a launch blocker yet — revisit before beta/launch.
 
-**Next step:** Re-run `npm run test:volume` with a paid-tier `CREATIVE_MODEL`/`LOGIC_MODEL` to get real latency/cost baseline before picking final model.
+**Next step:** Continue testing on free-tier. Re-run `npm run test:volume` against paid-tier `CREATIVE_MODEL`/`LOGIC_MODEL` for real latency/cost baseline when ready to move off free tier (pre-launch).
 
 ---
 
