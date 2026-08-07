@@ -7,6 +7,7 @@
     "harness": "tsx src/harness/run.ts",
     "harness:drift": "tsx src/harness/drift.ts",
     "test": "node --import tsx --test src/harness/__tests__/*.test.ts",
+    "test:volume": "ITERATIONS=${ITERATIONS:-1000} tsx volume-test.ts",
     "backend:dev": "ts-node -P tsconfig.backend.json src/backend/main.ts",
     "migration:generate": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:generate -d src/backend/data-source.ts",
     "migration:run": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:run -d src/backend/data-source.ts",

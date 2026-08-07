@@ -1,5 +1,5 @@
 import { StateGraph, StateSchema, START, END } from "@langchain/langgraph";
-import { PostgresCheckpointSaver } from "@langchain/langgraph-checkpoint-postgres";
+import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import type { GraphNode } from "@langchain/langgraph";
 import { z } from "zod";
 import {
@@ -137,9 +137,7 @@ const artTrigger: GraphNode<typeof State> = async (state) => {
 };
 
 const checkpointSaver = process.env.DATABASE_URL
-  ? new PostgresCheckpointSaver({
-      connectionString: process.env.DATABASE_URL,
-    })
+  ? PostgresSaver.fromConnString(process.env.DATABASE_URL)
   : undefined;
 
 export const harnessGraph = new StateGraph(State)
