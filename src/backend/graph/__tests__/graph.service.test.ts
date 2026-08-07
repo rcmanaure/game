@@ -64,6 +64,7 @@ describe('GraphService', () => {
         attributes: { strength: 10, dexterity: 14 },
         skills: {},
       },
+      turnNumber: 2,
     };
 
     it('should fail if turn reservation fails', async () => {
@@ -77,7 +78,7 @@ describe('GraphService', () => {
       expect(result.error).toContain('already processed');
     });
 
-    it('should query NPC on turn 1 only', async () => {
+    it('should query NPC on turn 2+ with chronicleId scope', async () => {
       jest
         .spyOn(reservationService, 'reserve')
         .mockResolvedValueOnce({
@@ -88,12 +89,12 @@ describe('GraphService', () => {
       // Mock graph invocation (normally expensive LLM call)
       jest.spyOn(service as any, 'runTurn').mockImplementationOnce(async (i) => {
         // Just test the NPC query path
-        if (i.turnNumber === 1) {
+        if (i.turnNumber > 1) {
           const npc = await npcRepo.findOne({
-            where: { userId: input.userId },
+            where: { userId: input.userId, chronicleId: input.chronicleId },
           });
           expect(npcRepo.findOne).toHaveBeenCalledWith({
-            where: { userId: input.userId },
+            where: { userId: input.userId, chronicleId: input.chronicleId },
             order: { createdAt: 'DESC' },
           });
         }

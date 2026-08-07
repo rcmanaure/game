@@ -41,6 +41,7 @@ export class GraphService implements OnModuleInit {
     playerAction: string;
     character: any; // CharacterSchema type from harness
     lastReferenceUrl?: string;
+    turnNumber: number;
   }, onArtReady?: (url: string) => void): Promise<{ success: boolean; error?: string }> {
     // Fast transaction 1: reserve the turn
     const reserved = await this.reservationService.reserve(
@@ -53,13 +54,13 @@ export class GraphService implements OnModuleInit {
       return { success: false, error: 'Turn already processed or in progress' };
     }
 
-    // T14d recall: query NPC by userId on turn 1 only (fail-open if DB fails)
+    // T14d recall: query NPC by userId & chronicleId on turn 2+ (fail-open if DB fails)
     // Query happens outside graph, result threaded into state for narrate
     let npcContext: Record<string, unknown> | null = null;
-    if (input.turnNumber === 1) {
+    if (input.turnNumber > 1) {
       try {
         const npc = await this.npcRepo.findOne({
-          where: { userId: input.userId },
+          where: { userId: input.userId, chronicleId: input.chronicleId },
           order: { createdAt: 'DESC' },
         });
         if (npc) {
@@ -84,7 +85,7 @@ export class GraphService implements OnModuleInit {
           artUrl: null,
           artError: null,
           lastReferenceUrl: input.lastReferenceUrl || null,
-          turnNumber: 1, // Placeholder: actual turn number will come from chronicle context
+          turnNumber: input.turnNumber,
         },
         { configurable: { thread_id: input.turnId } },
       );
