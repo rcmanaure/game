@@ -17,6 +17,7 @@ import { Socket, Server } from 'socket.io';
 import { JwtPayload } from './auth.service';
 import { UserEntity } from '../entities/user.entity';
 import { GraphService } from '../graph/graph.service';
+import { CharacterSchema } from '../../harness/character';
 
 @WebSocketGateway({
   cors: {
@@ -91,10 +92,17 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const turnData = data as Record<string, unknown>;
     const turnId = turnData.turnId as string;
     const playerAction = turnData.playerAction as string;
-    const character = turnData.character;
 
-    if (!turnId || !playerAction || !character) {
+    if (!turnId || !playerAction || !turnData.character) {
       throw new WsException('Missing required fields: turnId, playerAction, character');
+    }
+
+    // Validate character state — never trust client-supplied values
+    let character;
+    try {
+      character = CharacterSchema.parse(turnData.character);
+    } catch (error) {
+      throw new WsException(`Invalid character state: ${(error as Error).message}`);
     }
 
     // Get chronicleId: prefer client-provided, fallback to user's activeChronicleId, then placeholder

@@ -116,6 +116,7 @@ export const ResolvedEventSchema = z.object({
   statDeltas: z.record(z.string(), z.number()),
   archetype: z.string(),
   summary: z.string(),
+  consequences: z.array(z.string()).default([]), // visible consequences for player
 });
 export type ResolvedEvent = z.infer<typeof ResolvedEventSchema>;
 

@@ -68,6 +68,37 @@ function rollPlayerSide(character: Character, intent: LogicIntent): PlayerRoll {
   return { modifier, primaryRoll, cravingDie, usedRoll };
 }
 
+function generateConsequences(
+  statDeltas: Record<string, number>,
+  success: boolean,
+  criticalTier: CriticalTier,
+  rollType: string,
+): string[] {
+  const consequences: string[] = [];
+
+  if (criticalTier === "critical") {
+    consequences.push("Critical success!");
+  } else if (criticalTier === "cravingCritical") {
+    consequences.push("Extraordinary success through Craving!");
+  } else if (criticalTier === "cravingFailure") {
+    consequences.push("Catastrophic failure!");
+  } else if (!success && rollType === "opposedCheck") {
+    consequences.push("The attempt falters.");
+  }
+
+  if (statDeltas.craving) {
+    consequences.push("Craving increased.");
+  }
+  if (statDeltas.hp && statDeltas.hp < 0) {
+    consequences.push(`Took ${-statDeltas.hp} damage.`);
+  }
+  if (statDeltas.targetHp && statDeltas.targetHp < 0) {
+    consequences.push(`Target took ${-statDeltas.targetHp} damage.`);
+  }
+
+  return consequences;
+}
+
 /**
  * Resolves one check server-side. The resolve node's LLM only decided
  * *what* to check (attribute/skill/roughly-how-hard); everything here —
@@ -120,6 +151,7 @@ export function resolveCheck(
       statDeltas.hp = -(TIER_MODIFIERS[opponentTier] + 2);
     }
 
+    const consequences = generateConsequences(statDeltas, success, criticalTier, intent.rollType);
     return {
       ...base,
       targetNumber: null,
@@ -128,6 +160,7 @@ export function resolveCheck(
       success,
       criticalTier,
       statDeltas,
+      consequences,
     };
   }
 
@@ -147,6 +180,7 @@ export function resolveCheck(
     );
   }
 
+  const consequences = generateConsequences(statDeltas, success, criticalTier, intent.rollType);
   return {
     ...base,
     targetNumber,
@@ -155,6 +189,7 @@ export function resolveCheck(
     success,
     criticalTier,
     statDeltas,
+    consequences,
   };
 }
 
@@ -176,6 +211,7 @@ export function rejectedEvent(
     criticalTier: "none",
     statDeltas: {},
     summary: reason,
+    consequences: [`Attempt rejected: ${reason}`],
   };
 }
 
