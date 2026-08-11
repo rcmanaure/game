@@ -8,26 +8,13 @@ context: |
   benchmarks, ecosystem size, and deployment options. Goal: validate whether Phaser 
   is the right call vs. lighter alternatives.
 ---
-
 # Research: Lightweight Game Engines for Text-Heavy, Narrative-First Games
 
 ## Executive Summary
 
-**Finding: Phaser 3 is defensible but not optimal for this game's stated shape.** A 
-DOM+CSS-first approach with optional lightweight layers (Konva.js for canvas cards, 
-or Pixi.js for sprite animation only) is lighter and sufficient. Phaser's physics, 
-collision, and tilemap systems solve zero problems for text + card UI; its bundle 
-size (345 KB–71 KB gzipped depending on custom build) is dwarfed by the NestJS 
-backend overhead already committed.
+**Finding: Phaser 3 defensible, not optimal for game's shape.** DOM+CSS-first approach with optional lightweight layers (Konva.js for canvas cards, or Pixi.js for sprite animation only) lighter and sufficient. Phaser physics, collision, tilemap systems solve zero problems for text + card UI; bundle size (345 KB–71 KB gzipped depending on custom build) dwarfed by NestJS backend overhead already committed.
 
-**Secondary finding:** if a pure-canvas engine becomes necessary (100+ sprites on 
-screen), **Pixi.js (90–150 KB gzipped, 2D renderer only)** is the clear pick. 
-**Babylon.js and Three.js are overkill** — 3D engines for 2D work. **Konva.js** 
-(55 KB gzipped) is excellent for canvas-based UI if you want canvas layer and text 
-handling without a game loop. **Godot web export** is viable (35–100 MB WASM blob) 
-but adds build complexity for no feature win over JS-first. **Kaboom.js is 
-unmaintained** (Replit discontinued it); its successor **KaPlay** is actively maintained 
-but geared toward rapid arcade prototypes, not narrative games.
+**Secondary finding:** if pure-canvas engine becomes necessary (100+ sprites on screen), **Pixi.js (90–150 KB gzipped, 2D renderer only)** clear pick. **Babylon.js and Three.js overkill** — 3D engines for 2D work. **Konva.js** (55 KB gzipped) excellent for canvas-based UI, want canvas layer + text handling without game loop. **Godot web export** viable (35–100 MB WASM blob) but adds build complexity, no feature win over JS-first. **Kaboom.js unmaintained** (Replit discontinued it); successor **KaPlay** actively maintained but geared toward rapid arcade prototypes, not narrative games.
 
 ---
 
@@ -38,7 +25,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 **Bundle Size:**
 - Full build: 345 KB (minified, web server gzip)
 - Custom build (excluding physics, tilemap, etc.): 71–110 KB gzipped (primary: phaserjs/custom-build repo)
-- Variance: depends heavily on which Game Objects and systems you exclude
+- Variance: depends heavily on which Game Objects and systems excluded
 
 **What It Solves:**
 - Game loop + input handling (abstracted `requestAnimationFrame`, keyboard/mouse/touch)
@@ -50,7 +37,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 
 **Mobile Performance:**
 - Low-end Android: documented laggy/jerky with multiple simultaneous animations (Phaser issue #6989, v3 discourse)
-- Phaser 3.60 addressed WebGL buffer blocking via hybrid batch system, improving mobile performance
+- Phaser 3.60 addressed WebGL buffer blocking via hybrid batch system, improved mobile performance
 - Performance acceptable for card games (low on-screen sprite movement)
 - Recommendation: reduce resolution (960×640) on low-end devices; use requestAnimationFrame frame-skip for graceful degradation
 
@@ -68,8 +55,8 @@ but geared toward rapid arcade prototypes, not narrative games.
 
 **Verdict for Text+Card Game:**
 - Physics/collision/tilemap bundled in but unused → code bloat
-- Tween/animation is useful but light
-- Input handling is solid but not exclusive to Phaser
+- Tween/animation useful but light
+- Input handling solid, not exclusive to Phaser
 - Custom build can trim unused features, reaching 71 KB gzipped
 
 ---
@@ -90,7 +77,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 **Mobile Performance:**
 - Better than Phaser for large sprite counts (Babylon.js 56 FPS, Pixi.js 47 FPS vs Phaser 43 FPS on 10,000 sprites)
 - No built-in overhead; performance scales with your code only
-- Good for low-end Android if you're disciplined about draw calls
+- Good for low-end Android if disciplined about draw calls
 
 **Community & Ecosystem:**
 - Official UI library (pixi/ui) with commonly used components
@@ -105,8 +92,8 @@ but geared toward rapid arcade prototypes, not narrative games.
 - Desktop: requires Electron wrap same as Phaser (no native advantage)
 
 **Verdict for Text+Card Game:**
-- Excellent lightweight alternative if you need canvas rendering at all
-- Leaves input, state, animation to you (lighter mental model if you're hand-building DOM UI anyway)
+- Excellent lightweight alternative if canvas rendering needed at all
+- Leaves input, state, animation to you (lighter mental model if hand-building DOM UI anyway)
 - Better bundle size baseline than Phaser
 - Ecosystem less mature than Phaser for full game scaffolding
 
@@ -122,7 +109,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 **What It Solves:**
 - 3D rendering (shaders, lighting, complex geometry)
 - WebGL rendering pipeline
-- **Not applicable:** this is a 3D engine; card games are 2D
+- **Not applicable:** this a 3D engine; card games 2D
 
 **Mobile Performance:**
 - WebGL-heavy; low-end Android struggles significantly
@@ -135,7 +122,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 - Not a game engine; no input handling, game loop, or high-level game systems
 
 **Verdict:**
-- **Do not use.** 3D engine for 2D game is a category error.
+- **Do not use.** 3D engine for 2D game = category error.
 
 ---
 
@@ -150,11 +137,11 @@ but geared toward rapid arcade prototypes, not narrative games.
 **What It Solves:**
 - 3D rendering, physics, advanced graphics
 - Game loop abstraction
-- **Overkill:** physics and 3D are unused
+- **Overkill:** physics and 3D unused
 
 **Mobile Performance:**
 - Best-in-class WebGL performance in benchmarks (56 FPS on 10,000 sprites)
-- But overhead is unnecessary for text + cards
+- But overhead unnecessary for text + cards
 
 **Community & Ecosystem:**
 - Active, well-resourced (Microsoft backing)
@@ -162,7 +149,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 - Not sized for 2D games
 
 **Verdict:**
-- **Too much engine for too little use.** Better than Three.js (has game loop), but Pixi.js is lighter and sufficient.
+- **Too much engine for too little use.** Better than Three.js (has game loop), but Pixi.js lighter and sufficient.
 
 ---
 
@@ -196,9 +183,9 @@ but geared toward rapid arcade prototypes, not narrative games.
 - Desktop: same Electron wrap requirement
 
 **Verdict for Text+Card Game:**
-- Excellent if you want a pure-canvas UI layer without animation/physics overhead
+- Excellent if want pure-canvas UI layer without animation/physics overhead
 - Lighter than Phaser or Pixi
-- Requires you to hand-build game loop if animation needed (acceptable for this game's shape)
+- Requires hand-build game loop if animation needed (acceptable for this game's shape)
 - Good pairing: DOM CSS for text, Konva.js for card rendering canvas layer
 
 ---
@@ -209,7 +196,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 - Empty Godot 4.4 project: 35 MB compressed WASM, 25 MB with asset pack stripping
 - Typical game: 50–100 MB WASM blob
 - Desktop export (Electron): similar, but bundled differently
-- **Critical distinction:** WASM binary is not JavaScript tree-shakeable; entire runtime ships
+- **Critical distinction:** WASM binary not JavaScript tree-shakeable; entire runtime ships
 
 **What It Solves:**
 - Full IDE + game engine in one
@@ -218,29 +205,29 @@ but geared toward rapid arcade prototypes, not narrative games.
 - Cross-platform tooling (same editor for all targets)
 
 **Mobile Performance:**
-- WASM performance is good (approaching native in some cases)
-- But 25–100 MB initial load is a barrier for low-end mobile browsers
+- WASM performance good (approaching native in some cases)
+- But 25–100 MB initial load barrier for low-end mobile browsers
 - Godot 4.5 has memory ceiling constraints for longer play sessions
 
 **Desktop Deployment:**
 - Native Godot desktop export: small installers (via Godot's own executable packing)
-- Godot → Electron wrap: adds Godot's overhead on top of Chromium (defeats WASM advantage)
-- No advantage over building a JS game and wrapping in Electron
+- Godot → Electron wrap: adds Godot overhead on top of Chromium (defeats WASM advantage)
+- No advantage over building JS game and wrapping in Electron
 
 **Community & Ecosystem:**
 - Huge community for game development (not web-specific)
 - ~70,000+ GitHub stars
-- Mature 2D engine; web export is a second-class citizen (better on native targets)
-- UI systems built for desktop-first; web export is an afterthought
+- Mature 2D engine; web export second-class citizen (better on native targets)
+- UI systems built for desktop-first; web export afterthought
 
 **Web + Desktop Compromise:**
-- Web: 25–100 MB WASM blob is prohibitive for casual/web-first games with low bandwidth
-- Desktop: native export is great, but "web-first, wrap later" loses all Godot advantage
-- If you pick Godot for desktop, you're re-architecting for web (cross-compilation always costs)
+- Web: 25–100 MB WASM blob prohibitive for casual/web-first games, low bandwidth
+- Desktop: native export great, but "web-first, wrap later" loses all Godot advantage
+- Pick Godot for desktop → re-architecting for web (cross-compilation always costs)
 
 **Verdict:**
-- **Not suitable for web-first, text-heavy narrative game.** WASM blob size (25 MB minimum) is a barrier for browser casual play. Better suited for commercial desktop release where install size is tolerable.
-- If desktop release is later priority, native Godot builds are excellent (small installers). But that contradicts "web-first" sequencing in Scope Decision #7.
+- **Not suitable for web-first, text-heavy narrative game.** WASM blob size (25 MB minimum) barrier for browser casual play. Better suited for commercial desktop release where install size tolerable.
+- If desktop release later priority, native Godot builds excellent (small installers). But contradicts "web-first" sequencing in Scope Decision #7.
 
 ---
 
@@ -248,7 +235,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 
 **Status:**
 - **Unmaintained as of 2026.** Replit discontinued Kaboom.js.
-- Community fork **KaPlay** is actively maintained (last update 2026-08-04).
+- Community fork **KaPlay** actively maintained (last update 2026-08-04).
 
 **Bundle Size:**
 - Original Kaboom: ~20–30 KB minified (estimates from old docs)
@@ -272,7 +259,7 @@ but geared toward rapid arcade prototypes, not narrative games.
 - Used heavily in Replit educational contexts (not production games)
 
 **Verdict:**
-- **Avoid.** Dead upstream (Kaboom). KaPlay fork is too young and doesn't solve problems Phaser already handles better.
+- **Avoid.** Dead upstream (Kaboom). KaPlay fork too young, doesn't solve problems Phaser already handles better.
 
 ---
 
@@ -281,42 +268,42 @@ but geared toward rapid arcade prototypes, not narrative games.
 **Bundle Size:**
 - Baseline: 0 KB (no framework, just DOM and browser APIs)
 - Optional layers: Konva.js (55 KB), Motion.dev (~90% smaller than GSAP, ~5 KB), or animate.css (~3 KB)
-- Total: 0–60 KB depending on what you add
+- Total: 0–60 KB depending on what added
 
 **What It Solves:**
-- Text rendering: native DOM `<div>` + CSS is unbeaten for text (native browser optimization, accessibility, no redraw overhead)
-- Card layout: Flexbox/Grid is purpose-built for card UI
+- Text rendering: native DOM `<div>` + CSS unbeaten for text (native browser optimization, accessibility, no redraw overhead)
+- Card layout: Flexbox/Grid purpose-built for card UI
 - Animation: CSS transitions + `@keyframes` for idle/attack tweens, Motion.dev for orchestration
 - Input: native event listeners (no abstraction)
 - State: lives in NestJS backend (already committed per architecture)
 
 **What It Doesn't Solve (Real Gaps):**
 1. **Large sprite counts (100+):** DOM reflow/repaint cost scales poorly. Canvas needed.
-2. **Complex shader effects:** DOM can't do real-time filters (unless you layer a canvas).
-3. **Sub-millisecond input latency:** native DOM handlers have some scheduling delay; games with twitch action need this.
+2. **Complex shader effects:** DOM can't do real-time filters (unless layer canvas on top).
+3. **Sub-millisecond input latency:** native DOM handlers have some scheduling delay; games needing twitch action need this.
 
 **For This Game:**
-- Text: 🎯 excellent (native DOM is optimal)
+- Text: 🎯 excellent (native DOM optimal)
 - Cards: 🎯 excellent (Flexbox/Grid)
 - Sprite animation: 🎯 adequate (CSS keyframes for idle, Motion.dev for orchestration)
-- Sprite count: 🎯 adequate (card game is low sprite count: 5–20 on screen)
-- Input handling: 🎯 adequate (card taps/clicks are not latency-sensitive)
+- Sprite count: 🎯 adequate (card game low sprite count: 5–20 on screen)
+- Input handling: 🎯 adequate (card taps/clicks not latency-sensitive)
 - **Real cost avoided:** physics, collision, tilemap bundling, game loop abstraction
 
 **Mobile Performance:**
 - DOM scales excellently on Android (research shows DOM sprites beat canvas on older Android)
-- CSS transitions are GPU-accelerated on modern mobile
+- CSS transitions GPU-accelerated on modern mobile
 - No JavaScript game loop overhead; only runs on input or animation frame
 
 **Web + Desktop Deployment:**
-- Web: native (HTML/CSS/JS is the native platform)
+- Web: native (HTML/CSS/JS is native platform)
 - Desktop: Electron wrap works identically for DOM-based apps as canvas apps (150 MB installer overhead applies equally)
 - No advantage or disadvantage vs. Phaser/Pixi for wrapping
 
 **Verdict:**
 - **Best fit for stated game shape.** Text + cards + occasional sprite animation = DOM+CSS sweet spot.
 - Canvas layer (Konva.js or optional Pixi.js) only if sprite count explodes (not forecasted).
-- Eliminates physics, collision, tilemap code bloat that Phaser bundles but this game ignores.
+- Eliminates physics, collision, tilemap code bloat that Phaser bundles but game ignores.
 
 ---
 
@@ -371,31 +358,31 @@ but geared toward rapid arcade prototypes, not narrative games.
 - **Use:** vanilla HTML/CSS for text, cards, menus; vanilla DOM event listeners for input
 - **Add if needed:** Motion.dev (~5 KB) for orchestrating tween chains
 - **Add only if sprite count explodes:** Konva.js (55 KB) for canvas card rendering layer
-- **Rationale:** text and card UI are DOM's sweet spot; no engine bloat for unused systems; optimal mobile performance; aligns with NestJS backend architecture (state lives server-side)
+- **Why:** text and card UI DOM's sweet spot; no engine bloat for unused systems; optimal mobile performance; aligns with NestJS backend architecture (state lives server-side)
 
 ### Secondary Recommendation: Phaser 3 (Custom Build)
-- **If** you discover animated sprite count regularly exceeds 50, or you need built-in tween library
+- **If** animated sprite count regularly exceeds 50, or need built-in tween library
 - **Use:** custom build (phaserjs/custom-build repo) excluding physics/tilemap/unused Game Objects
 - **Target:** 71–110 KB gzipped
-- **Assumption:** animation + input handling + rendering are worth the 71 KB; physics/collision are still unused but smaller custom build mitigates
-- **Not recommended until you have data showing sprites are the bottleneck**
+- **Assumption:** animation + input handling + rendering worth 71 KB; physics/collision still unused but smaller custom build mitigates
+- **Not recommended until data shows sprites are the bottleneck**
 
 ### Not Recommended
 - Babylon.js, Three.js: overkill (3D engines)
 - Godot: 25–100 MB web export barrier for casual browser play
 - Kaboom: unmaintained; KaPlay too young
-- Pixi.js standalone: lighter than Phaser, but DOM+CSS is even lighter for this game's shape
+- Pixi.js standalone: lighter than Phaser, but DOM+CSS even lighter for this game's shape
 
 ---
 
 ## Tension with Foundational Decision #19-21
 
-Foundational Decision #19-21 (V1 Launch Scope) locks "Phaser/PixiJS frontend with sprite animations." This research finding is **not a override of that decision**, but flagged as a "candidate amendment" in the prior research doc (2026-08-04). 
+Foundational Decision #19-21 (V1 Launch Scope) locks "Phaser/PixiJS frontend with sprite animations." This research finding **not an override of that decision**, flagged as "candidate amendment" in prior research doc (2026-08-04).
 
 **Questions for future `/plan-eng-review` or decision review:**
 1. Does "sprite animations" include idle/attack tweens (solvable via CSS + Motion.dev) or require Phaser/Pixi specifically?
-2. What sprite count is acceptable before canvas becomes necessary?
-3. Is the 71–345 KB Phaser overhead acceptable for its tween/input convenience, or should MVP use DOM+CSS and add Phaser only on evidence of need?
+2. What sprite count acceptable before canvas becomes necessary?
+3. Is 71–345 KB Phaser overhead acceptable for tween/input convenience, or should MVP use DOM+CSS and add Phaser only on evidence of need?
 
 **This research doc enables that decision, not replaces it.**
 
@@ -403,13 +390,13 @@ Foundational Decision #19-21 (V1 Launch Scope) locks "Phaser/PixiJS frontend wit
 
 ## Verdict: Is Phaser the Right Call?
 
-**Conditional yes, but DOM+CSS-first is lighter and defensible.**
+**Conditional yes, but DOM+CSS-first lighter and defensible.**
 
-Phaser 3 (or custom build) is a solid, community-tested choice with excellent tooling. Its bundle size is not catastrophic (71 KB for a lean build). It solves real problems: input handling, sprite animation, rendering pipeline.
+Phaser 3 (or custom build) solid, community-tested choice, excellent tooling. Bundle size not catastrophic (71 KB for lean build). Solves real problems: input handling, sprite animation, rendering pipeline.
 
-But for a game that is 90% text + cards + 10% sprite tweens, Phaser is solving 10 problems to address 1. DOM+CSS natively solves the 90% (text + layout), and Motion.dev + optional canvas layer handles the 10% (animation + sprite rendering) at a fraction of the bundle cost and with simpler mental model.
+But for game 90% text + cards + 10% sprite tweens, Phaser solving 10 problems to address 1. DOM+CSS natively solves 90% (text + layout), Motion.dev + optional canvas layer handles 10% (animation + sprite rendering) at fraction of bundle cost, simpler mental model.
 
 **Recommendation for next phase:**
 1. Ship MVP with DOM+CSS + vanilla event listeners
-2. If data shows animation is a bottleneck (sprite count or tween complexity), measure the cost/benefit of adding Phaser or Pixi.js
-3. Do not pay for physics/collision/tilemap now; add them only if gameplay evolves to require them
+2. If data shows animation bottleneck (sprite count or tween complexity), measure cost/benefit of adding Phaser or Pixi.js
+3. Do not pay for physics/collision/tilemap now; add only if gameplay evolves to require them

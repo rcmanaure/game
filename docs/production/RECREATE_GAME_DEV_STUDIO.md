@@ -1,12 +1,12 @@
 # One-Shot: Recreate Game Dev Studio
 
-**Usage:** Paste this entire prompt into Claude Code when you need to recreate the 7-agent game development studio.
+**Usage:** Paste entire prompt into Claude Code when recreate 7-agent game dev studio needed.
 
 ---
 
 # PROMPT START HERE
 
-Create a complete 7-agent AI game development orchestration team at `~/.claude/agents/game-dev/`.
+Create complete 7-agent AI game development orchestration team at `~/.claude/agents/game-dev/`.
 
 ## Agents to Create
 
@@ -66,13 +66,13 @@ Verify:
 
 ## Studio Principles
 
-1. Ship a fun game — quality > velocity
+1. Ship fun game — quality > velocity
 2. Maintain clean architecture — code lives 5+ years
 3. Avoid unnecessary complexity — YAGNI
 4. Prefer simple solutions — boring > clever
 5. Never blindly implement — analyze first
 
-Create everything as self-contained files. No external dependencies.
+Create everything self-contained files. No external dependencies.
 
 # PROMPT END HERE
 
@@ -81,14 +81,14 @@ Create everything as self-contained files. No external dependencies.
 ## How to Use This File
 
 1. **Save location:** `~/work/game/docs/RECREATE_GAME_DEV_STUDIO.md` (this file)
-2. **When you need to recreate:** Copy everything from "PROMPT START HERE" to "PROMPT END HERE"
+2. **When recreate needed:** Copy everything from "PROMPT START HERE" to "PROMPT END HERE"
 3. **Paste into Claude Code:** Start new conversation, paste prompt
 4. **Wait:** Studio recreates automatically
 5. **Verify:** Run `ls ~/.claude/agents/game-dev/*.md | wc -l` (expect 6)
 
 ## Backup This File
 
-This prompt is the master copy. Back it up:
+Prompt is master copy. Back it up:
 
 ```bash
 # Git
@@ -103,7 +103,7 @@ tar czf ~/studio-prompt-backup.tar.gz ~/work/game/docs/RECREATE_GAME_DEV_STUDIO.
 # Copy to cloud storage or USB drive
 ```
 
-If you lose the studio agents, you have this prompt. Just paste it.
+Lose studio agents → still have this prompt. Just paste it.
 
 ---
 

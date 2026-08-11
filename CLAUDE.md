@@ -12,13 +12,13 @@ Studio: `@game-dev/game-lead` (orchestrator) + 5 specialists.
 
 **Code policy:** Analyze → Explain → Propose → Sign-off → Implement.
 
-See `docs/RECREATE_GAME_DEV_STUDIO.md` for full setup.  
+See `docs/production/RECREATE_GAME_DEV_STUDIO.md` for full setup.  
 See `~/.claude/agents/game-dev/docs/USAGE_GUIDE.md` for workflows.
 
 ---
 
 ## Design System
-Always read docs/DESIGN.md before visual/UI decisions. Font, color, spacing defined there. No deviation without approval.
+Always read docs/reference/DESIGN.md before visual/UI decisions. Font, color, spacing defined there. No deviation without approval.
 
 ## Tech Stack (Locked)
 - Frontend: DOM + CSS + Motion.dev (Phaser research: game-engines-lightweight.md ruled it out)

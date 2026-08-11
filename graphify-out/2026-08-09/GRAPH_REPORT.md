@@ -1,16 +1,16 @@
-# Graph Report - game  (2026-08-09)
+# Graph Report - game  (2026-08-06)
 
 ## Corpus Check
-- 82 files · ~86,093 words
+- 70 files · ~70,834 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1094 nodes · 1479 edges · 82 communities (65 shown, 17 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 34 edges (avg confidence: 0.74)
+- 906 nodes · 1243 edges · 74 communities (56 shown, 18 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 30 edges (avg confidence: 0.77)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `05137ba6`
+- Built from commit: `ad195346`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -27,7 +27,7 @@
 - compilerOptions
 - compilerOptions
 - glb_merge_anims.py
-- TurnEntity
+- GraphService
 - JwtWsGateway
 - graph.service.ts
 - OpenRouter image models for art generation
@@ -43,15 +43,15 @@
 - Phaser 3
 - glb_inspect.py
 - Decision #26: Ink + inkjs for narrative (v1 scope)
-- TODO — Implementation Backlog
+- Mejoras a @game-dev — Resumen de Especialización
 - Web APIs for Game Development
 - glb_patch.py
 - proc_anim_dragon.py
 - rig_transfer.py
 - seamless.py
 - Asset Generation Workflow
-- @game-dev — Índice Completo
-- Final Test Results — @game-dev Hierarchy Validation + Production Blockers
+- Contributing Guide
+- JwtAuthGuard
 - seg_dist
 - DOM+CSS-first frontend (post-v1 alternative)
 - JwtAuthGuard
@@ -62,24 +62,24 @@
 - backend/package.json
 - Permadeath + Torpor as core stakes
 - Tension with Foundational Decision #19-21 (Phaser/PixiJS)
-- Edge Cases — @game-dev Boundary Testing
-- Installed Skills Reference
+- Deployment Guide
 - Test Cases — Validación de Jerarquía @game-dev
 - Validación Completa — @game-dev Jerarquía
 - Uso de @game-dev — Studio de Desarrollo de Juegos
-- P0 Fix Plan — Recall Feature Blockers
 - Delegación @game-dev — Sistema Robusto de Especialistas
+- Empezá Aquí — @game-dev Quick Start
+- Test Results — @game-dev Hierarchy Validation
 - T15 Cost-Model Re-evaluation (Quality > Velocity Pass)
 - graph.ts
 - state.ts
-- Empezá Aquí — @game-dev Quick Start
+- Ejemplos Prácticos — Cómo Usar @game-dev/game-lead
 - Research: Blockchain NPCs (On-Chain AI State) for Retention Viability
 - AI Dungeon Master Coterie-Sim
 - rules.ts
-- Test Results — @game-dev Hierarchy Validation
-- Ejemplos Prácticos — Cómo Usar @game-dev/game-lead
+- PROMPT START HERE
+- Design System — AI Dungeon Master Coterie-Sim
 - narration.ts
-- Agent Improvements
+- NpcEntity
 - AddActiveChronicleIdToUser1786046005821
 - Research: Player Character Portraits and Story Reuse
 - Stylization — style contract for AI-generated assets
@@ -89,14 +89,6 @@
 - Research: Platform, Distribution, Monetization, Retention
 - Research: Text-Game Tooling, Animation, Alternative Formats, Accessibility
 - Voyage (Latitude) — multiplayer AI RPG competitor
-- SAMPLE_CHARACTERS
-- PROMPT START HERE
-- Design System — AI Dungeon Master Coterie-Sim
-- Roadmap — AI DM Coterie-Sim
-- Folders
-- Research: LLM-Narrated Permadeath Precedent — AI Dungeon, AI Roguelite, Hidden Door, Fallen London
-- Permadeath Retention Mechanics: Hades, FTL, Slay the Spire
-- Complete One-Shot Recreation — @game-dev with Inline Documentation
 
 ## God Nodes (most connected - your core abstractions)
 1. `log_info()` - 30 edges
@@ -106,21 +98,21 @@
 5. `log_success()` - 20 edges
 6. `log_warn()` - 20 edges
 7. `Test Results — @game-dev Hierarchy Validation` - 18 edges
-8. `TurnEntity` - 15 edges
-9. `Game Development Basics` - 15 edges
-10. `install_desktop()` - 14 edges
+8. `Game Development Basics` - 15 edges
+9. `install_desktop()` - 14 edges
+10. `TurnEntity` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `resolve()` --calls--> `resolveCheck()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/rules.ts
-- `resolve()` --calls--> `sanitizeIntent()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/state.ts
-- `rulesValidate()` --calls--> `applyMutation()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/validator.ts
-- `narrate()` --calls--> `narrateWithFallback()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/narration.ts
 - `Rendering Pipeline Subsystem` --semantically_similar_to--> `Rendering Subsystem`  [INFERRED] [semantically similar]
   .agents/skills/game-engine/references/game-engine-core-principles.md → .agents/skills/game-engine/SKILL.md
+- `Research: OpenRouter Free-Tier Model Candidates` --validates--> `OpenRouter image models for art generation`  [INFERRED]
+  docs/research/2026-08-05-openrouter-free-model-candidates-research.md → CLAUDE.md
+- `DOM+CSS-first frontend (post-v1 alternative)` --conceptually_related_to--> `Phaser/PixiJS game frontend engine`  [INFERRED]
+  docs/research/2026-08-04-platform-and-business-research.md → CLAUDE.md
+- `itch.io-first distribution strategy` --constrains--> `Phaser/PixiJS game frontend engine`  [INFERRED]
+  docs/research/2026-08-04-platform-and-business-research.md → CLAUDE.md
+- `Motion.dev for CSS tweens (5 KB alternative)` --supports--> `DOM+CSS-first frontend (post-v1 alternative)`  [INFERRED]
+  CLAUDE.md → docs/research/2026-08-04-platform-and-business-research.md
 
 ## Import Cycles
 - None detected.
@@ -131,11 +123,11 @@
 - **LLM Orchestration Framework Options** — langgraph_framework, langchain_framework, vercel_ai_sdk, anthropic_agent_sdk, rivet_framework, huggingface_agents [EXTRACTED 1.00]
 - **JWT Authentication Implementation Components** — jwt_strategy, jwt_auth_guard, src_backend_auth_service, jwt_ws_gateway [EXTRACTED 1.00]
 
-## Communities (82 total, 17 thin omitted)
+## Communities (74 total, 18 thin omitted)
 
 ### Community 0 - "character.ts"
-Cohesion: 0.19
-Nodes (12): Attribute, Character, CHARACTER_STATUSES, CharacterSchema, CharacterStatus, CharacterStatusSchema, Skill, SkillSchema (+4 more)
+Cohesion: 0.15
+Nodes (14): Attribute, Character, CHARACTER_STATUSES, CharacterSchema, CharacterStatus, CharacterStatusSchema, SAMPLE_CHARACTERS, Skill (+6 more)
 
 ### Community 1 - "install.sh"
 Cohesion: 0.10
@@ -155,15 +147,15 @@ Nodes (37): Game Engine Core Design Principles, Game Engine Skill, Canvas 2D API
 
 ### Community 5 - "scripts"
 Cohesion: 0.07
-Nodes (28): devDependencies, ts-node, tsx, @types/express, @types/node, @types/passport-jwt, typescript, name (+20 more)
+Nodes (27): devDependencies, ts-node, tsx, @types/express, @types/node, @types/passport-jwt, typescript, name (+19 more)
 
 ### Community 6 - "data-source.ts"
 Cohesion: 0.16
 Nodes (11): ChronicleEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Column, CreateDateColumn (+3 more)
 
 ### Community 7 - "art.ts"
-Cohesion: 0.26
-Nodes (8): ArtResult, extractImageUrl(), generateArt(), placeholderUrl(), main(), saveImage(), imageModelId(), openRouterApiKey()
+Cohesion: 0.23
+Nodes (8): ArtResult, extractImageUrl(), generateArt(), placeholderUrl(), main(), saveImage(), loadEnv(), imageModelId()
 
 ### Community 8 - "pipeline.py"
 Cohesion: 0.21
@@ -181,21 +173,21 @@ Nodes (13): src/backend/**/*.ts, compilerOptions, emitDecoratorMetadata, esModul
 Cohesion: 0.32
 Nodes (11): accessor_bytes(), append_accessor(), f32_bytes(), f32_list(), fix_root_scale(), main(), merge_clip(), node_names() (+3 more)
 
-### Community 12 - "TurnEntity"
-Cohesion: 0.16
-Nodes (10): InjectRepository, PrimaryColumn, Column, CreateDateColumn, Entity, Index, TurnEntity, GraphService (+2 more)
+### Community 12 - "GraphService"
+Cohesion: 0.29
+Nodes (3): GraphService, Injectable, HarnessGraphState
 
 ### Community 13 - "JwtWsGateway"
-Cohesion: 0.20
-Nodes (7): ConnectedSocket, MessageBody, JwtWsGateway, Injectable, SubscribeMessage, WebSocketGateway, WebSocketServer
+Cohesion: 0.17
+Nodes (8): ConnectedSocket, InjectRepository, MessageBody, JwtWsGateway, Injectable, SubscribeMessage, WebSocketGateway, WebSocketServer
 
 ### Community 14 - "graph.service.ts"
-Cohesion: 0.18
-Nodes (10): NpcEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, TURN_STATUSES, TurnStatus (+2 more)
+Cohesion: 0.21
+Nodes (10): PrimaryColumn, Column, CreateDateColumn, Entity, Index, TURN_STATUSES, TurnEntity, TurnStatus (+2 more)
 
 ### Community 16 - "app.module.ts"
-Cohesion: 0.14
-Nodes (7): AuthService, JwtPayload, Injectable, JwtAuthGuard, Injectable, JwtStrategy, Injectable
+Cohesion: 0.20
+Nodes (5): AuthService, JwtPayload, Injectable, JwtStrategy, Injectable
 
 ### Community 17 - "RolesGuard"
 Cohesion: 0.25
@@ -241,9 +233,9 @@ Nodes (5): accessor_values(), find_skeleton_roots(), main(), Joint nodes whose p
 Cohesion: 0.50
 Nodes (4): Decision #26: Ink + inkjs for narrative (v1 scope), Ink + inkjs narrative templating engine, Quality over velocity principle (2026-08-06), Scope Decision #4: Persistent NPC recall (v1 scope)
 
-### Community 28 - "TODO — Implementation Backlog"
-Cohesion: 0.04
-Nodes (46): EXECUTION ORDER, INNOVATION RISKS (surfaced, not buried), M1.1 — Rewrite raw SQL to TypeORM QueryBuilder, M1.2 — Validate chronicleId ownership at WS trust boundary, M1.3 — Delete `'placeholder-chronicle-id'` fallback, M1.4 — `@Public()` on HealthController, M1.5 — roles.guard fail-closed default, M1 — Production Blockers (SHIP STOPPERS) (+38 more)
+### Community 28 - "Mejoras a @game-dev — Resumen de Especialización"
+Cohesion: 0.05
+Nodes (37): Antes, Antes, Antes, Antes, Antes, Antes, Antes, Antes (+29 more)
 
 ### Community 29 - "Web APIs for Game Development"
 Cohesion: 0.40
@@ -269,13 +261,9 @@ Nodes (4): flatten_luminance(), make_seamless(), offset_blend(), periodic_compon
 Cohesion: 0.40
 Nodes (5): Asset Generation Workflow, AutoSprite Generation Model, Game Design System Reference, Higgsfield Game Generation Skill, Spritesheet Generation
 
-### Community 35 - "@game-dev — Índice Completo"
-Cohesion: 0.05
-Nodes (41): "Agent type not found", "¿Agregamos feature X?", ⚡ Common Issues & Solutions, "¿Cómo Empiezo?", "¿Cómo Fixo los P0s?", "¿Cómo Funciona la Delegación?", "¿Cómo Uso Especialistas Directos?", "¿Cómo Validar que Funciona?" (+33 more)
-
-### Community 36 - "Final Test Results — @game-dev Hierarchy Validation + Production Blockers"
+### Community 35 - "Contributing Guide"
 Cohesion: 0.06
-Nodes (32): Blocker 1: turnNumber Recall Query Broken, Blocker 2: chronicleId Not Scoped in Recall, Codebase: ⚠️ B Grade (with P0 fixes), Conclusion, Core Tests (10), Critical Finding: 2 P0 Blockers in Recall Feature, Crosstalk Prevention, Current Status: BLOCKED (2 P0 Fixes Required) (+24 more)
+Nodes (31): Architecture Decisions, Author Footer, Backend Logs, Before PR, Before Starting, Code Conventions, Code Review Checklist, Commit Conventions (+23 more)
 
 ### Community 37 - "seg_dist"
 Cohesion: 0.67
@@ -289,49 +277,49 @@ Nodes (4): DOM+CSS-first frontend (post-v1 alternative), itch.io-first distribut
 Cohesion: 0.67
 Nodes (4): JwtAuthGuard, JWT Strategy, JwtWsGateway, AuthService
 
-### Community 47 - "Edge Cases — @game-dev Boundary Testing"
-Cohesion: 0.06
-Nodes (31): Category 10: Decision Reversals (Context Change), Category 11: Error Scenarios (System Under Stress), Category 1: Ambiguous Requests (Design vs Code), Category 2: Missing Context (Incomplete Brief), Category 3: Conflicting Requirements (Tradeoffs), Category 4: Novel Features (No Precedent), Category 5: Extreme Scale (Stress Testing), Category 6: Incomplete Bug Reports (QA Edge Cases) (+23 more)
+### Community 47 - "Deployment Guide"
+Cohesion: 0.08
+Nodes (23): Build for Itch.io, Build Steps (Planned, Not v1), CORS Configuration (⚠️ Critical for Itch.io), Deployment Guide, Electron Scaffold (Placeholder for T25+), Environment, Environment Variables for Production, Itch.io Deployment (v1) (+15 more)
 
-### Community 48 - "Installed Skills Reference"
-Cohesion: 0.06
-Nodes (30): Agent Configuration, Backend Engineering, `cpu-profiling` (aj-geddes/useful-ai-prompts), `data-analysis` (claude-office-skills/skills), Database Engineering, `e2e-playwright-testing` (asyrafhussin/agent-skills), Future Custom Skills (Post-Playtest), `game-analytics` (alphaonedev/claude-skills) (+22 more)
-
-### Community 49 - "Test Cases — Validación de Jerarquía @game-dev"
+### Community 48 - "Test Cases — Validación de Jerarquía @game-dev"
 Cohesion: 0.08
 Nodes (23): Caso: Bug Report, Caso: Code Architecture Question, Caso: Core Loop Fun Factor, Caso: Engineer Gets Design Question, Caso: Feature Design Evaluation, Caso: Feature Precedent, Caso: Full Ship Readiness Audit, Caso: Slow Turn Resolution (+15 more)
 
-### Community 50 - "Validación Completa — @game-dev Jerarquía"
+### Community 49 - "Validación Completa — @game-dev Jerarquía"
 Cohesion: 0.09
 Nodes (22): Checklist de Validación, Cómo Correr Tests, Cómo Usar Resultados, During Tests, Error Recovery (Tests 8-10), Iteration Process, Métricas de Validación, Opción 1: Manual (Práctico) (+14 more)
 
-### Community 51 - "Uso de @game-dev — Studio de Desarrollo de Juegos"
+### Community 50 - "Uso de @game-dev — Studio de Desarrollo de Juegos"
 Cohesion: 0.09
 Nodes (21): 1. Decisión Compleja → Use @game-lead, 2. Especialista Específico → Use Directo, 3. Bug o Issue → Use @qa-tester, 4. Feature Research → Use @game-researcher, Code: "¿Está listo para deploy?", Dimensiones de Análisis, Ejemplos Reales, Especialistas (+13 more)
 
-### Community 52 - "P0 Fix Plan — Recall Feature Blockers"
-Cohesion: 0.09
-Nodes (21): Blocker 1: turnNumber Parameter Missing, Blocker 2: chronicleId Scope Missing, Current Code, Current Code, Deployment Checklist, Effort: 30 minutes code + 15 min test = 45 minutes, Effort: 5 minutes code + 10 min test = 15 minutes, Fix (+13 more)
-
-### Community 53 - "Delegación @game-dev — Sistema Robusto de Especialistas"
+### Community 51 - "Delegación @game-dev — Sistema Robusto de Especialistas"
 Cohesion: 0.10
 Nodes (20): Best Practices de Comunicación, Bugs / Issues / Reproducibilidad, Caso 1: "¿El juego está listo para ship?", Caso 2: "Performance spike en art cache", Casos de Uso — Workflow Completo, CON game-lead, Código / Arquitectura / Mantenibilidad, Delegación @game-dev — Sistema Robusto de Especialistas (+12 more)
+
+### Community 52 - "Empezá Aquí — @game-dev Quick Start"
+Cohesion: 0.10
+Nodes (20): 5 Segundos, Cómo Sé Si Funciona, Documentación (En Orden de Lectura), Ejemplo Salida Real, Ejemplos Rápidos (Copy-Paste), Empezá Aquí — @game-dev Quick Start, "¿Es divertido el core loop?", Especialista responde fuera de su rol (+12 more)
+
+### Community 53 - "Test Results — @game-dev Hierarchy Validation"
+Cohesion: 0.10
+Nodes (20): Appendix: Raw Outputs, Executive Summary, Issue 1: [Title], Issue 2: [Title], Issues Found, Metric Summary, Next Iteration Planning, Observations & Recommendations (+12 more)
 
 ### Community 54 - "T15 Cost-Model Re-evaluation (Quality > Velocity Pass)"
 Cohesion: 0.11
 Nodes (17): 1. Logic Model: Gemini 2.0 Flash, 2. Creative Model: Claude 3.5 Sonnet, 3. Image Model: OpenRouter Image APIs, Action Items, Before Launch, Context, Cost Analysis, Decision Framework (+9 more)
 
 ### Community 55 - "graph.ts"
-Cohesion: 0.15
-Nodes (21): graph, narrate(), resolve(), rulesValidate(), State, ATTRIBUTES, narrate(), resolve() (+13 more)
+Cohesion: 0.21
+Nodes (15): ATTRIBUTES, narrate(), resolve(), rulesValidate(), State, apiKey(), creativeAltModel(), creativeModel() (+7 more)
 
 ### Community 56 - "state.ts"
 Cohesion: 0.14
-Nodes (15): AttributeSchema, CriticalTier, CriticalTierSchema, LogicIntent, LogicIntentRaw, LogicIntentSchema, nullableString, nullableStringOrNumber (+7 more)
+Nodes (15): AttributeSchema, CriticalTierSchema, LogicIntentRaw, LogicIntentRawSchema, LogicIntentSchema, nullableString, nullableStringOrNumber, OpponentTierSchema (+7 more)
 
-### Community 57 - "Empezá Aquí — @game-dev Quick Start"
-Cohesion: 0.10
-Nodes (20): 5 Segundos, Cómo Sé Si Funciona, Documentación (En Orden de Lectura), Ejemplo Salida Real, Ejemplos Rápidos (Copy-Paste), Empezá Aquí — @game-dev Quick Start, "¿Es divertido el core loop?", Especialista responde fuera de su rol (+12 more)
+### Community 57 - "Ejemplos Prácticos — Cómo Usar @game-dev/game-lead"
+Cohesion: 0.12
+Nodes (15): Conflicto entre especialistas, Cómo Leer Respuestas de Game-Lead, Ejemplos Prácticos — Cómo Usar @game-dev/game-lead, Especialista responde fuera de su rol, Game-lead no entiende tu request, Game-lead no sintetiza, Pro Tips, Template 1: ¿Es Divertido? (+7 more)
 
 ### Community 58 - "Research: Blockchain NPCs (On-Chain AI State) for Retention Viability"
 Cohesion: 0.13
@@ -342,73 +330,41 @@ Cohesion: 0.14
 Nodes (13): AI Dungeon Master Coterie-Sim, Architecture, Commands, Deployment, Development Conventions, Docs, Environment Variables, Key Files (+5 more)
 
 ### Community 60 - "rules.ts"
-Cohesion: 0.31
-Nodes (11): clampAttributeModifier(), modifierFor(), clampTargetNumber(), computeCriticalTier(), generateConsequences(), OpponentTier, PlayerRoll, resolveCheck() (+3 more)
+Cohesion: 0.26
+Nodes (12): clampAttributeModifier(), modifierFor(), clampTargetNumber(), computeCriticalTier(), OpponentTier, PlayerRoll, resolveCheck(), rollD20() (+4 more)
 
-### Community 61 - "Test Results — @game-dev Hierarchy Validation"
-Cohesion: 0.10
-Nodes (20): Appendix: Raw Outputs, Executive Summary, Issue 1: [Title], Issue 2: [Title], Issues Found, Metric Summary, Next Iteration Planning, Observations & Recommendations (+12 more)
+### Community 61 - "PROMPT START HERE"
+Cohesion: 0.15
+Nodes (12): Agents to Create, Backup This File, Documentation to Create, How to Use This File, Key Behaviors Embedded, One-Shot: Recreate Game Dev Studio, Output After Creation, Project Integration (+4 more)
 
-### Community 62 - "Ejemplos Prácticos — Cómo Usar @game-dev/game-lead"
-Cohesion: 0.12
-Nodes (15): Conflicto entre especialistas, Cómo Leer Respuestas de Game-Lead, Ejemplos Prácticos — Cómo Usar @game-dev/game-lead, Especialista responde fuera de su rol, Game-lead no entiende tu request, Game-lead no sintetiza, Pro Tips, Template 1: ¿Es Divertido? (+7 more)
+### Community 62 - "Design System — AI Dungeon Master Coterie-Sim"
+Cohesion: 0.17
+Nodes (11): Accessibility (carries forward from research already done this session), Aesthetic Direction, Color, Decisions Log, Design System — AI Dungeon Master Coterie-Sim, Layout, Motion, Product Context (+3 more)
 
 ### Community 63 - "narration.ts"
 Cohesion: 0.42
 Nodes (6): contentToString(), deterministicNarration(), isRefusal(), narrateWithFallback(), NarrationResponse, outcomeLabel()
 
-### Community 64 - "Agent Improvements"
-Cohesion: 0.14
-Nodes (13): 1. **gameplay-engineer** — Code Quality + Architecture, 2. **performance-engineer** — Metrics + Profiling, 3. **qa-tester** — Test Automation + Regression, 4. **gameplay-designer** — Fun Metrics + Design, 5. **game-researcher** — Industry Precedent + Risk, 6. **game-lead** — Orchestration (No Changes), Agent Improvements, Collaboration Pattern (+5 more)
-
-### Community 74 - "SAMPLE_CHARACTERS"
-Cohesion: 0.25
-Nodes (5): SAMPLE_CHARACTERS, loadEnv(), harnessGraph, ITERATIONS, SAMPLE_ACTIONS
-
-### Community 75 - "PROMPT START HERE"
-Cohesion: 0.15
-Nodes (12): Agents to Create, Backup This File, Documentation to Create, How to Use This File, Key Behaviors Embedded, One-Shot: Recreate Game Dev Studio, Output After Creation, Project Integration (+4 more)
-
-### Community 76 - "Design System — AI Dungeon Master Coterie-Sim"
-Cohesion: 0.17
-Nodes (11): Accessibility (carries forward from research already done this session), Aesthetic Direction, Color, Decisions Log, Design System — AI Dungeon Master Coterie-Sim, Layout, Motion, Product Context (+3 more)
-
-### Community 77 - "Roadmap — AI DM Coterie-Sim"
-Cohesion: 0.18
-Nodes (10): Current Sprint, Decision References, Deferred (Post-v1), Known Issues, Locked Decisions, P0 Fixes (Complete), Quality Gates (Pre-Launch), Roadmap — AI DM Coterie-Sim (+2 more)
-
-### Community 78 - "Folders"
-Cohesion: 0.18
-Nodes (10): Documentation Structure, File Count, Folders, `game-dev/` — @game-dev Studio Documentation (8 files), How to Use, `production/` — Production Fixes & Recreation (3 files), Quick Navigation, `reference/` — Reference & System Design (1 file) (+2 more)
-
-### Community 79 - "Research: LLM-Narrated Permadeath Precedent — AI Dungeon, AI Roguelite, Hidden Door, Fallen London"
-Cohesion: 0.29
-Nodes (6): 1. AI Dungeon (Latitude), 2. AI Roguelite, 3. Hidden Door, 4. Fallen London (Failbetter Games) — added as narrative-first slow-pacing precedent, Differentiation Analysis, Research: LLM-Narrated Permadeath Precedent — AI Dungeon, AI Roguelite, Hidden Door, Fallen London
-
-### Community 80 - "Permadeath Retention Mechanics: Hades, FTL, Slay the Spire"
-Cohesion: 0.29
-Nodes (6): FTL: Faster Than Light (Subset Games), Gap in Current Game, Hades (Supergiant Games), Pattern Across All Three, Permadeath Retention Mechanics: Hades, FTL, Slay the Spire, Slay the Spire (Mega Crit Games)
-
-### Community 81 - "Complete One-Shot Recreation — @game-dev with Inline Documentation"
+### Community 64 - "NpcEntity"
 Cohesion: 0.33
-Nodes (5): Complete One-Shot Recreation — @game-dev with Inline Documentation, COMPLETE RECREATION PROMPT (Copy Everything Below), Expected Output, How to Use This Complete Prompt, What This Prompt Does Differently
+Nodes (6): NpcEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn
 
 ## Knowledge Gaps
-- **532 isolated node(s):** `UV_NO_CONFIG`, `name`, `version`, `private`, `type` (+527 more)
+- **405 isolated node(s):** `UV_NO_CONFIG`, `name`, `version`, `private`, `type` (+400 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `TurnEntity` connect `TurnEntity` to `app.module.ts`, `data-source.ts`, `graph.service.ts`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `CharacterSchema` connect `character.ts` to `app.module.ts`, `state.ts`, `JwtWsGateway`, `graph.ts`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `scripts`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `JwtWsGateway` connect `JwtWsGateway` to `app.module.ts`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `GraphService` connect `GraphService` to `app.module.ts`, `NpcEntity`, `JwtWsGateway`, `graph.service.ts`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `UV_NO_CONFIG`, `name`, `version` to the rest of the system?**
-  _532 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _405 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `install.sh` be split into smaller, more focused modules?**
   _Cohesion score 0.10359964881474978 - nodes in this community are weakly interconnected._
 - **Should `Game Development Terminology` be split into smaller, more focused modules?**
