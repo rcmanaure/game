@@ -61,11 +61,30 @@ blade") live: previously 0 cost, now correctly costs HP on a miss.
   "no stable NPC identifier" risk Q2 flagged from the start — not a
   regression, an accepted tradeoff pending a stable id if it matters later.
 
-**Remaining open P0s (`TODO.md` M1–M3):** M1.1 (raw SQL → QueryBuilder,
-symptom already fixed), M1.5 (roles.guard fail-closed, dormant), M2.1-M2.3/
-M2.5-M2.7 (recall wiring, NPC hp, chronicle termination, LLM-failure/
-invariant-violation split, playerAction sanitization), M3.1-M3.2 (backend
-test suite — `jest` still not installed).
+✅ **M1.1 — raw SQL → TypeORM QueryBuilder (2026-08-13).** Both files'
+`dataSource.query(...)` calls replaced with `createQueryBuilder()`/
+`repo.update()`; column names now come from the entity, not hand-typed
+strings, so the quoting-bug class that caused the original outage is
+structurally closed, not just patched at today's call sites.
+
+✅ **M1.5 — roles.guard fail-closed (2026-08-13).** `user.role === undefined`
+now denies instead of defaulting to `UserRole.User`. `role` hydrates from a
+DB lookup in `JwtStrategy.validate` on every request, never from the JWT
+claim. Still dormant (no route uses `@Roles(...)` yet) — the trap is closed,
+not triggered.
+
+✅ **M2.1-M2.3/M2.5-M2.7 — recall wiring, NPC hp, chronicle termination,
+LLM-failure/invariant-violation split, playerAction sanitization.** All
+shipped 2026-08-13, see `CHANGELOG.md` `[0.1.1.0]`.
+
+✅ **M3.1 — backend test suite (2026-08-13).** `jest`/`ts-jest`/
+`@nestjs/testing` installed, wired into CI. 28 tests, all real, all
+passing, several against real Postgres.
+
+**Remaining open (`TODO.md` M1–M3):** M3.2 partial — mocking
+`harnessGraph.invoke` under ts-jest's CJS transform (to unit-test
+NPC-context-into-invoke directly) wasn't solved; that path is still only
+live-verified, not mock-tested.
 
 **Found and fixed 2026-08-13, not on this list because the audit never ran
 the backend far enough to find them:** the backend could not boot at all
@@ -180,12 +199,16 @@ See `docs/research/` for full rationale.
 
 - **Done (2026-08-13):** Auth endpoints, one turn against a live Postgres over
   the real WS path, player able to lose, craving applies, chronicleId
-  ownership fixed, LLM-call timeout stopgap. See `CHANGELOG.md` `[0.1.1.0]`.
-- **Now:** Pick real `LOGIC_MODEL`/`CREATIVE_MODEL` IDs (current defaults 404).
-  T19 recall wiring (`TODO.md` M2.1/M2.2 — persist trigger decided as
-  LLM-signaled, not yet implemented). Backend test suite (`jest`, M3.1).
-  Chronicle termination on death (M2.5) — the death path exists now but
-  nothing closes the chronicle when it fires.
+  ownership fixed, LLM-call timeout stopgap, `LOGIC_MODEL`/`CREATIVE_MODEL`
+  set to real IDs (`google/gemini-2.5-flash-lite`), T19 recall wiring (read
+  + write path), chronicle termination on death, LLM-failure/
+  invariant-violation split, playerAction sanitization, backend test suite
+  (M3.1, 28 tests), raw SQL → QueryBuilder (M1.1), roles.guard fail-closed
+  (M1.5). See `CHANGELOG.md` `[0.1.1.0]`.
+- **Now:** M3.2 gap (mocking `harnessGraph.invoke` under ts-jest — currently
+  live-verified only, not mock-tested). `npm run test:volume` re-run against
+  the current model choice for a real p95 latency baseline — mentioned
+  several times this session, not yet executed.
 - **2026-Q3:** T25 design, T27 art chain, frontend T0
 - **2026-Q4:** Beta test, Itch.io launch
 - **2026-Q4+:** Balance patches, permadeath tuning
@@ -230,14 +253,16 @@ See `docs/research/` for full rationale.
 | Backend never run against a live Postgres | 🔴 BLOCKER | ✅ FIXED 2026-08-13, live-verified over real WS |
 | Permadeath unreachable — only `opposedCheck` combat failure costs HP | 🔴 BLOCKER | ✅ FIXED 2026-08-13, live-verified on the audit's exact scenario |
 | `'placeholder-chronicle-id'` shared bucket; client `chronicleId` unvalidated | 🟠 MAJOR | ✅ FIXED 2026-08-13, live-verified both directions |
-| T19 recall not wired (`npcContext` discarded, no `npcs` writes) | 🔴 BLOCKER | ⛔ OPEN (query fixed 2026-08-07, still not wired 2026-08-13) |
+| T19 recall not wired (`npcContext` discarded, no `npcs` writes) | 🔴 BLOCKER | ✅ FIXED 2026-08-13, live-verified read+write path (D-3) |
 | `craving` computed, never applied (`applyMutation` reads only `hp`) | 🟠 MAJOR | ✅ FIXED 2026-08-13, unit-tested |
 | `GET /health` returns 401 — no `@Public()` under the global guard | 🟠 MAJOR | ✅ FIXED 2026-08-13, live-verified |
 | `countTurns` silently broken every turn (`TurnEntity`/`NpcEntity` missing from `forFeature`) | 🟠 MAJOR | ✅ FIXED 2026-08-13 — found live, not in original audit |
 | CLI harness (`run.ts`) crashes the instant `DATABASE_URL` is set (no `thread_id`) | 🟠 MAJOR | ✅ FIXED 2026-08-13 — found live, not in original audit |
-| Backend tests never execute (jest not installed) | 🟠 MAJOR | ⛔ OPEN |
-| ~81s measured turn latency, no timeout anywhere | 🟠 MAJOR | 🟡 PARTIAL — deadline shipped 2026-08-13 (stopgap), root cause scoped (see T15), not fixed |
-| `LOGIC_MODEL`/`CREATIVE_MODEL` default IDs 404 on OpenRouter | 🟡 MINOR | ⛔ OPEN — found 2026-08-13 |
+| Backend tests never execute (jest not installed) | 🟠 MAJOR | ✅ FIXED 2026-08-13 — 28 real tests, wired into CI, several against real Postgres |
+| Raw SQL hand-quoted to match migration columns (`TODO.md` M1.1) | 🟠 MAJOR | ✅ FIXED 2026-08-13 — QueryBuilder rewrite, column names now come from the entity |
+| `roles.guard` fails open when `user.role` is undefined (`TODO.md` M1.5) | 🟠 MAJOR | ✅ FIXED 2026-08-13 — fails closed, role hydrates from DB (dormant, no `@Roles` route yet) |
+| ~81s measured turn latency, no timeout anywhere | 🟠 MAJOR | ✅ FIXED 2026-08-13 — root cause was model choice (reasoning tokens), swapped to `google/gemini-2.5-flash-lite`, deadline stopgap still in place too (see T15) |
+| `LOGIC_MODEL`/`CREATIVE_MODEL` default IDs 404 on OpenRouter | 🟡 MINOR | ✅ FIXED 2026-08-13 — set to `google/gemini-2.5-flash-lite`, see `MODEL_RECOMMENDATIONS.md` |
 | Ink/inkjs locked against its own research, never installed | 🟡 MINOR | ✅ FIXED 2026-08-13 — lock dropped (decision D-2) |
 | Docs roadmap links | 🟡 MINOR | ✅ FIXED |
 

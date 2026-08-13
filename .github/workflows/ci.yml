@@ -26,15 +26,15 @@ jobs:
         run: npm test
       - name: Typecheck (backend)
         run: npx tsc --noEmit -p tsconfig.backend.json
+      - name: Backend tests
+        run: npm run test:backend
 
-      # ponytail: backend TYPECHECK is now gated (tsconfig.backend.json rootDir
-      # fixed to "src", __tests__ excluded -- it needs no jest install). Backend
-      # TESTS still are not: npm test globs src/harness/__tests__/*.test.ts only,
-      # and src/backend/graph/__tests__ needs jest / @types/jest / @nestjs/testing.
-      # Green here means both source trees COMPILE; it does not mean the backend
-      # works against real Postgres -- nothing here touches a database.
-      # Re-enable the remaining half once TODO.md M3.1 lands:
-      #   npm run test:backend
+      # M3.1 (2026-08-13): jest / @types/jest / ts-jest / @nestjs/testing
+      # installed, jest.backend.config.cjs added, backend tests now run
+      # here — closes the gap this comment used to describe. Still true:
+      # nothing in this workflow touches a real Postgres, so "backend
+      # tests pass" is unit-level confidence, not the live-DB verification
+      # this session did manually (see CHANGELOG [0.1.1.0]).
       #
       # ponytail: node-version pinned to 24 LTS. Dev runs 26.5, @types/node is ^22.
       # Three versions, none enforced. Consolidate via engines or .nvmrc if the

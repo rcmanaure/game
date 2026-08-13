@@ -10,12 +10,17 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 
 // somewhere to apply. Not every encounter targets a persisted Npc (one-off
 // monsters can stay ephemeral); rulesValidate only applies targetHp when
 // the resolved event's target is a real, persisted Npc row.
+// M4.3 (2026-08-13): recall's query filters userId+chronicleId and orders
+// createdAt DESC LIMIT 1 — a userId-only index means Postgres still seq-scans
+// within that user's rows to filter chronicleId and sort. Composite index
+// (userId, chronicleId, createdAt DESC) — see migration
+// AddCompositeIndexes1786644000000 — makes that an index-ordered scan.
 @Entity('npcs')
+@Index(['userId', 'chronicleId'])
 export class NpcEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
   @Column()
   userId!: string;
 

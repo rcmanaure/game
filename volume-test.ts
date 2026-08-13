@@ -29,6 +29,11 @@ async function main() {
     minMs: Infinity,
     maxMs: 0,
     errors: [] as string[],
+    // M4.2: a bare success/failure count can't tell a real narration from
+    // every call being refused/timed-out and landing on the deterministic
+    // template — this was the "100% success masked by fail-open fallback"
+    // gap. Counted separately so template-fallback rate is a real number.
+    narrationSource: { primary: 0, alt: 0, template: 0, none: 0 } as Record<string, number>,
   };
 
   console.log(`=== T14 Volume Test (${ITERATIONS} iterations) ===\n`);
@@ -53,6 +58,8 @@ async function main() {
 
       if (result.gameEvent && result.narration) {
         stats.success++;
+        const source = result.narrationSource ?? "none";
+        stats.narrationSource[source] = (stats.narrationSource[source] ?? 0) + 1;
       } else {
         stats.failure++;
         stats.errors.push(`Turn ${i + 1}: missing gameEvent or narration`);
@@ -71,6 +78,18 @@ async function main() {
   console.log("\n\n=== RESULTS ===");
   console.log(`Success: ${stats.success}/${stats.total} (${((stats.success / stats.total) * 100).toFixed(1)}%)`);
   console.log(`Failure: ${stats.failure}/${stats.total} (${((stats.failure / stats.total) * 100).toFixed(1)}%)`);
+  console.log(`\nNarration source (of ${stats.success} successes):`);
+  for (const [source, count] of Object.entries(stats.narrationSource)) {
+    if (count === 0) continue;
+    console.log(`  ${source}: ${count} (${((count / stats.success) * 100).toFixed(1)}%)`);
+  }
+  if (stats.narrationSource.template > 0) {
+    console.log(
+      `\n  ${stats.narrationSource.template} of ${stats.success} "successful" turns actually fell` +
+        ` through to the deterministic template (LLM refusal/timeout/error on both primary and alt) —` +
+        ` not a real model narration.`,
+    );
+  }
   console.log(`\nLatency (ms):`);
   console.log(`  Min: ${stats.minMs.toFixed(2)}`);
   console.log(`  Max: ${stats.maxMs.toFixed(2)}`);

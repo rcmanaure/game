@@ -4,15 +4,44 @@ import { GraphService } from '../graph.service';
 import { TurnReservationService } from '../turn-reservation.service';
 import { TurnEntity } from '../../entities/turn.entity';
 import { NpcEntity } from '../../entities/npc.entity';
+import { ChronicleEntity } from '../../entities/chronicle.entity';
+
+// M3.2 (2026-08-13): this file previously mocked `runTurn` — the method
+// under test — via jest.spyOn(service, 'runTurn').mockImplementationOnce,
+// which replaces the code being tested rather than exercising it. Two
+// adjacent tests had no assertions at all. Rewritten to test the parts of
+// GraphService reachable WITHOUT mocking the dynamic `import()` of the
+// ESM-only harness module (src/harness/graph.ts, no CJS build) — that
+// boundary is real and load-bearing (see CHANGELOG [0.1.1.0], M1.6), and
+// mocking a dynamic import cleanly under ts-jest's CJS transform is its
+// own scoped problem, not squeezed into this pass. What's covered here:
+// the reservation-fail short-circuit and the chronicle-already-ended
+// pre-check (both testable via jest.spyOn on real dependencies, no
+// harness import touched) plus onModuleInit's stale-turn sweep.
 
 describe('GraphService', () => {
   let service: GraphService;
-  let dataSource: DataSource;
+  let chronicleRepo: Repository<ChronicleEntity>;
   let turnRepo: Repository<TurnEntity>;
-  let npcRepo: Repository<NpcEntity>;
   let reservationService: TurnReservationService;
 
   beforeEach(async () => {
+    // GraphService's constructor calls dataSource.getRepository() directly
+    // (T19d recall + the rest of runTurn resolve their repos this way, not
+    // via @InjectRepository — see app.module.ts's comment on why). That
+    // constructor runs during compile(), so the routing must exist BEFORE
+    // compile() — a jest.spyOn attached after compile() is too late, the
+    // instance has already captured whatever getRepository returned then.
+    chronicleRepo = { findOne: jest.fn().mockResolvedValue(null) } as any;
+    turnRepo = { update: jest.fn().mockResolvedValue(undefined), findOne: jest.fn() } as any;
+    const npcRepo = { findOne: jest.fn() } as any;
+    const getRepository = jest.fn((entity: any) => {
+      if (entity === ChronicleEntity) return chronicleRepo;
+      if (entity === TurnEntity) return turnRepo;
+      if (entity === NpcEntity) return npcRepo;
+      return {};
+    });
+
     const module = await Test.createTestingModule({
       providers: [
         GraphService,
@@ -20,139 +49,90 @@ describe('GraphService', () => {
         {
           provide: DataSource,
           useValue: {
-            getRepository: jest.fn(),
+            getRepository,
             query: jest.fn(),
+            transaction: jest.fn(),
           },
         },
       ],
     }).compile();
 
     service = module.get<GraphService>(GraphService);
-    dataSource = module.get<DataSource>(DataSource);
-    reservationService = module.get<TurnReservationService>(
-      TurnReservationService
-    );
-
-    // Mock repositories
-    turnRepo = {
-      update: jest.fn().mockResolvedValue({ affected: 1 }),
-      findOne: jest.fn(),
-    } as any;
-
-    npcRepo = {
-      findOne: jest.fn(),
-    } as any;
-
-    jest.spyOn(dataSource, 'getRepository').mockImplementation((entity) => {
-      if (entity === TurnEntity) return turnRepo;
-      if (entity === NpcEntity) return npcRepo;
-      return {} as any;
-    });
+    reservationService = module.get<TurnReservationService>(TurnReservationService);
   });
 
-  describe('runTurn', () => {
-    const input = {
-      turnId: 'turn-123',
-      userId: 'user-456',
-      chronicleId: 'chronicle-789',
-      playerAction: 'I cast fireball',
-      character: {
-        id: 'mira-ashgrave',
-        name: 'Mira',
-        hp: 10,
-        maxHp: 10,
-        craving: 0,
-        proficiencyBonus: 2,
-        status: 'active',
-        attributeModifiers: { strength: 10, dexterity: 14 },
-        skills: {},
-      },
-    };
+  const input = {
+    turnId: 'turn-123',
+    userId: 'user-456',
+    chronicleId: 'chronicle-789',
+    playerAction: 'I cast fireball',
+    character: {
+      id: 'mira-ashgrave',
+      name: 'Mira',
+      hp: 10,
+      maxHp: 10,
+      craving: 0,
+      proficiencyBonus: 2,
+      status: 'active',
+      attributeModifiers: { strength: 10, dexterity: 14 },
+      skills: {},
+    },
+  };
 
-    it('should fail if turn reservation fails', async () => {
-      jest
-        .spyOn(reservationService, 'reserve')
-        .mockResolvedValueOnce(null);
+  describe('runTurn', () => {
+    it('rejects with chronicleAlreadyEnded when the chronicle has ended (M2.5)', async () => {
+      jest.spyOn(chronicleRepo, 'findOne').mockResolvedValueOnce({
+        id: input.chronicleId,
+        userId: input.userId,
+        endedAt: new Date('2026-08-13T00:00:00Z'),
+      } as ChronicleEntity);
 
       const result = await service.runTurn(input);
 
       expect(result.success).toBe(false);
+      expect(result.chronicleAlreadyEnded).toBe(true);
+      expect(result.error).toBe('This chronicle has ended');
+    });
+
+    it('checks the chronicle BEFORE reserving the turn — an ended chronicle never reaches reservation', async () => {
+      jest.spyOn(chronicleRepo, 'findOne').mockResolvedValueOnce({
+        id: input.chronicleId,
+        userId: input.userId,
+        endedAt: new Date(),
+      } as ChronicleEntity);
+      const reserveSpy = jest.spyOn(reservationService, 'reserve');
+
+      await service.runTurn(input);
+
+      expect(reserveSpy).not.toHaveBeenCalled();
+    });
+
+    it('fails with a distinct message if turn reservation fails (idempotency)', async () => {
+      jest.spyOn(chronicleRepo, 'findOne').mockResolvedValueOnce(null); // not ended
+      jest.spyOn(reservationService, 'reserve').mockResolvedValueOnce(null);
+
+      const result = await service.runTurn(input);
+
+      expect(result.success).toBe(false);
+      expect(result.chronicleAlreadyEnded).toBeUndefined();
       expect(result.error).toContain('already processed');
-    });
-
-    it('should query NPC on turn 2+ with chronicleId scope', async () => {
-      jest
-        .spyOn(reservationService, 'reserve')
-        .mockResolvedValueOnce({
-          turn_id: input.turnId,
-          status: 'reserved',
-        } as any);
-
-      // Mock graph invocation (normally expensive LLM call)
-      jest.spyOn(service as any, 'runTurn').mockImplementationOnce(async (i) => {
-        // Just test the NPC query path
-        if (i.turnNumber > 1) {
-          const npc = await npcRepo.findOne({
-            where: { userId: input.userId, chronicleId: input.chronicleId },
-          });
-          expect(npcRepo.findOne).toHaveBeenCalledWith({
-            where: { userId: input.userId, chronicleId: input.chronicleId },
-            order: { createdAt: 'DESC' },
-          });
-        }
-        return { success: true };
-      });
-
-      // This test is integration-heavy; full test requires mocking harnessGraph
-      // Simplified version shown here
-    });
-
-    it('should fail gracefully if NPC query errors', async () => {
-      jest
-        .spyOn(reservationService, 'reserve')
-        .mockResolvedValueOnce({
-          turn_id: input.turnId,
-          status: 'reserved',
-        } as any);
-
-      jest
-        .spyOn(npcRepo, 'findOne')
-        .mockRejectedValueOnce(new Error('DB query failed'));
-
-      // Service should catch and continue (fail-open)
-      // Verified by checking error logs and continued execution
-      // Full test requires mocking harnessGraph.invoke()
-    });
-
-    it('should persist turn result to DB', async () => {
-      jest
-        .spyOn(reservationService, 'reserve')
-        .mockResolvedValueOnce({
-          turn_id: input.turnId,
-          status: 'reserved',
-        } as any);
-
-      jest.spyOn(npcRepo, 'findOne').mockResolvedValueOnce(null);
-
-      // Full test requires mocking harnessGraph.invoke() to return a valid result
-      // This test structure is set up for that
     });
   });
 
   describe('onModuleInit', () => {
-    it('should flip stale reserved turns to failed', async () => {
-      jest.spyOn(dataSource, 'query').mockResolvedValueOnce([]);
-
+    it('flips stale reserved turns to failed with a ~60s threshold', async () => {
       await service.onModuleInit();
 
-      expect(dataSource.query).toHaveBeenCalledWith(
-        expect.stringContaining('UPDATE turns SET status'),
-        expect.any(Array)
+      expect(turnRepo.update).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'reserved' }),
+        { status: 'failed' },
       );
-
-      // Verify the stale threshold is ~60s
-      const args = (dataSource.query as jest.Mock).mock.calls[0];
-      expect(args[1][0]).toBeInstanceOf(Date);
+      const [criteria] = (turnRepo.update as jest.Mock).mock.calls[0];
+      // LessThan(...) wraps the threshold in a FindOperator — ._value holds the raw Date.
+      const staleBefore = criteria.createdAt._value as Date;
+      const ageMs = Date.now() - staleBefore.getTime();
+      expect(ageMs).toBeGreaterThan(55_000);
+      expect(ageMs).toBeLessThan(65_000);
     });
   });
 });

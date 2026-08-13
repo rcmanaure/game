@@ -7,6 +7,7 @@
     "harness": "tsx src/harness/run.ts",
     "harness:drift": "tsx src/harness/drift.ts",
     "test": "node --import tsx --test src/harness/__tests__/*.test.ts",
+    "test:backend": "jest --config jest.backend.config.cjs",
     "test:volume": "ITERATIONS=${ITERATIONS:-1000} tsx volume-test.ts",
     "backend:build": "tsc -p tsconfig.backend.json && echo '{\"type\":\"commonjs\"}' > dist/backend/package.json",
     "backend:dev": "npm run backend:build && node dist/backend/backend/main.js",
@@ -42,10 +43,14 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@nestjs/testing": "^11.1.29",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/passport-jwt": "^4.0.1",
+    "jest": "^30.4.2",
     "socket.io-client": "^4.8.3",
+    "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"

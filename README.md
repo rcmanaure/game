@@ -53,6 +53,7 @@ npm run harness "action 1" "action 2"
 | `npm run harness:drift` | Test art generation quality via drift scan |
 | `npm run backend:dev` | Start NestJS backend (port 3000) |
 | `npm run test` | Run harness unit tests |
+| `npm run test:backend` | Run backend unit tests (jest) |
 | `npm run migration:generate` | Generate new TypeORM migration |
 | `npm run migration:run` | Run pending migrations |
 | `npm run migration:revert` | Revert last migration |
@@ -76,8 +77,8 @@ npm run harness "action 1" "action 2"
 | `JWT_REFRESH_SECRET` | Refresh token key | (generate: `openssl rand -hex 32`) |
 | `OPENROUTER_API_KEY` | LLM API key | `sk-...` |
 | `FRONTEND_URL` | CORS origin for WS | `http://localhost:3001` |
-| `LOGIC_MODEL` | D20/stat resolver | `google/gemini-2.0-flash-001` ⚠️ 404s on OpenRouter now, pick a real model |
-| `CREATIVE_MODEL` | Narration LLM | `anthropic/claude-3.5-sonnet` ⚠️ 404s on OpenRouter now, pick a real model |
+| `LOGIC_MODEL` | D20/stat resolver | `google/gemini-2.5-flash-lite` (see `docs/production/MODEL_RECOMMENDATIONS.md`) |
+| `CREATIVE_MODEL` | Narration LLM | `google/gemini-2.5-flash-lite` |
 | `CREATIVE_MODEL_ALT` | Narration retry (content-refusal fallback) | `nvidia/nemotron-3-super-120b-a12b:free` |
 | `IMAGE_MODEL` | Art generation | `google/gemini-2.5-flash-image` |
 | `LLM_TIMEOUT_MS` | Per-call deadline before falling back (stopgap, not a latency fix) | `45000` |
@@ -92,7 +93,15 @@ npm run test
 # Runs `node --import tsx --test src/harness/__tests__/*.test.ts`
 ```
 
-Current coverage: harness rules, character validation, narration fallback, art generation (69 tests). Backend has no test suite yet (`jest` not installed — `TODO.md` M3.1).
+Current coverage: harness rules, character validation, narration fallback, art generation (76 tests).
+
+```bash
+npm run test:backend
+# Runs jest --config jest.backend.config.cjs — 28 tests: auth (register/
+# login/password hashing), chronicle-ended gating, stale-turn sweep,
+# roles.guard fail-closed matrix, JWT role hydration, turn reservation
+# (against real Postgres).
+```
 
 ## Docs
 

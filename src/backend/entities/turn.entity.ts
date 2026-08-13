@@ -35,7 +35,11 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryColumn } from 'typeorm'
 export const TURN_STATUSES = ['reserved', 'completed', 'failed'] as const;
 export type TurnStatus = (typeof TURN_STATUSES)[number];
 
+// M4.3 (2026-08-13): countTurns filters userId+chronicleId together on every
+// turn — composite index replaces the two single-column ones, which were
+// each only half of the actual query predicate.
 @Entity('turns')
+@Index(['userId', 'chronicleId'])
 export class TurnEntity {
   // Client-generated UUID (crypto.randomUUID() in the browser) — required
   // for retry-after-drop idempotency to work: a retry must resend the SAME
@@ -43,11 +47,9 @@ export class TurnEntity {
   @PrimaryColumn('uuid')
   turnId!: string;
 
-  @Index()
   @Column()
   userId!: string;
 
-  @Index()
   @Column()
   chronicleId!: string;
 

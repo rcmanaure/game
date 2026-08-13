@@ -1,121 +1,71 @@
-import { Test } from '@nestjs/testing';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
+import { randomUUID } from 'node:crypto';
 import { TurnReservationService } from '../turn-reservation.service';
 import { TurnEntity } from '../../entities/turn.entity';
+import dataSource from '../../data-source';
 
-describe('TurnReservationService', () => {
+// M1.1 (2026-08-13): the old version of this file mocked dataSource.query
+// and asserted on the raw SQL string it was called with — it verified the
+// mock, not the query. TODO.md M1.1 explicitly calls mock-based tests
+// harmful here (the whole bug class was a raw-SQL column-name typo a mock
+// can't catch) and asks for a real Postgres integration test instead. This
+// runs the real QueryBuilder rewrite against the dev DB from `npm run db:up`.
+describe('TurnReservationService (real Postgres)', () => {
+  let ds: DataSource;
   let service: TurnReservationService;
-  let dataSource: DataSource;
-  let turnRepo: Repository<TurnEntity>;
+  const userId = randomUUID();
+  const chronicleId = randomUUID();
 
-  // In-memory SQLite for testing (requires better setup in real project)
-  // For now, mock the dataSource.query calls
-
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
-      providers: [
-        TurnReservationService,
-        {
-          provide: DataSource,
-          useValue: {
-            query: jest.fn(),
-          },
-        },
-      ],
-    }).compile();
-
-    service = module.get<TurnReservationService>(TurnReservationService);
-    dataSource = module.get<DataSource>(DataSource);
+  beforeAll(async () => {
+    ds = await dataSource.initialize();
+    service = new TurnReservationService(ds);
   });
 
-  describe('reserve', () => {
-    it('should return new turn if INSERT succeeds', async () => {
-      const turnId = 'turn-123';
-      const userId = 'user-456';
-      const chronicleId = 'chronicle-789';
+  afterAll(async () => {
+    await ds.destroy();
+  });
 
-      const mockTurn = {
-        turn_id: turnId,
-        user_id: userId,
-        chronicle_id: chronicleId,
-        status: 'reserved',
-      };
+  afterEach(async () => {
+    await ds.getRepository(TurnEntity).delete({ userId });
+  });
 
-      jest.spyOn(dataSource, 'query').mockResolvedValueOnce([mockTurn]);
+  it('reserves a brand-new turnId', async () => {
+    const turnId = randomUUID();
 
-      const result = await service.reserve(turnId, userId, chronicleId);
+    const result = await service.reserve(turnId, userId, chronicleId);
 
-      expect(result).toEqual(mockTurn);
-      expect(dataSource.query).toHaveBeenCalledWith(
-        expect.stringContaining('INSERT INTO turns'),
-        [turnId, userId, chronicleId]
-      );
-    });
+    expect(result).not.toBeNull();
+    expect(result!.turnId).toBe(turnId);
+    expect(result!.status).toBe('reserved');
+  });
 
-    it('should retry UPDATE if INSERT conflicts', async () => {
-      const turnId = 'turn-123';
-      const userId = 'user-456';
-      const chronicleId = 'chronicle-789';
+  it('returns null on a second reservation of the same turnId (idempotency)', async () => {
+    const turnId = randomUUID();
+    await service.reserve(turnId, userId, chronicleId);
 
-      const mockTurn = {
-        turn_id: turnId,
-        user_id: userId,
-        status: 'reserved',
-      };
+    const result = await service.reserve(turnId, userId, chronicleId);
 
-      // First call (INSERT): returns empty (conflict)
-      // Second call (UPDATE): returns the retry turn
-      jest
-        .spyOn(dataSource, 'query')
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([mockTurn]);
+    expect(result).toBeNull();
+  });
 
-      const result = await service.reserve(turnId, userId, chronicleId);
+  it('allows retry-after-failure: a failed turn can be re-reserved', async () => {
+    const turnId = randomUUID();
+    await service.reserve(turnId, userId, chronicleId);
+    await ds.getRepository(TurnEntity).update({ turnId }, { status: 'failed' });
 
-      expect(result).toEqual(mockTurn);
-      expect(dataSource.query).toHaveBeenCalledTimes(2);
-      // First call: INSERT
-      expect(dataSource.query).toHaveBeenNthCalledWith(
-        1,
-        expect.stringContaining('INSERT INTO turns'),
-        [turnId, userId, chronicleId]
-      );
-      // Second call: UPDATE where status='failed'
-      expect(dataSource.query).toHaveBeenNthCalledWith(
-        2,
-        expect.stringContaining('UPDATE turns'),
-        [turnId, userId]
-      );
-    });
+    const result = await service.reserve(turnId, userId, chronicleId);
 
-    it('should return null if turn already reserved/completed', async () => {
-      const turnId = 'turn-123';
-      const userId = 'user-456';
-      const chronicleId = 'chronicle-789';
+    expect(result).not.toBeNull();
+    expect(result!.status).toBe('reserved');
+  });
 
-      // INSERT fails (conflict), UPDATE fails (not in failed state)
-      jest
-        .spyOn(dataSource, 'query')
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([]);
+  it('does not re-reserve a completed turn', async () => {
+    const turnId = randomUUID();
+    await service.reserve(turnId, userId, chronicleId);
+    await ds.getRepository(TurnEntity).update({ turnId }, { status: 'completed' });
 
-      const result = await service.reserve(turnId, userId, chronicleId);
+    const result = await service.reserve(turnId, userId, chronicleId);
 
-      expect(result).toBeNull();
-    });
-
-    it('should handle DB errors gracefully', async () => {
-      const turnId = 'turn-123';
-      const userId = 'user-456';
-      const chronicleId = 'chronicle-789';
-
-      jest
-        .spyOn(dataSource, 'query')
-        .mockRejectedValueOnce(new Error('DB connection failed'));
-
-      await expect(
-        service.reserve(turnId, userId, chronicleId)
-      ).rejects.toThrow('DB connection failed');
-    });
+    expect(result).toBeNull();
   });
 });

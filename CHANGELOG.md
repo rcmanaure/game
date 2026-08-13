@@ -150,8 +150,62 @@ this branch's work between `6017c0d` and this commit.
   favorable `opponentTier`/`targetNumber` was completely ignored — the
   model classified the actual action (attacking a dragon) correctly instead.
 
+- **The backend has a real test suite now, wired into CI.** Every backend
+  fix landed this session (auth, chronicleId ownership, NPC persist,
+  chronicle termination, invariant rejection) had zero automated
+  coverage — only manual live-verification scripts, deleted after each
+  run. Installed `jest`/`ts-jest`/`@nestjs/testing`, added
+  `jest.backend.config.cjs`, wired `test:backend` into `ci.yml`.
+  `graph.service.test.ts` — previously the audit's own named example of a
+  test that mocks the method it claims to test, plus two tests with zero
+  assertions — rewritten: those are deleted, replaced with real coverage
+  of the chronicle-ended pre-check and the reservation-fail path. New
+  `auth.service.test.ts` (register/login, duplicate-email rejection,
+  plaintext password never persisted, no user-enumeration) and
+  `password.util.test.ts` (hash format, random salt, verify, malformed
+  input doesn't throw). 20 tests, all real, all passing.
+
+- **Raw SQL replaced with TypeORM QueryBuilder — the quoting-bug class is
+  gone, not just fixed at today's call sites.** `turn-reservation.service.ts`
+  and `graph.service.ts` used to hand-write SQL with manually-quoted
+  camelCase column names (`"turnId"`, `"userId"`, ...) to match the
+  migration; a single retyped identifier would silently reintroduce the
+  exact bug that made the backend unable to boot against real Postgres in
+  the first place. `reserve()` now uses
+  `createQueryBuilder().insert().orIgnore().returning('*')` and
+  `createQueryBuilder().update().where(...).returning('*')`; the stale-turn
+  sweep and both failure-recovery paths in `graph.service.ts` now use
+  `turnRepo.update(...)` with TypeORM's `LessThan`. Column names come from
+  the entity now, so they can't drift from the migration. Live-verified
+  against real Postgres over a real WS connection: a turn completes
+  (`turn:complete` + `art:ready`), then the identical `turnId` replayed and
+  is correctly rejected ("Turn already processed or in progress") — proves
+  both the new INSERT-ignore path and the conditional retry-UPDATE path.
+  `turn-reservation.service.test.ts` rewritten from a mock of
+  `dataSource.query` (which can't catch a real column-name typo) to a real
+  integration test against the dev Postgres container.
+
+- **`roles.guard` no longer fails open.** `user.role || UserRole.User`
+  meant an unauthenticated-for-roles request silently got treated as a
+  normal user instead of being denied — harmless today only because no
+  route uses `@Roles(...)` yet, but a live trap for the first one that
+  does. Now: `user.role === undefined` returns `false` (deny). `UserEntity`
+  gained a real `role` column (migration `AddRoleToUser`, defaults to
+  `'user'`). `JwtStrategy.validate` hydrates `role` from a DB lookup on
+  every request instead of trusting a JWT claim that was never set in the
+  first place — a role change takes effect on the next request, not at
+  token expiry, and a token for a since-deleted user is now rejected.
+  Live-verified: registered a user against real Postgres, confirmed
+  `role='user'` in the row, confirmed a real turn carries the hydrated role
+  through. 13 new tests (`roles.guard.test.ts`, `jwt.strategy.test.ts`).
+
 ### Known, not fixed this pass
 
+- Backend test coverage stops at the dynamic `import()` boundary —
+  mocking `harnessGraph.invoke` under ts-jest's CJS transform (to test
+  NPC-context-passed-into-invoke directly, per `TODO.md` M3.2's original
+  ask) wasn't solved this pass. That specific behavior is still verified,
+  just by live testing against a real DB rather than a mock.
 - No way to start a NEW chronicle after one ends — only registration
   creates one, once. A real gap for whenever the frontend lands.
 - NPC death/dispersal isn't tracked — `NpcEntity` has no status column,
@@ -166,13 +220,12 @@ this branch's work between `6017c0d` and this commit.
   same day:** root cause was `deepseek-v4-flash-0731` being a reasoning
   model (10-33 reasoning tokens burned even on a trivial prompt,
   ~11-12s/call floor). Swapped `LOGIC_MODEL`/`CREATIVE_MODEL`/
-  `CREATIVE_MODEL_ALT` to `openai/gpt-4o-mini` (web-corroborated as one of
-  the lowest first-token-latency OpenRouter models, alongside Claude Haiku
-  3.5 and Gemini 2.5 Flash) — live-verified full turn dropped from 29.4s to
-  5.6s, narration quality held up. See `ROADMAP.md` T15.
-- Backend still has no test suite (`jest` not installed, `TODO.md` M3.1).
-- Raw SQL with hand-quoted camelCase columns is still hand-written
-  (`TODO.md` M1.1 — symptom fixed earlier, class not eliminated).
+  `CREATIVE_MODEL_ALT` to `google/gemini-2.5-flash-lite` (re-validated
+  against a fresh pull of the OpenRouter models list — cheaper and lower
+  first-token-latency than `deepseek-v4-flash-0731` in practice once
+  hidden reasoning tokens are counted) — live-verified full turn latency
+  dropped sharply, narration quality held up. See
+  `docs/production/MODEL_RECOMMENDATIONS.md` and `ROADMAP.md` T15.
 
 ## [0.1.0.0] - 2026-08-12
 

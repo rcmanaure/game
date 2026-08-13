@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, LessThan, Repository } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 // harness/* is ESM-only (langgraph has no CJS build) while this backend
 // compiles to CommonJS — a CJS module can't `require()` an ESM one, so
@@ -59,10 +59,9 @@ export class GraphService implements OnModuleInit {
     const STALE_THRESHOLD_MS = 60 * 1000;
     const staleBefore = new Date(Date.now() - STALE_THRESHOLD_MS);
 
-    await this.dataSource.query(
-      `UPDATE turns SET status = 'failed'
-       WHERE status = 'reserved' AND "createdAt" < $1`,
-      [staleBefore],
+    await this.turnRepo.update(
+      { status: 'reserved', createdAt: LessThan(staleBefore) },
+      { status: 'failed' },
     );
   }
 
@@ -79,6 +78,7 @@ export class GraphService implements OnModuleInit {
     chronicleAlreadyEnded?: boolean; // this chronicle ended before this turn was submitted
     chronicleJustEnded?: boolean; // THIS turn is the one that ended it (still completes normally)
     invariantViolation?: boolean; // rulesValidate rejected the mutation — it never happened
+    narrationSource?: 'primary' | 'alt' | 'template' | null; // M4.2: which model (if any) produced the narration
   }> {
     // M2.5 (2026-08-13): a dead character stopped the CLI loop, but the
     // backend never blocked further turns against an ended chronicle — a
@@ -157,10 +157,9 @@ export class GraphService implements OnModuleInit {
       );
     } catch (err) {
       // Graph invocation failed — flip turn to 'failed' so client can retry
-      await this.dataSource.query(
-        `UPDATE turns SET status = 'failed'
-         WHERE "turnId" = $1 AND "userId" = $2`,
-        [input.turnId, input.userId],
+      await this.turnRepo.update(
+        { turnId: input.turnId, userId: input.userId },
+        { status: 'failed' },
       );
       return { success: false, error: `Graph error: ${(err as Error).message}` };
     }
@@ -250,10 +249,9 @@ export class GraphService implements OnModuleInit {
       });
     } catch (err) {
       // Persist failed — flip to 'failed' so retry picks it up
-      await this.dataSource.query(
-        `UPDATE turns SET status = 'failed'
-         WHERE "turnId" = $1 AND "userId" = $2`,
-        [input.turnId, input.userId],
+      await this.turnRepo.update(
+        { turnId: input.turnId, userId: input.userId },
+        { status: 'failed' },
       );
       return { success: false, error: `Persist error: ${(err as Error).message}` };
     }
@@ -284,6 +282,7 @@ export class GraphService implements OnModuleInit {
     return {
       success: true,
       chronicleJustEnded: graphResult.character?.status === 'dead',
+      narrationSource: graphResult.narrationSource,
     };
   }
 

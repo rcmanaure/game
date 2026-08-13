@@ -171,7 +171,7 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // M2.5: the death-causing turn still completes normally (narration/art
     // for the death itself), then a separate chronicle:ended follows so
     // the client can transition without losing the final beat.
-    client.emit('turn:complete', { turnId });
+    client.emit('turn:complete', { turnId, narrationSource: result.narrationSource });
     if (result.chronicleJustEnded) {
       client.emit('chronicle:ended', { turnId });
     }

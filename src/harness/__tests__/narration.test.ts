@@ -63,7 +63,7 @@ test("deterministicNarration: never empty, reflects success/failure", () => {
   assert.match(failure, /fails/);
 });
 
-test("narrateWithFallback: primary success is used directly, alt never called", () => {
+test("narrateWithFallback: primary success is used directly, alt never called, source is 'primary'", () => {
   let altCalled = false;
   const result = narrateWithFallback({
     event: makeEvent(),
@@ -73,49 +73,53 @@ test("narrateWithFallback: primary success is used directly, alt never called", 
       return { content: "should not be reached" };
     },
   });
-  return result.then((narration) => {
-    assert.equal(narration, "A clean narration from the primary model.");
+  return result.then(({ text, source }) => {
+    assert.equal(text, "A clean narration from the primary model.");
+    assert.equal(source, "primary");
     assert.equal(altCalled, false);
   });
 });
 
-test("narrateWithFallback: primary refuses, alt succeeds -> uses alt narration", async () => {
-  const narration = await narrateWithFallback({
+test("narrateWithFallback: primary refuses, alt succeeds -> uses alt narration, source is 'alt'", async () => {
+  const { text, source } = await narrateWithFallback({
     event: makeEvent(),
     invokePrimary: async () => ({ content: "I cannot narrate this." }),
     invokeAlt: async () => ({ content: "The alt model narrates the beat instead." }),
   });
-  assert.equal(narration, "The alt model narrates the beat instead.");
+  assert.equal(text, "The alt model narrates the beat instead.");
+  assert.equal(source, "alt");
 });
 
-test("narrateWithFallback: primary and alt both refuse -> deterministic template, never empty", async () => {
+test("narrateWithFallback: primary and alt both refuse -> deterministic template, source is 'template', never empty", async () => {
   const event = makeEvent({ success: false, criticalTier: "none" });
-  const narration = await narrateWithFallback({
+  const { text, source } = await narrateWithFallback({
     event,
     invokePrimary: async () => ({ content: "" }),
     invokeAlt: async () => ({ response_metadata: { finish_reason: "content_filter" }, content: "" }),
   });
-  assert.ok(narration.length > 0);
-  assert.equal(narration, deterministicNarration(event));
+  assert.ok(text.length > 0);
+  assert.equal(text, deterministicNarration(event));
+  assert.equal(source, "template");
 });
 
 // CEO Review Hardening (2026-08-06) added try/catch around both invokes. A
 // thrown LLM error (network, 429, timeout) must fall through the same chain as
 // a refusal, not propagate and kill the turn.
-test("narrateWithFallback: primary throws -> alt still runs and its narration is used", async () => {
-  const narration = await narrateWithFallback({
+test("narrateWithFallback: primary throws -> alt still runs and its narration is used, source is 'alt'", async () => {
+  const { text, source } = await narrateWithFallback({
     event: makeEvent(),
     invokePrimary: async () => {
       throw new Error("429 rate limited");
     },
     invokeAlt: async () => ({ content: "The alt model carries the beat after the primary died." }),
   });
-  assert.equal(narration, "The alt model carries the beat after the primary died.");
+  assert.equal(text, "The alt model carries the beat after the primary died.");
+  assert.equal(source, "alt");
 });
 
-test("narrateWithFallback: primary and alt both throw -> deterministic template, never throws", async () => {
+test("narrateWithFallback: primary and alt both throw -> deterministic template, source is 'template', never throws", async () => {
   const event = makeEvent({ success: false, criticalTier: "none" });
-  const narration = await narrateWithFallback({
+  const { text, source } = await narrateWithFallback({
     event,
     invokePrimary: async () => {
       throw new Error("ECONNRESET");
@@ -124,6 +128,7 @@ test("narrateWithFallback: primary and alt both throw -> deterministic template,
       throw new Error("upstream 503");
     },
   });
-  assert.ok(narration.length > 0);
-  assert.equal(narration, deterministicNarration(event));
+  assert.ok(text.length > 0);
+  assert.equal(text, deterministicNarration(event));
+  assert.equal(source, "template");
 });

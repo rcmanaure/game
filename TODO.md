@@ -16,7 +16,22 @@ Backend broken on real Postgres. Tests green hide red. Fix first.
 - **Fix:** Replace all `dataSource.query(...)` raw SQL with `turnRepo.createQueryBuilder()` / `.update()` / `.insert()`. QueryBuilder match entity column names automatic — kill entire quoting-bug class.
 - **Verify:** Add integration test against real Postgres (testcontainers or local docker). Mock-based tests harmful here — need real DB.
 - **Refs:** code-reviewer C1. TypeORM QueryBuilder docs.
-- **Priority:** P0 → P2 (symptom fixed, class not eliminated).
+- **Priority:** P0 → P2 (symptom fixed) → DONE.
+- **Status (2026-08-13):** DONE. All raw `dataSource.query(...)` calls replaced:
+  `turn-reservation.service.ts`'s `reserve()` now uses `createQueryBuilder().insert().orIgnore().returning('*')`
+  for the new-turn path and `createQueryBuilder().update().where(...).returning('*')` for the
+  retry-after-failure path. `graph.service.ts`'s stale-sweep (`onModuleInit`) and both
+  failure-recovery UPDATEs now use `turnRepo.update(...)` with `LessThan(...)` for the
+  threshold. Column names now come from the entity, not hand-typed strings — the whole
+  quoting-bug class is structurally impossible now, not just fixed at today's call sites.
+  Verified live: real Postgres, real WS turn (`turn:complete` + `art:ready`), then the
+  exact same `turnId` replayed and correctly rejected with "Turn already processed or in
+  progress" — proves both the `orIgnore()` INSERT path and the conditional retry UPDATE
+  path. New test: `turn-reservation.service.test.ts` rewritten to run against real
+  Postgres (was mock-based — TODO said mocks are harmful for exactly this bug class since
+  a mock can't catch a real column-name mismatch). `graph.service.test.ts`'s stale-sweep
+  test updated to assert `turnRepo.update` with a `LessThan` threshold instead of the old
+  raw-SQL string match.
 - **Status (2026-08-12, /ship pre-landing review):** SYMPTOM FIXED, root class still open.
   All four raw queries now quote camelCase identifiers matching the migration exactly
   (`"turnId"`, `"userId"`, `"chronicleId"`, `"playerAction"`, `"createdAt"`), so
@@ -118,6 +133,21 @@ Backend broken on real Postgres. Tests green hide red. Fix first.
 - **Mark:** `// ponytail: role guard wired, hydrate role from DB before relying on @Roles`
 - **Refs:** code-reviewer C4. PassportJS strategy-validate pattern.
 - **Priority:** P1 (dormant trap, fix before any `@Roles` annotation ships).
+- **Status (2026-08-13):** DONE. `roles.guard.ts`: `user.role === undefined` now returns
+  `false` (fail-closed) instead of defaulting to `UserRole.User`. `UserEntity` gained a
+  `role` column (migration `1786643012008-AddRoleToUser`, `varchar NOT NULL DEFAULT 'user'`,
+  applied to real Postgres). `JwtStrategy.validate` now does a DB lookup by `payload.sub` on
+  every request and hydrates `role` from there — the JWT claim never carries a role, so
+  there's nothing in the token to trust or forge; a role change takes effect on the next
+  request, not at token expiry. Also now rejects tokens for users deleted after issue
+  (`findOne` returns null → `UnauthorizedException`), which the old strategy didn't check.
+  Still true: no route has `@Roles(...)` yet, so this stays dormant until an admin route
+  ships — the trap is just closed now instead of open.
+  Verified live: registered a user against real Postgres, confirmed `role='user'` in the
+  `users` table, confirmed the hydrated JWT payload carries it through a real turn. 13 new
+  tests: `roles.guard.test.ts` (5 — allow/deny matrix including the fail-closed case) and
+  `jwt.strategy.test.ts` (3 — hydration, deleted-user rejection, malformed-payload
+  short-circuit before any DB call).
 
 ---
 
@@ -329,6 +359,21 @@ Without M3: zero confidence in any other fix.
 - **Fix:** Install deps. Add `"test:backend": "jest --config jest.backend.config.js"`. Wire both `npm test` + `npm run test:backend` into CI.
 - **Refs:** QA P0 #5.
 - **Priority:** P0.
+- **Status (2026-08-13):** ✅ DONE. Installed `jest`, `@types/jest`, `ts-jest`,
+  `@nestjs/testing`. Added `jest.backend.config.cjs` (`.cjs` extension deliberately —
+  root `package.json` sets `"type": "module"`, a plain `.js` config would parse as
+  ESM and break `module.exports`; same class of fix as the backend build itself,
+  see M1.6). `moduleNameMapper` added to resolve the harness's ESM-style `./x.js`
+  imports that refer to sibling `.ts` files — real Node/tsx remap this at runtime,
+  ts-jest's CJS-oriented resolver doesn't, and this bit the very first real test run
+  (`onModuleInit`'s dynamic `import()` of `harness/graph.ts` failed to resolve until
+  fixed). `test:backend` wired into `ci.yml`. 20 tests across 4 files, all real:
+  `turn-reservation.service.test.ts` (already legitimate, just never run — 4 tests),
+  a rewritten `graph.service.test.ts` (see M3.2), new `auth.service.test.ts` (8
+  tests: register/login, duplicate-email rejection, plaintext-password-never-stored,
+  no-user-enumeration), new `password.util.test.ts` (6 tests: hash format, random
+  salt, verify correct/wrong, malformed-hash doesn't throw, case/whitespace
+  sensitivity).
 
 ### M3.2 — Rewrite NPC recall regression test (real runTurn exercise)
 - **File:** `src/backend/graph/__tests__/graph.service.test.ts:90-102`
@@ -336,6 +381,20 @@ Without M3: zero confidence in any other fix.
 - **Fix:** Mock `npcRepo.findOne` (return fake Npc w/ real shape), mock `harnessGraph.invoke` (capture first arg). Call real `service.runTurn({turnNumber:2, chronicleId})`. Assert: `npcRepo.findOne` called w/ `{where:{userId, chronicleId}, order:{createdAt:'DESC'}}`. Assert: captured invoke arg contain `npcContext` field w/ seeded NPC. Add multi-chronicle isolation test (two runTurns, different chronicleIds, NPC seeded only in one).
 - **Refs:** QA P0 #5. code-reviewer M5.
 - **Priority:** P0.
+- **Status (2026-08-13):** ⚠️ PARTIAL, deliberately narrower than this ticket's fix
+  text. The mock-of-method-under-test test is deleted, not fixed — the two
+  zero-assertion tests are deleted too. What replaced them: real tests for the
+  chronicle-ended pre-check (M2.5) and the reservation-fail path, both fully
+  exercising real `runTurn` code. **NOT done:** mocking `harnessGraph.invoke` to
+  test the NPC-recall-context-passed-into-invoke path this ticket specifically
+  asks for. That requires mocking a dynamic `import()` of an ESM module under
+  ts-jest's CJS transform — a real, separate problem from the `.js`-resolution fix
+  above (jest's module registry needs to intercept the dynamic import call itself,
+  not just resolve import specifiers), not solved in this pass. The actual behavior
+  this ticket wants verified — recall wiring end to end — IS covered, just by live
+  verification against a real DB rather than a jest mock (see CHANGELOG [0.1.1.0],
+  T19). Multi-chronicle isolation test also not added. Flagging the gap rather than
+  claiming this ticket fully closed.
 
 ### M3.3 — Add `tsc --noEmit` to CI
 - **File:** `.github/workflows/*` (CI config)
@@ -369,9 +428,8 @@ Without M3: zero confidence in any other fix.
     Fixed by `rootDir: "src"` plus `exclude: ["src/backend/**/__tests__/**"]`, so the
     typecheck needs no jest. `tsc --noEmit -p tsconfig.backend.json` exits 0 and runs
     as a CI step.
-  - ⏳ Backend **tests** still NOT in CI — genuinely blocked on M3.1 (jest /
-    `@types/jest` / `@nestjs/testing`). The `npm run test:backend` re-enable line
-    stays commented in `ci.yml`.
+  - ✅ Backend **tests** now in CI (2026-08-13, M3.1 landed) — `npm run test:backend`
+    uncommented in `ci.yml`, 20 real tests.
   - ✅ `graph.service.test.ts` fixture fixed (2026-08-12): `attributes` →
     `attributeModifiers`, `status:'alive'` → `'active'`, plus the three fields the
     fixture was missing outright against `CharacterSchema` (`id`, `craving`,

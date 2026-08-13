@@ -53,29 +53,42 @@ export function deterministicNarration(event: ResolvedEvent): string {
   return `${outcomeLabel(event)} (${event.summary})`;
 }
 
+// M4.2 (2026-08-13): a volume test counting `narration` non-empty as
+// "success" can't tell a real LLM narration from every call having been
+// refused/failed and silently landing on the deterministic template — the
+// exact "100% success masked by fail-open fallback" gap ROADMAP.md flagged.
+// Tagging the source makes template-fallback rate a measurable, reportable
+// number instead of an invisible one.
+export type NarrationSource = "primary" | "alt" | "template";
+
+export interface NarrationResult {
+  text: string;
+  source: NarrationSource;
+}
+
 export async function narrateWithFallback(params: {
   event: ResolvedEvent;
   invokePrimary: () => Promise<NarrationResponse>;
   invokeAlt: () => Promise<NarrationResponse>;
-}): Promise<string> {
+}): Promise<NarrationResult> {
   const { event, invokePrimary, invokeAlt } = params;
 
   // CEO Review Hardening (2026-08-06): catch thrown LLM errors, not just refusals
   try {
     const primary = await invokePrimary();
-    if (!isRefusal(primary)) return contentToString(primary);
+    if (!isRefusal(primary)) return { text: contentToString(primary), source: "primary" };
   } catch (err) {
     console.error('Primary narration invoke failed:', err);
   }
 
   try {
     const alt = await invokeAlt();
-    if (!isRefusal(alt)) return contentToString(alt);
+    if (!isRefusal(alt)) return { text: contentToString(alt), source: "alt" };
   } catch (err) {
     console.error('Alt narration invoke failed:', err);
   }
 
-  return deterministicNarration(event);
+  return { text: deterministicNarration(event), source: "template" };
 }
 
 function contentToString(response: NarrationResponse): string {

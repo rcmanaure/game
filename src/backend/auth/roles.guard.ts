@@ -21,11 +21,11 @@ export class RolesGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    if (!user) {
+    if (!user || user.role === undefined) {
+      // Fail closed: no hydrated role means we can't prove access, not that it's implicitly allowed.
       return false;
     }
 
-    // User role from JWT or DB — for now, check if role exists in requiredRoles
-    return requiredRoles.includes(user.role || UserRole.User);
+    return requiredRoles.includes(user.role);
   }
 }
