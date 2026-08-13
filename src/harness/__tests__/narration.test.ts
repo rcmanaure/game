@@ -21,6 +21,7 @@ function makeEvent(overrides: Partial<ResolvedEvent> = {}): ResolvedEvent {
     success: true,
     criticalTier: "none",
     statDeltas: {},
+    consequences: [],
     archetype: "test-scene",
     summary: "the wretch lunges and is repelled",
     ...overrides,
@@ -91,6 +92,35 @@ test("narrateWithFallback: primary and alt both refuse -> deterministic template
     event,
     invokePrimary: async () => ({ content: "" }),
     invokeAlt: async () => ({ response_metadata: { finish_reason: "content_filter" }, content: "" }),
+  });
+  assert.ok(narration.length > 0);
+  assert.equal(narration, deterministicNarration(event));
+});
+
+// CEO Review Hardening (2026-08-06) added try/catch around both invokes. A
+// thrown LLM error (network, 429, timeout) must fall through the same chain as
+// a refusal, not propagate and kill the turn.
+test("narrateWithFallback: primary throws -> alt still runs and its narration is used", async () => {
+  const narration = await narrateWithFallback({
+    event: makeEvent(),
+    invokePrimary: async () => {
+      throw new Error("429 rate limited");
+    },
+    invokeAlt: async () => ({ content: "The alt model carries the beat after the primary died." }),
+  });
+  assert.equal(narration, "The alt model carries the beat after the primary died.");
+});
+
+test("narrateWithFallback: primary and alt both throw -> deterministic template, never throws", async () => {
+  const event = makeEvent({ success: false, criticalTier: "none" });
+  const narration = await narrateWithFallback({
+    event,
+    invokePrimary: async () => {
+      throw new Error("ECONNRESET");
+    },
+    invokeAlt: async () => {
+      throw new Error("upstream 503");
+    },
   });
   assert.ok(narration.length > 0);
   assert.equal(narration, deterministicNarration(event));

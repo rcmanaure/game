@@ -23,6 +23,7 @@ function makeEvent(hpDelta: number): ResolvedEvent {
     success: true,
     criticalTier: "none",
     statDeltas: hpDelta === 0 ? {} : { hp: hpDelta },
+    consequences: [],
     archetype: "test-scene",
     summary: "test event",
   };

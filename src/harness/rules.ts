@@ -68,7 +68,10 @@ function rollPlayerSide(character: Character, intent: LogicIntent): PlayerRoll {
   return { modifier, primaryRoll, cravingDie, usedRoll };
 }
 
-function generateConsequences(
+// Exported for direct branch testing (TODO.md M7.4b) — resolveCheck rolls a
+// real d20, so the criticalTier branches are not reachable deterministically
+// through the public path.
+export function generateConsequences(
   statDeltas: Record<string, number>,
   success: boolean,
   criticalTier: CriticalTier,

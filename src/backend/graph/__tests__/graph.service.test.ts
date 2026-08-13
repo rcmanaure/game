@@ -57,14 +57,16 @@ describe('GraphService', () => {
       chronicleId: 'chronicle-789',
       playerAction: 'I cast fireball',
       character: {
+        id: 'mira-ashgrave',
         name: 'Mira',
         hp: 10,
         maxHp: 10,
-        status: 'alive',
-        attributes: { strength: 10, dexterity: 14 },
+        craving: 0,
+        proficiencyBonus: 2,
+        status: 'active',
+        attributeModifiers: { strength: 10, dexterity: 14 },
         skills: {},
       },
-      turnNumber: 2,
     };
 
     it('should fail if turn reservation fails', async () => {

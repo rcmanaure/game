@@ -5,8 +5,69 @@ import {
   modifierFor,
   SAMPLE_CHARACTERS,
 } from "../character.js";
-import { rollD20, resolveCheck, computeCriticalTier } from "../rules.js";
+import {
+  rollD20,
+  resolveCheck,
+  computeCriticalTier,
+  generateConsequences,
+} from "../rules.js";
 import { LogicIntentSchema } from "../state.js";
+
+// generateConsequences: the player-visible consequence strings. Every branch
+// asserted directly — resolveCheck rolls a real d20, so the criticalTier arms
+// are unreachable deterministically through the public path.
+
+test("generateConsequences: critical success reports a critical", () => {
+  assert.deepEqual(generateConsequences({}, true, "critical", "check"), [
+    "Critical success!",
+  ]);
+});
+
+test("generateConsequences: cravingCritical and cravingFailure each get their own line", () => {
+  assert.deepEqual(generateConsequences({}, true, "cravingCritical", "check"), [
+    "Extraordinary success through Craving!",
+  ]);
+  assert.deepEqual(generateConsequences({}, false, "cravingFailure", "check"), [
+    "Catastrophic failure!",
+  ]);
+});
+
+test("generateConsequences: a lost opposedCheck falters, a lost plain check says nothing", () => {
+  assert.deepEqual(generateConsequences({}, false, "none", "opposedCheck"), [
+    "The attempt falters.",
+  ]);
+  assert.deepEqual(generateConsequences({}, false, "none", "check"), []);
+});
+
+test("generateConsequences: a won opposedCheck does not falter", () => {
+  assert.deepEqual(generateConsequences({}, true, "none", "opposedCheck"), []);
+});
+
+test("generateConsequences: craving, self damage and target damage each report", () => {
+  assert.deepEqual(
+    generateConsequences({ craving: 1, hp: -3, targetHp: -5 }, true, "none", "attack"),
+    ["Craving increased.", "Took 3 damage.", "Target took 5 damage."],
+  );
+});
+
+test("generateConsequences: healing is never reported as damage", () => {
+  // Only negative deltas are damage. A positive hp/targetHp delta must not
+  // produce a "Took -N damage" line.
+  assert.deepEqual(generateConsequences({ hp: 4, targetHp: 2 }, true, "none", "check"), []);
+});
+
+test("generateConsequences: no deltas and no critical yields no consequences, never null", () => {
+  const result = generateConsequences({}, true, "none", "check");
+  assert.ok(Array.isArray(result));
+  assert.equal(result.length, 0);
+});
+
+test("generateConsequences: a critical stacks with its stat deltas, critical line first", () => {
+  assert.deepEqual(
+    generateConsequences({ hp: -2 }, true, "critical", "attack"),
+    ["Critical success!", "Took 2 damage."],
+  );
+});
 
 test("clampAttributeModifier bounds to -5..+10", () => {
   assert.equal(clampAttributeModifier(99), 10);
