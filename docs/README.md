@@ -7,9 +7,10 @@
 - **RECREATE_GAME_DEV_STUDIO.md** ← Setup reference, @game-dev agents
 - **ROADMAP.md** ← Scope, decisions, T-numbers, deployment timeline (referenced from root README)
 
-### `testing/` — Quality Snapshot (1 file)
+### `testing/` — Quality Snapshot (2 files)
 
-- **TEST_RESULTS_FINAL.md** ← Test coverage snapshot, known issues (referenced from root README)
+- **REPO_STATE_2026-08-12.md** ← Forensic repo-state audit: what exists, what runs, what's placeholder. Current source of truth for state.
+- **TEST_RESULTS_FINAL.md** ← Test coverage snapshot from 2026-08-06, superseded by the above (referenced from root README)
 
 ### `reference/` — Reference & System Design (1 file)
 
