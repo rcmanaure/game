@@ -9,7 +9,12 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist/backend",
-    "rootDir": "src/backend"
+    // rootDir is "src", not "src/backend": the backend imports the shared
+    // harness (graph, rules, art) from src/harness, and a rootDir of
+    // src/backend made every one of those imports a TS6059. That error alone
+    // is what kept `tsc -p tsconfig.backend.json` out of CI (TODO.md M3.3).
+    "rootDir": "src"
   },
-  "include": ["src/backend/**/*.ts"]
+  "include": ["src/backend/**/*.ts"],
+  "exclude": ["src/backend/**/__tests__/**"]
 }
