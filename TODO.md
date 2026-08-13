@@ -16,7 +16,25 @@ Backend broken on real Postgres. Tests green hide red. Fix first.
 - **Fix:** Replace all `dataSource.query(...)` raw SQL with `turnRepo.createQueryBuilder()` / `.update()` / `.insert()`. QueryBuilder match entity column names automatic — kill entire quoting-bug class.
 - **Verify:** Add integration test against real Postgres (testcontainers or local docker). Mock-based tests harmful here — need real DB.
 - **Refs:** code-reviewer C1. TypeORM QueryBuilder docs.
-- **Priority:** P0.
+- **Priority:** P0 → P2 (symptom fixed, class not eliminated).
+- **Status (2026-08-12, /ship pre-landing review):** SYMPTOM FIXED, root class still open.
+  All four raw queries now quote camelCase identifiers matching the migration exactly
+  (`"turnId"`, `"userId"`, `"chronicleId"`, `"playerAction"`, `"createdAt"`), so
+  `reserve()`, the `onModuleInit` sweep and both failure-recovery UPDATEs no longer
+  throw. **This is the narrow fix, not the one this entry asks for** — the queries are
+  still hand-written SQL, so the next hand-edited column name can reintroduce the same
+  bug. The QueryBuilder rewrite that kills the class is still worth doing; it just
+  stopped being a P0 the moment the backend could execute a turn.
+  Two more P0s were found in the same pass and fixed:
+  - `src/harness/graph.ts` — `PostgresSaver.fromConnString()` was never followed by
+    `.setup()`, so with `DATABASE_URL` set every `graph.invoke()` threw on a missing
+    `checkpoints` relation. Now behind a memoized `ensureCheckpointer()`, awaited from
+    `GraphService.onModuleInit`, `run.ts` and `volume-test.ts`.
+  - `src/backend/app.module.ts` — no `TypeOrmModule.forFeature([UserEntity])`, so
+    `@InjectRepository(UserEntity)` in `JwtWsGateway` could not resolve and Nest failed
+    at bootstrap. The app never started at all.
+  **Still unverified against a real database.** The integration test this entry asks
+  for does not exist, so all three fixes ship read-verified only.
 
 ### M1.2 — Validate chronicleId ownership at WS trust boundary
 - **File:** `src/backend/auth/jwt-ws.gateway.ts` `handleTurn` (around line 111-121)
@@ -151,6 +169,37 @@ Without M3: zero confidence in any other fix.
 - **Fix:** Fix all three fixtures to match schema. Add `tsc --noEmit -p tsconfig.json` and `tsc --noEmit -p tsconfig.backend.json` to CI.
 - **Refs:** QA P2. code-reviewer M5.
 - **Priority:** P1.
+- **Status (2026-08-11, CEO + eng review):** PARTIAL — **written, not yet proven.**
+  - 📝 `.github/workflows/ci.yml` written — `npm ci`, `tsc --noEmit -p tsconfig.json`, `npm test`.
+    **Uncommitted, unpushed, and has never executed on a runner.** Steps were verified
+    locally against an already-populated `node_modules`, which does not prove `npm ci`
+    from scratch. Do not treat this row as done until a run is observed green.
+  - 📝 `.gitignore:11` changed `.github` → `.github/*` + `!.github/workflows/`, keeping
+    deny-by-default for the tree while tracking workflows. Verified with `git check-ignore`
+    in both directions (workflow visible; `copilot-instructions.md` and a probe under
+    `.github/instructions/` both still ignored).
+  - ✅ `narration.test.ts` + `validator.test.ts` fixtures fixed (`consequences: []`).
+    `tsc -p tsconfig.json` exit 0, `npm test` 52/52.
+  - ⚠️ **Scope of the gate is narrower than this milestone's Fix text demands.**
+    `tsconfig.json` sets `exclude: ["src/backend"]` (verified: `--listFiles` covers 0
+    backend files) and `npm test` globs only `src/harness/__tests__/*.test.ts`. So 20 of
+    32 source files and every backend test sit outside CI. Green here does not mean the
+    backend works. M3.3 is not closed until both `tsconfig.backend.json` and
+    `test:backend` are wired.
+  - ✅ Backend **typecheck** now in CI (2026-08-12). It was never actually blocked on
+    M3.1 — the blocker was `tsconfig.backend.json` setting `rootDir: "src/backend"`
+    while the backend imports `src/harness`, which made every shared import a TS6059.
+    Fixed by `rootDir: "src"` plus `exclude: ["src/backend/**/__tests__/**"]`, so the
+    typecheck needs no jest. `tsc --noEmit -p tsconfig.backend.json` exits 0 and runs
+    as a CI step.
+  - ⏳ Backend **tests** still NOT in CI — genuinely blocked on M3.1 (jest /
+    `@types/jest` / `@nestjs/testing`). The `npm run test:backend` re-enable line
+    stays commented in `ci.yml`.
+  - ✅ `graph.service.test.ts` fixture fixed (2026-08-12): `attributes` →
+    `attributeModifiers`, `status:'alive'` → `'active'`, plus the three fields the
+    fixture was missing outright against `CharacterSchema` (`id`, `craving`,
+    `proficiencyBonus`). Still unverifiable by typecheck until M3.1 lands — the edit
+    itself never needed jest.
 
 ### M3.4 — Fix `process.exit(1)` in run.ts catch
 - **File:** `src/harness/run.ts` (main().catch block)
@@ -284,6 +333,120 @@ See `docs/designs/` for full design doc (T25 permadeath UI + T0 frontend). Below
 - **Schema migration:** add `death_summary` column on `chronicles` table. Ink template slot for creative-model to author one-sentence death line. **Open question:** team confirm — adds 1 column + 1 Ink slot. Without it ledger shows only stats (less emotional). See OPEN QUESTIONS below.
 - **Refs:** design doc §1.2, §3. Hades/Rogue Legacy/Hidden Door/Darkest Dungeon/Dwarf Fortress precedents.
 - **Priority:** P1.
+
+---
+
+## M7 — From CEO Review (2026-08-11)
+
+Source: `/plan-ceo-review` on `docs/game-auditor.md` (then named
+`GAME_AUDITOR_v3_EN.md`), branch `feat/fun`.
+Full record: `~/.gstack/projects/game/ceo-plans/2026-08-11-game-auditor-v3.md`.
+
+### M7.1 — Resolve 5 live doc contradictions
+- **Bug:** Five contradictions across the doc set. The auditor (M7.2) reads these
+  files as inputs, so contradictory inputs produce a contradictory audit.
+
+  | # | Contradiction | Evidence |
+  |---|---|---|
+  | 1 | Frontend engine | `CLAUDE.md` + `ROADMAP.md:53` lock DOM+CSS+Motion.dev, no Phaser. gstack decision log 2026-08-05 records "keep Phaser/PixiJS, not DOM+CSS — direct user decision". |
+  | 2 | Ink/inkjs | `CLAUDE.md` + `ROADMAP.md:55` lock it. Zero `.ink` files, zero `inkjs` in `package.json`, own research doc rejects it. |
+  | 3 | Launch date | `ROADMAP.md:3` targets 2026-Q4. `src/frontend` does not exist. M1.1 means backend throws on real Postgres. |
+  | 4 | Art latency gate | `ROADMAP.md:87` "Art generation <50ms p95". Art is an image-model call. Unmeetable as written. |
+  | 5 | Success metric | `ROADMAP.md:37` concedes "100% success masked by fail-open fallback"; gate at `:83` still reads "<5% failure rate". Measures the fallback, not the game. |
+
+- **Fix:** Pick one side of each. #1 and #2 need a real tech decision, not a doc edit.
+  #4 and #5 are gate rewrites. #3 is a date call.
+- **Priority:** P1.
+
+### M7.2 — Game auditor: facts file + spec defect pass ✅
+- **File:** `docs/GAME_AUDITOR_v3_EN.md` → renamed `docs/game-auditor.md`, v4.0.0 + changelog in frontmatter
+- **File:** new `docs/PROJECT_FACTS.md` (public-safe fields 1/3/5/9/10/11)
+- **File:** new `PROJECT_FACTS.local.md` (gitignored — fields 2/4/6/7/8 + GO/PIVOT/KILL thresholds)
+- **Bug:** The auditor's §0 entry contract blocks on 11 project facts. None are
+  written down anywhere. Running it today halts at question 1. Eight internal
+  defects (F1-F8) documented in the CEO plan.
+- **Fix (spec, 10 changes):** numeral-source lint scoped to external-claim numerals
+  only · PASS 0 contradiction sweep with declared input set + emitted manifest ·
+  per-section word budgets replacing the unmeetable 1,500 cap · 15-second
+  discriminator protocol · VOID status on missing / `WE DON'T KNOW` / expired
+  blocking fields · structured verdict header gating PASS 2 on the blocking-field
+  date set · assumption scoring rubric (impact/uncertainty/cost-of-late, 1-5) ·
+  evidence-backed capacity requirement · cite-don't-restate against this file ·
+  promote runtime-AI economics to a first-class §1.2 vector (cost per session at
+  target retention, p95 latency vs genre tolerance, moderation, offline, model
+  deprecation).
+- **Verify:** ⚠️ the plan predicted "all four blocking fields are answerable today,
+  so it should not VOID." That prediction was wrong on one field. Fields 2, 6 and 8
+  are answered from observable sources (git commit spans; `gh repo view` 0 stars and
+  no devlog/Discord anywhere; `TODO.md` M7.3's own record that no external playtest
+  has happened). Fields 6 and 8 are **explicit zeros**, which decision 6A rules valid
+  rather than missing. **Field 11 — "what concrete decision will you make with this
+  audit and when" — is not derivable from the repo.** Only the person deciding knows
+  it. It is left `WE DON'T KNOW`, so the audit currently stamps VOID by design.
+- **Status:** DONE (2026-08-12) — all 3 artifacts and all 10 spec changes shipped.
+  Answering field 11 in `docs/PROJECT_FACTS.md` is what unblocks a non-VOID run;
+  that is a one-line user decision, not remaining engineering work.
+- **Priority:** P2.
+- **Depends on:** M7.1 (contradictory inputs poison the sweep) — still open, so the
+  PASS 0 sweep will surface those 5 contradictions on the first real run.
+
+### M7.3 — Auditor durable-instrument scope (deferred)
+- **Cut from scope 2026-08-11.** Skill file + doc→skill generator,
+  `docs/audit/EVIDENCE.md` sourced-benchmark ledger, and the regression test tier
+  (6 mechanical no-LLM checks + LLM golden-case fixture with planted contradictions).
+- **Why cut:** the ledger has zero rows to hold (no external playtest has happened),
+  and there was no CI for the test tier to run in.
+- **Preconditions to revisit:**
+  1. First external playtest produces a real evidence row.
+  2. CI exists **and has been observed green on a runner** — see M3.3 status. As of
+     2026-08-11 the workflow is written but uncommitted and never executed, so this
+     precondition is NOT met yet.
+- **Priority:** P3.
+- **Depends on:** first external playtest; M3.3 reaching an observed-green run.
+
+### M7.4 — Test fixture consolidation + consequences coverage
+- **File:** new `src/harness/__tests__/fixtures.ts`
+- **File:** `src/harness/__tests__/narration.test.ts:10`, `validator.test.ts:12`
+- **File:** `src/harness/rules.ts:71` (add `export`), `src/harness/__tests__/rules.test.ts`
+- **Bug:** Two `makeEvent` factories hand-list all 14 `ResolvedEvent` fields; adding one
+  schema field forced edits to both, and `TODO.md` M3.3 names a third in
+  `graph.service.test.ts`. Separately, `generateConsequences` (`rules.ts:71-99`) has 7
+  push branches and **zero assertions** across all 52 tests — and the `consequences: []`
+  added above cements the empty case into all 16 tests in those two files.
+- **Fix:** (a) Extract one shared `makeEvent(overrides)` as a plain object literal — NOT
+  via `ResolvedEventSchema.parse()`. `state.ts:119` declares `.default([])`, so parsing
+  would fill defaults silently and convert a future compile error into no signal at all.
+  (b) `export` `generateConsequences` and assert all 7 branches directly. It takes
+  `criticalTier` as a plain argument, so no RNG seam is needed and the tests cannot flake.
+- **Verify:** `npx tsc --noEmit -p tsconfig.json` && `npm test` — expect 59+ tests.
+- **Refs:** eng review 2026-08-11 issues 3, 5, 8, 9.
+- **Status (2026-08-12):** (b) DONE — `generateConsequences` exported and all 7 push
+  branches asserted in `rules.test.ts`, plus the two guard cases the branch list misses
+  (positive `hp`/`targetHp` must not report as damage; a won `opposedCheck` must not
+  falter). 62 tests pass, `tsc --noEmit` clean. **(a) still open** — the two `makeEvent`
+  factories are still hand-listed, and `graph.service.test.ts` now carries a third.
+- **Priority:** P2 (remaining: fixture consolidation only).
+
+### M7.5 — Consolidate the Node version
+- **File:** `package.json` (`engines`, `@types/node`) and/or new `.nvmrc`
+- **File:** `.github/workflows/ci.yml` (`node-version`)
+- **Bug:** Three disagreeing Node versions, none enforced anywhere:
+  | Where | Version |
+  |---|---|
+  | `ci.yml` `node-version` | 24 (LTS) |
+  | local dev (`node --version`) | 26.5.1 |
+  | `package.json` `@types/node` | `^22.0.0` |
+  `package.json` has no `engines` field and there is no `.nvmrc`. So `tsc` validates
+  against a Node 22 API surface while nothing actually runs on 22 — it can both miss
+  real errors and report errors for APIs that exist at runtime.
+- **Fix:** Pick one authoritative version. Either add `engines: { node: ">=24" }` to
+  `package.json`, or add `.nvmrc` and switch the workflow to `node-version-file: .nvmrc`.
+  Bump `@types/node` to match. Expect the bump to surface new type errors — budget for
+  them rather than doing it mid-diff.
+- **Verify:** `npx tsc --noEmit -p tsconfig.json` still exit 0 after the `@types/node` bump.
+- **Refs:** eng review 2026-08-11, outside voice finding 5. `ci.yml` carries a
+  `ponytail:` comment pointing here.
+- **Priority:** P3.
 
 ---
 
