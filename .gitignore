@@ -8,8 +8,10 @@ build/
 drift-output-*/
 .agents/skills
 .claude
-.github
+.github/*
+!.github/workflows/
 .cursor
 AGENTS.md
 .opencode
 skills-lock.json
+PROJECT_FACTS.local.md
