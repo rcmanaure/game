@@ -140,6 +140,17 @@ const checkpointSaver = process.env.DATABASE_URL
   ? PostgresSaver.fromConnString(process.env.DATABASE_URL)
   : undefined;
 
+// PostgresSaver does NOT create its own tables on construction. Without one
+// setup() call the first invoke() throws on a missing "checkpoints" relation,
+// so every turn fails the moment DATABASE_URL is set. Memoized: setup() is
+// idempotent but does real DDL, and every entry point calls this.
+let checkpointerReady: Promise<void> | undefined;
+export function ensureCheckpointer(): Promise<void> {
+  if (!checkpointSaver) return Promise.resolve();
+  checkpointerReady ??= checkpointSaver.setup();
+  return checkpointerReady;
+}
+
 export const harnessGraph = new StateGraph(State)
   .addNode("resolve", resolve)
   .addNode("rulesValidate", rulesValidate)

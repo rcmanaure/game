@@ -6,8 +6,13 @@ import { AllExceptionsFilter } from "./common/all-exceptions.filter";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // WebSocket support
-  app.enableCors();
+  // Scoped to the same origin the WS gateway allows. A bare enableCors() sets
+  // Access-Control-Allow-Origin: * , which contradicted the gateway's
+  // allowlist and would have been wide open the moment an HTTP route landed.
+  app.enableCors({
+    origin: process.env.FRONTEND_URL ?? "http://localhost:3001",
+    credentials: true,
+  });
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());

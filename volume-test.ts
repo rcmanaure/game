@@ -1,7 +1,7 @@
 import { loadEnv } from "./src/harness/env.js";
 loadEnv();
 
-import { harnessGraph } from "./src/harness/graph.js";
+import { harnessGraph, ensureCheckpointer } from "./src/harness/graph.js";
 import { SAMPLE_CHARACTERS } from "./src/harness/character.js";
 
 const ITERATIONS = parseInt(process.env.ITERATIONS || "100", 10);
@@ -17,6 +17,9 @@ const SAMPLE_ACTIONS = [
 ];
 
 async function main() {
+  // Creates the checkpointer's tables when DATABASE_URL is set; no-op otherwise.
+  await ensureCheckpointer();
+
   const character = SAMPLE_CHARACTERS["mira-ashgrave"];
   const stats = {
     total: ITERATIONS,

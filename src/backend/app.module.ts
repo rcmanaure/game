@@ -5,6 +5,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { APP_GUARD } from "@nestjs/core";
 import { HealthController } from "./health/health.controller";
+import { UserEntity } from "./entities/user.entity";
 import { JwtStrategy } from "./auth/jwt.strategy";
 import { JwtAuthGuard } from "./auth/jwt-auth.guard";
 import { RolesGuard } from "./auth/roles.guard";
@@ -25,6 +26,13 @@ import { GraphService } from "./graph/graph.service";
         synchronize: false,
       }),
     }),
+    // Required for @InjectRepository(UserEntity) in JwtWsGateway.
+    // autoLoadEntities registers the entity with the connection but does NOT
+    // create the per-entity repository provider — without forFeature, Nest
+    // fails at bootstrap with "can't resolve dependencies of JwtWsGateway".
+    // GraphService needs no entry here: it resolves its repositories through
+    // dataSource.getRepository() instead of DI.
+    TypeOrmModule.forFeature([UserEntity]),
     PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

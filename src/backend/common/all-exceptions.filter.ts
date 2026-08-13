@@ -24,9 +24,11 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         typeof exceptionResponse === 'object'
           ? (exceptionResponse as any).message || exception.message
           : exception.message;
-    } else if (exception instanceof Error) {
-      message = exception.message;
     }
+    // Anything that is not an HttpException was not written to be shown to a
+    // client. Its message is a DB error, a file path, or a stack fragment, so
+    // the client gets the generic 500 message and the detail goes to the log
+    // below only.
 
     console.error(
       `[${new Date().toISOString()}] ${request.method} ${request.url}`,

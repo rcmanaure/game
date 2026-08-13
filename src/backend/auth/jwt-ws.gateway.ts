@@ -16,7 +16,6 @@ import { Repository } from 'typeorm';
 import { Socket, Server } from 'socket.io';
 import { JwtPayload } from './auth.service';
 import { UserEntity } from '../entities/user.entity';
-import { TurnEntity } from '../entities/turn.entity';
 import { GraphService } from '../graph/graph.service';
 import { CharacterSchema } from '../../harness/character';
 
@@ -46,8 +45,6 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private graphService: GraphService,
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
-    @InjectRepository(TurnEntity)
-    private turnRepo: Repository<TurnEntity>,
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
@@ -120,16 +117,9 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
     }
 
-    // Calculate turnNumber: count existing completed/reserved turns for this chronicle
-    let turnNumber = 1;
-    try {
-      const existingTurns = await this.turnRepo.count({
-        where: { chronicleId },
-      });
-      turnNumber = existingTurns + 1;
-    } catch (err) {
-      this.logger.warn(`Failed to count turns for chronicle ${chronicleId}, using turnNumber=1: ${(err as Error).message}`);
-    }
+    // turnNumber is no longer computed here. Counting before the reservation
+    // was check-then-act: two concurrent turns both read N and both sent N+1.
+    // GraphService counts after its own reservation commits instead.
 
     // Run the turn through GraphService
     // Pass callback for async art generation completion
@@ -141,7 +131,6 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         playerAction,
         character,
         lastReferenceUrl: turnData.lastReferenceUrl as string | undefined,
-        turnNumber,
       },
       (artUrl: string) => {
         client.emit('art:ready', { turnId, url: artUrl });

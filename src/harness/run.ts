@@ -1,7 +1,7 @@
 import { loadEnv } from "./env.js";
 loadEnv();
 
-import { harnessGraph } from "./graph.js";
+import { harnessGraph, ensureCheckpointer } from "./graph.js";
 import { SAMPLE_CHARACTERS } from "./character.js";
 
 // T22: fire a handful of turns end-to-end (resolve -> rulesValidate ->
@@ -11,6 +11,9 @@ import { SAMPLE_CHARACTERS } from "./character.js";
 // — the character now persists ACROSS turns within one CLI invocation
 // (in-memory only, no DB per T22's scope; T4/T14 own real persistence).
 async function main() {
+  // Creates the checkpointer's tables when DATABASE_URL is set; no-op otherwise.
+  await ensureCheckpointer();
+
   const [characterFlag, ...rest] = process.argv.slice(2);
   let characterId = "mira-ashgrave";
   let actions = [characterFlag, ...rest].filter(Boolean) as string[];
