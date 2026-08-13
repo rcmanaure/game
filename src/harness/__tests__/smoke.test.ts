@@ -19,6 +19,7 @@ const VALID_INTENT = {
   targetNumber: 15,
   opponentTier: null,
   cravingElevated: false,
+  npcSignal: null,
 };
 
 test("LogicIntentSchema accepts a well-formed intent", () => {

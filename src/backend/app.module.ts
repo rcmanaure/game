@@ -6,10 +6,14 @@ import { PassportModule } from "@nestjs/passport";
 import { APP_GUARD } from "@nestjs/core";
 import { HealthController } from "./health/health.controller";
 import { UserEntity } from "./entities/user.entity";
+import { ChronicleEntity } from "./entities/chronicle.entity";
+import { TurnEntity } from "./entities/turn.entity";
+import { NpcEntity } from "./entities/npc.entity";
 import { JwtStrategy } from "./auth/jwt.strategy";
 import { JwtAuthGuard } from "./auth/jwt-auth.guard";
 import { RolesGuard } from "./auth/roles.guard";
 import { AuthService } from "./auth/auth.service";
+import { AuthController } from "./auth/auth.controller";
 import { JwtWsGateway } from "./auth/jwt-ws.gateway";
 import { TurnReservationService } from "./graph/turn-reservation.service";
 import { GraphService } from "./graph/graph.service";
@@ -27,12 +31,12 @@ import { GraphService } from "./graph/graph.service";
       }),
     }),
     // Required for @InjectRepository(UserEntity) in JwtWsGateway.
-    // autoLoadEntities registers the entity with the connection but does NOT
-    // create the per-entity repository provider — without forFeature, Nest
-    // fails at bootstrap with "can't resolve dependencies of JwtWsGateway".
-    // GraphService needs no entry here: it resolves its repositories through
-    // dataSource.getRepository() instead of DI.
-    TypeOrmModule.forFeature([UserEntity]),
+    // autoLoadEntities only registers an entity's metadata on the DataSource
+    // if it appears in SOME module's forFeature() call — GraphService reads
+    // TurnEntity/NpcEntity via dataSource.getRepository() (no DI), but that
+    // still throws EntityMetadataNotFoundError unless they're listed here
+    // too. (Found live 2026-08-13: countTurns failed-open on exactly this.)
+    TypeOrmModule.forFeature([UserEntity, ChronicleEntity, TurnEntity, NpcEntity]),
     PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -47,7 +51,7 @@ import { GraphService } from "./graph/graph.service";
       }),
     }),
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, AuthController],
   providers: [
     JwtStrategy,
     AuthService,

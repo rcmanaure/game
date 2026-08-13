@@ -76,9 +76,12 @@ npm run harness "action 1" "action 2"
 | `JWT_REFRESH_SECRET` | Refresh token key | (generate: `openssl rand -hex 32`) |
 | `OPENROUTER_API_KEY` | LLM API key | `sk-...` |
 | `FRONTEND_URL` | CORS origin for WS | `http://localhost:3001` |
-| `LOGIC_MODEL` | D20/stat resolver | `google/gemini-2.0-flash-001` |
-| `CREATIVE_MODEL` | Narration LLM | `anthropic/claude-3.5-sonnet` |
+| `LOGIC_MODEL` | D20/stat resolver | `google/gemini-2.0-flash-001` ⚠️ 404s on OpenRouter now, pick a real model |
+| `CREATIVE_MODEL` | Narration LLM | `anthropic/claude-3.5-sonnet` ⚠️ 404s on OpenRouter now, pick a real model |
+| `CREATIVE_MODEL_ALT` | Narration retry (content-refusal fallback) | `nvidia/nemotron-3-super-120b-a12b:free` |
 | `IMAGE_MODEL` | Art generation | `google/gemini-2.5-flash-image` |
+| `LLM_TIMEOUT_MS` | Per-call deadline before falling back (stopgap, not a latency fix) | `45000` |
+| `DISABLE_IMAGE_GEN` | Skip real art generation, use a placeholder | `true` |
 
 See `.env.example` for defaults.
 
@@ -89,7 +92,7 @@ npm run test
 # Runs `node --import tsx --test src/harness/__tests__/*.test.ts`
 ```
 
-Current coverage: harness rules, character validation, narration fallback, art generation (52 tests).
+Current coverage: harness rules, character validation, narration fallback, art generation (69 tests). Backend has no test suite yet (`jest` not installed — `TODO.md` M3.1).
 
 ## Docs
 

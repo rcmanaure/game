@@ -23,7 +23,7 @@ Always read docs/reference/DESIGN.md before visual/UI decisions. Font, color, sp
 ## Tech Stack (Locked)
 - Frontend: DOM + CSS + Motion.dev (Phaser research: game-engines-lightweight.md ruled it out)
 - LLM: LangGraph.js (proven, no refactor needed)
-- Narrative: Ink + inkjs (narration consistency + permadeath v1)
+- Narrative: plain narration (own research 2026-08-04 rejected Ink/Twine/Yarn; inkjs never installed, no code references it — Ink+inkjs lock dropped 2026-08-13, decision D-2)
 
 Detailed rationale: See `docs/research/` directory. Tech decisions are locked; research amendments go there, not inline.
 

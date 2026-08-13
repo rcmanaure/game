@@ -2,10 +2,11 @@
 
 ## Folders
 
-### `production/` — Studio Setup & Roadmap (2 files)
+### `production/` — Studio Setup & Roadmap (3 files)
 
 - **RECREATE_GAME_DEV_STUDIO.md** ← Setup reference, @game-dev agents
 - **ROADMAP.md** ← Scope, decisions, T-numbers, deployment timeline (referenced from root README)
+- **MODEL_RECOMMENDATIONS.md** ← Which OpenRouter model to use for `LOGIC_MODEL`/`CREATIVE_MODEL`, with live-measured pricing/latency. `.env`'s current choice is a dev/test pick, not the production recommendation — see the file for the distinction.
 
 ### `testing/` — Quality Snapshot (2 files)
 

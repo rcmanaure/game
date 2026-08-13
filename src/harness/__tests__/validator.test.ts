@@ -24,6 +24,8 @@ function makeEvent(hpDelta: number): ResolvedEvent {
     criticalTier: "none",
     statDeltas: hpDelta === 0 ? {} : { hp: hpDelta },
     consequences: [],
+    npcSignal: null,
+    rejected: false,
     archetype: "test-scene",
     summary: "test event",
   };
@@ -80,4 +82,36 @@ test("applyMutation: a zero-hp-delta event against a living character is a no-op
   const result = applyMutation(mira, makeEvent(0));
   assert.equal(result.rejected, false);
   assert.equal(result.character, mira);
+});
+
+// Audit finding: rules.ts computes statDeltas.craving on every
+// cravingElevated roll, but nothing ever applied it — "craving=1 before and
+// after" a turn that should have raised it. These are the regression tests.
+
+function makeCravingOnlyEvent(cravingDelta: number): ResolvedEvent {
+  const event = makeEvent(0);
+  return { ...event, statDeltas: { craving: cravingDelta } };
+}
+
+test("applyMutation: a craving-only event (no hp change) still raises craving", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"]; // craving: 1
+  const result = applyMutation(mira, makeCravingOnlyEvent(1));
+  assert.equal(result.rejected, false);
+  assert.equal(result.character.craving, 2);
+  assert.equal(result.character.hp, mira.hp); // hp untouched
+});
+
+test("applyMutation: an hp-reducing event also applies its craving delta", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"]; // craving: 1
+  const event = { ...makeEvent(-5), statDeltas: { hp: -5, craving: 1 } };
+  const result = applyMutation(mira, event);
+  assert.equal(result.rejected, false);
+  assert.equal(result.character.hp, 7);
+  assert.equal(result.character.craving, 2);
+});
+
+test("applyMutation: craving clamps at 5, never exceeds it", () => {
+  const satedMira: Character = { ...SAMPLE_CHARACTERS["mira-ashgrave"], craving: 5 };
+  const result = applyMutation(satedMira, makeCravingOnlyEvent(1));
+  assert.equal(result.character.craving, 5);
 });

@@ -16,8 +16,10 @@ import { Repository } from 'typeorm';
 import { Socket, Server } from 'socket.io';
 import { JwtPayload } from './auth.service';
 import { UserEntity } from '../entities/user.entity';
+import { ChronicleEntity } from '../entities/chronicle.entity';
 import { GraphService } from '../graph/graph.service';
 import { CharacterSchema } from '../../harness/character';
+import { sanitizePlayerAction } from '../../harness/sanitize';
 
 @WebSocketGateway({
   cors: {
@@ -45,6 +47,8 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private graphService: GraphService,
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
+    @InjectRepository(ChronicleEntity)
+    private chronicleRepo: Repository<ChronicleEntity>,
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
@@ -91,7 +95,11 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Parse turn request
     const turnData = data as Record<string, unknown>;
     const turnId = turnData.turnId as string;
-    const playerAction = turnData.playerAction as string;
+    // M2.7: sanitize at the trust boundary, before this text goes anywhere
+    // near an LLM prompt — length cap + control-char strip. Everything
+    // downstream (persistence, runTurn, the prompt itself) uses this
+    // sanitized value, not the raw one.
+    const playerAction = sanitizePlayerAction((turnData.playerAction as string) ?? '');
 
     if (!turnId || !playerAction || !turnData.character) {
       throw new WsException('Missing required fields: turnId, playerAction, character');
@@ -105,16 +113,30 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException(`Invalid character state: ${(error as Error).message}`);
     }
 
-    // Get chronicleId: prefer client-provided, fallback to user's activeChronicleId, then placeholder
-    let chronicleId = turnData.chronicleId as string;
+    // Get chronicleId: prefer client-provided, fallback to user's activeChronicleId.
+    // A client-supplied chronicleId is NEVER trusted as-is — it's verified
+    // against this user's own chronicles below, closing the cross-user turn
+    // insertion gap (a client could otherwise target another user's
+    // chronicleId and have countTurns/recall read across accounts).
+    let chronicleId = turnData.chronicleId as string | undefined;
     if (!chronicleId) {
       try {
         const userRecord = await this.userRepo.findOne({ where: { id: user.sub } });
-        chronicleId = userRecord?.activeChronicleId || 'placeholder-chronicle-id';
+        chronicleId = userRecord?.activeChronicleId;
       } catch (err) {
         this.logger.error(`Failed to fetch user ${user.sub}: ${(err as Error).message}`);
-        chronicleId = 'placeholder-chronicle-id';
       }
+    }
+
+    if (!chronicleId) {
+      throw new WsException('No active chronicle for this user');
+    }
+
+    const chronicle = await this.chronicleRepo.findOne({
+      where: { id: chronicleId, userId: user.sub },
+    });
+    if (!chronicle) {
+      throw new WsException('chronicleId does not belong to this user');
     }
 
     // turnNumber is no longer computed here. Counting before the reservation
@@ -138,11 +160,21 @@ export class JwtWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     if (!result.success) {
-      client.emit('turn:error', { turnId, error: result.error });
+      if (result.chronicleAlreadyEnded) {
+        client.emit('chronicle:ended', { turnId, error: result.error });
+      } else {
+        client.emit('turn:error', { turnId, error: result.error });
+      }
       return;
     }
 
+    // M2.5: the death-causing turn still completes normally (narration/art
+    // for the death itself), then a separate chronicle:ended follows so
+    // the client can transition without losing the final beat.
     client.emit('turn:complete', { turnId });
+    if (result.chronicleJustEnded) {
+      client.emit('chronicle:ended', { turnId });
+    }
   }
 
   private extractToken(client: Socket): string | undefined {

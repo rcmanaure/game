@@ -8,6 +8,7 @@ import {
 import {
   rollD20,
   resolveCheck,
+  rejectedEvent,
   computeCriticalTier,
   generateConsequences,
 } from "../rules.js";
@@ -41,6 +42,14 @@ test("generateConsequences: a lost opposedCheck falters, a lost plain check says
 
 test("generateConsequences: a won opposedCheck does not falter", () => {
   assert.deepEqual(generateConsequences({}, true, "none", "opposedCheck"), []);
+});
+
+// "attack" resolves through the same contested-roll path as "opposedCheck"
+// now (D-1, 2026-08-13), so it falters the same way on a loss.
+test("generateConsequences: a lost attack falters too", () => {
+  assert.deepEqual(generateConsequences({}, false, "none", "attack"), [
+    "The attempt falters.",
+  ]);
 });
 
 test("generateConsequences: craving, self damage and target damage each report", () => {
@@ -141,6 +150,7 @@ test("resolveCheck: modifier is the real character-sheet value, never LLM-suppli
     targetNumber: 15,
     opponentTier: null,
     cravingElevated: false,
+    npcSignal: null,
   });
   const event = resolveCheck(mira, intent);
   assert.equal(event.modifier, 6); // charisma +4, persuasion proficient +2
@@ -163,6 +173,7 @@ test("resolveCheck: out-of-range targetNumber gets clamped to 5-30", () => {
     targetNumber: 40,
     opponentTier: null,
     cravingElevated: false,
+    npcSignal: null,
   });
   const event = resolveCheck(mira, intent);
   assert.equal(event.targetNumber, 30);
@@ -180,15 +191,17 @@ test("resolveCheck: cravingElevated rolls a second die and costs 1 Craving", () 
     targetNumber: 15,
     opponentTier: null,
     cravingElevated: true,
+    npcSignal: null,
   });
   const event = resolveCheck(mira, intent);
   assert.ok(event.cravingDie !== null && event.cravingDie >= 1 && event.cravingDie <= 20);
   assert.equal(event.statDeltas.craving, 1);
 });
 
-test("resolveCheck: successful attack applies bounded negative HP delta", () => {
+// "attack" is routed through the same contested-roll resolution as
+// "opposedCheck" (D-1, 2026-08-13) instead of a fixed DC — see rules.ts.
+test("resolveCheck: attack has null targetNumber, rolls a contested opponent d20", () => {
   const toren = SAMPLE_CHARACTERS["toren-vale"];
-  // Force a guaranteed success: strength +4, huge modifier vs trivial DC.
   const intent = LogicIntentSchema.parse({
     eventType: "combat",
     archetype: "cornered-wretch",
@@ -196,18 +209,52 @@ test("resolveCheck: successful attack applies bounded negative HP delta", () => 
     rollType: "attack",
     attribute: "strength",
     skill: "athletics",
-    targetNumber: 5, // minimum legal DC, near-guaranteed hit with +6 modifier
-    opponentTier: null,
+    targetNumber: null,
+    opponentTier: "trivial", // +0, easiest opponent — success on almost any roll
     cravingElevated: false,
+    npcSignal: null,
   });
-  // Run several times since the roll is random — DC 5 with modifier 6 only
-  // fails on a natural 1 (1+6=7 >= 5 is still a hit) so this should always
-  // succeed; assert deterministically over a few trials to be safe.
-  for (let i = 0; i < 5; i++) {
+  let sawSuccess = false;
+  for (let i = 0; i < 30; i++) {
     const event = resolveCheck(toren, intent);
-    assert.equal(event.success, true);
-    assert.ok(event.statDeltas.targetHp! < 0);
+    assert.equal(event.targetNumber, null);
+    assert.equal(event.opponentTier, "trivial");
+    if (event.success) {
+      sawSuccess = true;
+      assert.ok(event.statDeltas.targetHp! < 0);
+    }
   }
+  assert.ok(sawSuccess, "expected at least one success across 30 trials");
+});
+
+// The audit's headline finding: a failed attack cost the player nothing on
+// the common path, making permadeath mechanically unreachable. This is the
+// regression test for the D-1 fix.
+test("resolveCheck: failed combat attack costs the actor HP", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"]; // strength +1, no proficiency
+  const intent = LogicIntentSchema.parse({
+    eventType: "combat",
+    archetype: "hulking-brute",
+    summary: "swings wildly at the brute",
+    rollType: "attack",
+    attribute: "strength",
+    skill: null,
+    targetNumber: null,
+    opponentTier: "deadly", // +9, hardest tier — failure is the common outcome
+    cravingElevated: false,
+    npcSignal: null,
+  });
+  let sawFailure = false;
+  for (let i = 0; i < 30; i++) {
+    const event = resolveCheck(mira, intent);
+    if (!event.success) {
+      sawFailure = true;
+      assert.ok(event.statDeltas.hp! < 0, "a failed combat attack must cost HP");
+    } else {
+      assert.equal(event.statDeltas.hp, undefined);
+    }
+  }
+  assert.ok(sawFailure, "expected at least one failure across 30 trials");
 });
 
 test("resolveCheck: opposedCheck has null targetNumber, rolls an opponent d20", () => {
@@ -222,6 +269,7 @@ test("resolveCheck: opposedCheck has null targetNumber, rolls an opponent d20", 
     targetNumber: null,
     opponentTier: "moderate",
     cravingElevated: false,
+    npcSignal: null,
   });
   const event = resolveCheck(mira, intent);
   assert.equal(event.targetNumber, null);
@@ -245,6 +293,7 @@ test("resolveCheck: opposedCheck falls back to moderate tier when opponentTier i
     targetNumber: null,
     opponentTier: null,
     cravingElevated: false,
+    npcSignal: null,
   });
   const event = resolveCheck(mira, intent);
   assert.equal(event.opponentTier, "moderate");
@@ -265,6 +314,7 @@ test("resolveCheck: opposedCheck tie is a non-success with no statDeltas, not a 
     targetNumber: null,
     opponentTier: "trivial", // +0 modifier
     cravingElevated: false,
+    npcSignal: null,
   });
   // With both modifiers at 0, playerTotal === opponentTotal exactly when
   // both d20s land the same — run enough trials to hit it at least once.
@@ -292,6 +342,7 @@ test("resolveCheck: opposedCheck Craving only ever affects the player's roll", (
     targetNumber: null,
     opponentTier: "moderate",
     cravingElevated: true,
+    npcSignal: null,
   });
   const event = resolveCheck(mira, intent);
   assert.ok(event.cravingDie !== null); // player's side got a second die
@@ -299,4 +350,36 @@ test("resolveCheck: opposedCheck Craving only ever affects the player's roll", (
   // opponentRoll is a single plain d20 — no craving mechanic on that side,
   // nothing in resolveCheck ever rolls a second die for the opponent.
   assert.ok(event.opponentRoll! >= 1 && event.opponentRoll! <= 20);
+});
+
+// M2.6 (2026-08-13): rejectedEvent()'s `rejected: true` is what lets
+// downstream code (narrate node, graph.service.ts) tell "the mutation was
+// illegal and never happened" apart from "the character failed the check"
+// — both used to look identical (success:false + flavor narration reported
+// as a completed turn).
+test("rejectedEvent: marks rejected true, clears stat deltas and npcSignal", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
+  const intent = LogicIntentSchema.parse({
+    eventType: "combat",
+    archetype: "cornered-wretch",
+    summary: "swings a blade at the wretch",
+    rollType: "attack",
+    attribute: "strength",
+    skill: null,
+    targetNumber: null,
+    opponentTier: "trivial",
+    cravingElevated: false,
+    npcSignal: { name: "The Wretch", fact: "cornered in the alley" },
+  });
+  const resolved = resolveCheck(mira, intent);
+  const rejected = rejectedEvent("target has met Final Death", resolved);
+
+  assert.equal(rejected.rejected, true);
+  assert.equal(rejected.success, false);
+  assert.equal(rejected.criticalTier, "none");
+  assert.deepEqual(rejected.statDeltas, {});
+  assert.equal(rejected.npcSignal, null);
+  assert.deepEqual(rejected.consequences, ["Attempt rejected: target has met Final Death"]);
+  // The roll itself is kept for transparency/debugging, not erased.
+  assert.equal(rejected.roll, resolved.roll);
 });

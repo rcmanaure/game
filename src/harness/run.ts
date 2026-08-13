@@ -3,6 +3,7 @@ loadEnv();
 
 import { harnessGraph, ensureCheckpointer } from "./graph.js";
 import { SAMPLE_CHARACTERS } from "./character.js";
+import { sanitizePlayerAction } from "./sanitize.js";
 
 // T22: fire a handful of turns end-to-end (resolve -> rulesValidate ->
 // narrate -> art-trigger, no auth/DB/UI) and print the result for
@@ -32,15 +33,27 @@ async function main() {
   }
 
   let character = SAMPLE_CHARACTERS[characterId];
+  // Required when DATABASE_URL is set: PostgresSaver rejects a null
+  // thread_id (checkpoint_blobs.thread_id is NOT NULL). One thread per CLI
+  // invocation — mirrors GraphService's turnId-as-thread_id, just scoped to
+  // the whole run instead of one turn since there's no per-turn id here.
+  const threadId = crypto.randomUUID();
 
-  for (const [i, playerAction] of actions.entries()) {
+  for (const [i, rawAction] of actions.entries()) {
+    // M2.7: CLI mirror of the WS gateway's trust-boundary sanitization —
+    // same function, same rules, applied before this text goes anywhere
+    // near an LLM prompt.
+    const playerAction = sanitizePlayerAction(rawAction);
     console.log(`\n=== Turn ${i + 1} (${characterId}): "${playerAction}" ===`);
-    const result = await harnessGraph.invoke({ playerAction, character });
+    const result = await harnessGraph.invoke(
+      { playerAction, character },
+      { configurable: { thread_id: threadId } },
+    );
     character = result.character; // carry any mutation into the next turn
 
     const e = result.gameEvent!;
     const vsDetail =
-      e.rollType === "opposedCheck"
+      e.rollType === "opposedCheck" || e.rollType === "attack"
         ? `vs opponent roll=${e.opponentRoll} (${e.opponentTier})`
         : `vs DC ${e.targetNumber}`;
     console.log(

@@ -12,6 +12,19 @@ function requireEnv(name: string): string {
 
 const apiKey = () => requireEnv("OPENROUTER_API_KEY");
 
+// Stopgap (audit finding H4): no LLM call had a deadline — a hung request
+// hung the turn indefinitely, no client cancel path. This bounds the worst
+// case; it does not explain or fix WHY a call is slow (root-cause is a
+// separate, unscoped investigation). RunnableConfig's native `timeout`
+// aborts the underlying HTTP request via AbortSignal — not a Promise.race,
+// which would leave the real fetch running in the background.
+const DEFAULT_LLM_TIMEOUT_MS = 45_000;
+export function llmTimeoutMs(): number {
+  const raw = process.env.LLM_TIMEOUT_MS;
+  const parsed = raw ? Number(raw) : NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_LLM_TIMEOUT_MS;
+}
+
 // Decision #20: model calls via @langchain/openrouter's ChatOpenRouter, not a
 // hand-rolled client. Model IDs are env-configurable — T15's cost-model pass
 // hasn't picked final models yet, so the harness must not silently lock one in.

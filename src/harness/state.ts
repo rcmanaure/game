@@ -28,6 +28,19 @@ export const OpponentTierSchema = z.enum(OPPONENT_TIERS);
 const nullableStringOrNumber = z.union([z.number(), z.string()]).nullable();
 const nullableString = z.string().nullable();
 
+// T19/D-3 (2026-08-13): the NPC persist trigger is LLM-signaled — the
+// resolve model flags a named NPC worth remembering across turns as part
+// of its normal intent output, rather than a text-mention heuristic on the
+// narration or a separate player-facing action. Plain nullable object, no
+// transform — same JSON-Schema-representability constraint as every other
+// field here.
+const NpcSignalSchema = z
+  .object({
+    name: z.string().min(1),
+    fact: z.string().min(1),
+  })
+  .nullable();
+
 export const LogicIntentRawSchema = z.object({
   eventType: z.enum(["combat", "social", "exploration", "other"]),
   archetype: z.string().min(1),
@@ -38,6 +51,7 @@ export const LogicIntentRawSchema = z.object({
   targetNumber: nullableStringOrNumber,
   opponentTier: z.union([OpponentTierSchema, z.string()]).nullable(),
   cravingElevated: z.boolean(),
+  npcSignal: NpcSignalSchema,
 });
 export type LogicIntentRaw = z.infer<typeof LogicIntentRawSchema>;
 
@@ -59,6 +73,7 @@ export const LogicIntentSchema = z.object({
   // off free-text `archetype` would have allowed.
   opponentTier: OpponentTierSchema.nullable(),
   cravingElevated: z.boolean(),
+  npcSignal: NpcSignalSchema,
 });
 export type LogicIntent = z.infer<typeof LogicIntentSchema>;
 
@@ -78,14 +93,18 @@ export function sanitizeIntent(raw: LogicIntentRaw): LogicIntent {
     skill: coerce(raw.skill),
     targetNumber: coerce(raw.targetNumber),
     opponentTier: coerce(raw.opponentTier),
+    npcSignal: coerce(raw.npcSignal),
   });
 }
 
-// A null targetNumber on "check"/"attack" is semantically invalid (those
-// rollTypes need a DC) but zod already accepted it structurally — this is
-// the cross-field check a discriminated union would've given for free.
+// A null targetNumber on "check" is semantically invalid (that rollType
+// needs a DC) but zod already accepted it structurally — this is the
+// cross-field check a discriminated union would've given for free.
+// "attack" used to need one too, but rules.ts now resolves attack through
+// the same contested-roll (opponentTier) path as opposedCheck (D-1,
+// 2026-08-13), so targetNumber is no longer meaningful for it.
 export function needsTargetNumber(intent: Pick<LogicIntent, "rollType">): boolean {
-  return intent.rollType === "check" || intent.rollType === "attack";
+  return intent.rollType === "check";
 }
 
 // --- RESOLVED EVENT (server-authoritative) ---
@@ -117,6 +136,15 @@ export const ResolvedEventSchema = z.object({
   archetype: z.string(),
   summary: z.string(),
   consequences: z.array(z.string()).default([]), // visible consequences for player
+  npcSignal: NpcSignalSchema, // pass-through from intent — see M2.2/D-3
+  // M2.6 (2026-08-13): distinguishes "the character failed the check" (a
+  // normal gameplay outcome, success:false is still a completed turn) from
+  // "the mutation was illegal and never applied" (rulesValidate rejected
+  // it — validator.ts targeting an already-dead character, etc.). Both
+  // used to look identical downstream (success:false + flavor narration
+  // reported as a completed turn) — the Hidden Door failure mode the audit
+  // flagged. Only rejectedEvent() sets this true.
+  rejected: z.boolean(),
 });
 export type ResolvedEvent = z.infer<typeof ResolvedEventSchema>;
 
@@ -136,6 +164,7 @@ export const SAFE_DEFAULT_INTENT: LogicIntent = {
   targetNumber: 10,
   opponentTier: null,
   cravingElevated: false,
+  npcSignal: null,
 };
 
 // HarnessState type: import from graph.ts as HarnessGraphState.

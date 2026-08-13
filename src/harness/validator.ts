@@ -53,11 +53,23 @@ export function validateTransition(
  * row: "Schema-valid but rules-illegal -> Rejected by rules validator,
  * safe no-op event."
  */
+// Craving's range per character.ts (0-5, VTM V5's Hunger). Clamped here for
+// the same reason hp is clamped in validateTransition: never trust an
+// unbounded delta straight onto the sheet.
+const CRAVING_MIN = 0;
+const CRAVING_MAX = 5;
+
+function clampCraving(craving: number): number {
+  return Math.max(CRAVING_MIN, Math.min(CRAVING_MAX, craving));
+}
+
 export function applyMutation(
   character: Character,
   event: ResolvedEvent,
 ): { character: Character; rejected: false } | { character: Character; rejected: true; reason: string } {
   const hpDelta = event.statDeltas.hp ?? 0;
+  const cravingDelta = event.statDeltas.craving ?? 0;
+
   if (hpDelta === 0) {
     // No hp change proposed — still must reject if the character is
     // already dead (e.g. a Craving cost or a social check targeting a
@@ -69,7 +81,17 @@ export function applyMutation(
         reason: `${character.name} has met Final Death — no further mutation is legal`,
       };
     }
-    return { character, rejected: false };
+    if (cravingDelta === 0) {
+      return { character, rejected: false };
+    }
+    // Craving-only event (e.g. a cravingElevated check with no hp
+    // consequence) — rules.ts computes statDeltas.craving on every such
+    // roll, but until this fix nothing ever applied it (audit finding:
+    // "craving=1 before and after" a turn that should have raised it).
+    return {
+      character: { ...character, craving: clampCraving(character.craving + cravingDelta) },
+      rejected: false,
+    };
   }
 
   const result = validateTransition(character, hpDelta);
@@ -82,6 +104,7 @@ export function applyMutation(
       ...character,
       hp: result.resultingHp,
       status: result.resultingStatus,
+      craving: clampCraving(character.craving + cravingDelta),
     },
     rejected: false,
   };

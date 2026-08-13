@@ -1,6 +1,7 @@
 import { Controller, Get, ServiceUnavailableException } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
+import { Public } from "../auth/auth.decorators";
 
 // Proves the Postgres connection actually works end-to-end (not just that
 // the app booted) — the concrete thing T3/T4/T7 need before they can trust
@@ -9,6 +10,7 @@ import { DataSource } from "typeorm";
 export class HealthController {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
+  @Public()
   @Get()
   async check() {
     try {

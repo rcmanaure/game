@@ -22,6 +22,8 @@ function makeEvent(overrides: Partial<ResolvedEvent> = {}): ResolvedEvent {
     criticalTier: "none",
     statDeltas: {},
     consequences: [],
+    npcSignal: null,
+    rejected: false,
     archetype: "test-scene",
     summary: "the wretch lunges and is repelled",
     ...overrides,

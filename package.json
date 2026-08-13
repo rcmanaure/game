@@ -1,6 +1,6 @@
 {
   "name": "ai-dm-platform",
-  "version": "0.1.0.0",
+  "version": "0.1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,8 @@
     "harness:drift": "tsx src/harness/drift.ts",
     "test": "node --import tsx --test src/harness/__tests__/*.test.ts",
     "test:volume": "ITERATIONS=${ITERATIONS:-1000} tsx volume-test.ts",
-    "backend:dev": "ts-node -P tsconfig.backend.json src/backend/main.ts",
+    "backend:build": "tsc -p tsconfig.backend.json && echo '{\"type\":\"commonjs\"}' > dist/backend/package.json",
+    "backend:dev": "npm run backend:build && node dist/backend/backend/main.js",
     "migration:generate": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:generate -d src/backend/data-source.ts",
     "migration:run": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:run -d src/backend/data-source.ts",
     "migration:revert": "TS_NODE_PROJECT=tsconfig.backend.json typeorm-ts-node-commonjs migration:revert -d src/backend/data-source.ts",
@@ -16,6 +17,7 @@
     "db:down": "docker compose down"
   },
   "dependencies": {
+    "@langchain/core": "^1.2.7",
     "@langchain/langgraph": "^1.1.0",
     "@langchain/langgraph-checkpoint-postgres": "^1.0.4",
     "@langchain/openrouter": "^0.1.0",
@@ -25,6 +27,7 @@
     "@nestjs/jwt": "^11.0.1",
     "@nestjs/passport": "^11.0.0",
     "@nestjs/platform-express": "^11.1.28",
+    "@nestjs/platform-socket.io": "^11.1.29",
     "@nestjs/platform-ws": "^11.1.28",
     "@nestjs/typeorm": "^11.0.3",
     "@nestjs/websockets": "^11.1.28",
@@ -42,6 +45,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^22.0.0",
     "@types/passport-jwt": "^4.0.1",
+    "socket.io-client": "^4.8.3",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"

@@ -85,7 +85,7 @@ export function generateConsequences(
     consequences.push("Extraordinary success through Craving!");
   } else if (criticalTier === "cravingFailure") {
     consequences.push("Catastrophic failure!");
-  } else if (!success && rollType === "opposedCheck") {
+  } else if (!success && (rollType === "opposedCheck" || rollType === "attack")) {
     consequences.push("The attempt falters.");
   }
 
@@ -127,9 +127,22 @@ export function resolveCheck(
     cravingDie,
     archetype: intent.archetype,
     summary: intent.summary,
+    npcSignal: intent.npcSignal,
+    rejected: false, // only rejectedEvent() ever sets this true
   };
 
-  if (intent.rollType === "opposedCheck") {
+  // "attack" is routed through the same contested-roll resolution as
+  // "opposedCheck" (D-1, 2026-08-13) rather than a DC-based to-hit: the
+  // audit found failed attacks cost the player nothing on the common path
+  // (opponentTier / TIER_MODIFIERS never entered the calculation), leaving
+  // permadeath unreachable. The LLM's rollType label is advisory, same as
+  // every other intent field — the server decides the actual mechanical
+  // shape (Decision #7). Attack-only difference from a plain opposedCheck:
+  // success still damages the TARGET (an attack that connects), which a
+  // non-combat opposedCheck (e.g. a social contest) never did and still
+  // doesn't — gated on `intent.rollType === "attack"`, not on eventType,
+  // so this doesn't change opposedCheck's existing defense/dodge semantics.
+  if (intent.rollType === "opposedCheck" || intent.rollType === "attack") {
     const opponentTier = intent.opponentTier ?? "moderate";
     const opponentRoll = rollD20();
     const opponentTotal = opponentRoll + TIER_MODIFIERS[opponentTier];
@@ -144,13 +157,22 @@ export function resolveCheck(
 
     const statDeltas: Record<string, number> = {};
     if (intent.cravingElevated) statDeltas.craving = CRAVING_COST;
+    if (intent.rollType === "attack" && success) {
+      // Attack connects — placeholder weapon-damage band until a real
+      // damage-dice system exists (unchanged from the prior attack path).
+      statDeltas.targetHp = -(
+        criticalTier === "critical" || criticalTier === "cravingCritical"
+          ? 8
+          : 4
+      );
+    }
     if (intent.eventType === "combat" && !success) {
-      // A failed combat opposedCheck (e.g. a defense/dodge contest) means
-      // the character took a hit — damage to the ACTOR's own hp, not the
-      // opponent's. This is what gives T1's rules-validator (validator.ts)
-      // real material to gate: an actor's own hp/status transition.
-      // Placeholder band, same bounded-not-LLM-supplied discipline as the
-      // attack-success damage below.
+      // A failed combat roll (a miss, or a lost defense/dodge contest)
+      // means the character took a hit — damage to the ACTOR's own hp, not
+      // the opponent's. This is what gives T1's rules-validator
+      // (validator.ts) real material to gate: an actor's own hp/status
+      // transition. Placeholder band, same bounded-not-LLM-supplied
+      // discipline as the attack-success damage above.
       statDeltas.hp = -(TIER_MODIFIERS[opponentTier] + 2);
     }
 
@@ -167,21 +189,13 @@ export function resolveCheck(
     };
   }
 
+  // Only "check" reaches here now — "attack" is handled above.
   const targetNumber = clampTargetNumber(intent.targetNumber!);
   const success = usedRoll + modifier >= targetNumber;
   const criticalTier = computeCriticalTier(usedRoll, cravingDie, success);
 
   const statDeltas: Record<string, number> = {};
   if (intent.cravingElevated) statDeltas.craving = CRAVING_COST;
-  if (intent.rollType === "attack" && success) {
-    // Placeholder damage band until a real weapon/damage-dice system
-    // exists — bounded, not LLM-supplied, per Decision #7.
-    statDeltas.targetHp = -(
-      criticalTier === "critical" || criticalTier === "cravingCritical"
-        ? 8
-        : 4
-    );
-  }
 
   const consequences = generateConsequences(statDeltas, success, criticalTier, intent.rollType);
   return {
@@ -215,6 +229,8 @@ export function rejectedEvent(
     statDeltas: {},
     summary: reason,
     consequences: [`Attempt rejected: ${reason}`],
+    npcSignal: null, // the attempt never actually happened — nothing to remember
+    rejected: true,
   };
 }
 
