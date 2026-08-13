@@ -1,417 +1,352 @@
-# Graph Report - game  (2026-08-09)
+# Graph Report - .  (2026-08-12)
 
 ## Corpus Check
-- 82 files · ~86,093 words
+- 49 files · ~58,833 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1094 nodes · 1479 edges · 82 communities (65 shown, 17 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 34 edges (avg confidence: 0.74)
-- Token cost: 0 input · 0 output
-
-## Graph Freshness
-- Built from commit: `05137ba6`
-- Run `git rev-parse HEAD` and compare to check if the graph is stale.
-- Run `graphify update .` after code changes (no API cost).
+- 888 nodes · 1202 edges · 63 communities (52 shown, 11 thin omitted)
+- Extraction: 96% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.84)
+- Token cost: 0 input · 350,677 output
 
 ## Community Hubs (Navigation)
-- character.ts
-- install.sh
-- Game Development Terminology
-- dependencies
-- Game Development Basics
-- scripts
-- data-source.ts
-- art.ts
-- pipeline.py
-- compilerOptions
-- compilerOptions
-- glb_merge_anims.py
-- TurnEntity
-- JwtWsGateway
-- graph.service.ts
-- OpenRouter image models for art generation
-- app.module.ts
-- RolesGuard
-- fbx2glb.py
-- merge_anim_glbs.py
-- Voyage (Latitude AI RPG)
-- main.ts
-- Research: Game-Design Inspiration for AI-DM Coterie-Sim
-- LangGraph.js
-- HealthController
-- Phaser 3
-- glb_inspect.py
-- Decision #26: Ink + inkjs for narrative (v1 scope)
-- TODO — Implementation Backlog
-- Web APIs for Game Development
-- glb_patch.py
-- proc_anim_dragon.py
-- rig_transfer.py
-- seamless.py
-- Asset Generation Workflow
-- @game-dev — Índice Completo
-- Final Test Results — @game-dev Hierarchy Validation + Production Blockers
-- seg_dist
-- DOM+CSS-first frontend (post-v1 alternative)
-- JwtAuthGuard
-- InitSchema1786034027189
-- proc_rig_dragon.py
-- D&D 5e d20 system for stat resolution
-- Babylon.js
-- backend/package.json
-- Permadeath + Torpor as core stakes
-- Tension with Foundational Decision #19-21 (Phaser/PixiJS)
-- Edge Cases — @game-dev Boundary Testing
-- Installed Skills Reference
-- Test Cases — Validación de Jerarquía @game-dev
-- Validación Completa — @game-dev Jerarquía
-- Uso de @game-dev — Studio de Desarrollo de Juegos
-- P0 Fix Plan — Recall Feature Blockers
-- Delegación @game-dev — Sistema Robusto de Especialistas
-- T15 Cost-Model Re-evaluation (Quality > Velocity Pass)
-- graph.ts
-- state.ts
-- Empezá Aquí — @game-dev Quick Start
-- Research: Blockchain NPCs (On-Chain AI State) for Retention Viability
-- AI Dungeon Master Coterie-Sim
-- rules.ts
-- Test Results — @game-dev Hierarchy Validation
-- Ejemplos Prácticos — Cómo Usar @game-dev/game-lead
-- narration.ts
-- Agent Improvements
-- AddActiveChronicleIdToUser1786046005821
-- Research: Player Character Portraits and Story Reuse
-- Stylization — style contract for AI-generated assets
-- GAME CREATION SYSTEM reference
-- LangGraph.js orchestration framework
-- NestJS + Postgres backend platform
-- Research: Platform, Distribution, Monetization, Retention
-- Research: Text-Game Tooling, Animation, Alternative Formats, Accessibility
-- Voyage (Latitude) — multiplayer AI RPG competitor
-- SAMPLE_CHARACTERS
-- PROMPT START HERE
-- Design System — AI Dungeon Master Coterie-Sim
-- Roadmap — AI DM Coterie-Sim
-- Folders
-- Research: LLM-Narrated Permadeath Precedent — AI Dungeon, AI Roguelite, Hidden Door, Fallen London
-- Permadeath Retention Mechanics: Hades, FTL, Slay the Spire
-- Complete One-Shot Recreation — @game-dev with Inline Documentation
+- Project Root Documentation
+- Documentation Structure Guide
+- Game-Dev Agent Specialists
+- P0 Fix Plan Backlog
+- Backend NPM Dependencies
+- Platform & Monetization Research
+- Game Dev Technique Reference
+- Game Engine Skill Reference
+- OpenRouter Free-Model Research
+- Installed Agent Skills
+- Harness NPM Dependencies
+- Harness LangGraph Pipeline
+- Art Generation Module
+- Image Compositing Pipeline
+- Backend NPC/Turn Entities
+- Character Schema & Attributes
+- Design Doc & Competitors
+- Backend TS Config
+- Harness TS Config
+- Backend Auth Module
+- Permadeath Retention Research
+- Project README Overview
+- Dice Rules Engine
+- GLB Animation Merge Tool
+- LLM Framework Research
+- Harness Env & Bootstrap
+- WebSocket Gateway
+- Game Design Inspiration
+- Portrait Generation Research
+- AI Storytelling Platforms Survey
+- Role-Based Access Guards
+- Narration Fallback Module
+- FBX to GLB Converter
+- GLB Animation Import Tool
+- Global Exception Filter
+- Battle/Stat Resolution Research
+- Backend Chronicle Entity
+- GraphService Turn Orchestration
+- TypeORM Entity Decorators
+- Health Check Controller
+- NPC Memory & Retention Hooks
+- GLB Inspection Tool
+- JWT Auth Service
+- Backend NPC Entity
+- Web Game APIs Reference
+- GLB Material Patch Tool
+- Procedural Dragon Animation
+- Rig Transfer Tool
+- Seamless Texture Tool
+- Asset Generation Skills
+- Art Style Formula
+- Procedural Weight Painting
+- Auth Component Cluster
+- Init Schema Migration
+- ActiveChronicleId Migration
+- Procedural Dragon Rig
+- Backend Package Config
+- Art Style Contract
+- Game Creation System Doc
+- TypeORM Column Decorator
+- TypeORM CreateDateColumn Decorator
+- TypeORM Entity Decorator
+- TypeORM PrimaryGeneratedColumn Decorator
 
 ## God Nodes (most connected - your core abstractions)
-1. `log_info()` - 30 edges
-2. `run_stage_body()` - 25 edges
-3. `main()` - 23 edges
-4. `Game Development Terminology` - 23 edges
-5. `log_success()` - 20 edges
-6. `log_warn()` - 20 edges
-7. `Test Results — @game-dev Hierarchy Validation` - 18 edges
-8. `TurnEntity` - 15 edges
-9. `Game Development Basics` - 15 edges
-10. `install_desktop()` - 14 edges
+1. `Game Development Terminology` - 23 edges
+2. `Research: Game-Design Inspiration for the AI-DM Coterie-Sim Plan` - 20 edges
+3. `Roadmap — AI DM Coterie-Sim` - 19 edges
+4. `Final Test Results — @game-dev Hierarchy Validation + Production Blockers` - 17 edges
+5. `Design System — AI Dungeon Master Coterie-Sim` - 16 edges
+6. `Research: Blockchain NPCs (On-Chain AI State) for Retention Viability` - 15 edges
+7. `Research: LLM-Narrated Permadeath Precedent — AI Dungeon, AI Roguelite, Hidden Door, Fallen London` - 15 edges
+8. `Game Development Basics` - 15 edges
+9. `Permadeath Retention Mechanics: Hades, FTL, Slay the Spire` - 13 edges
+10. `T15 Cost-Model Re-evaluation (Quality > Velocity Pass)` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `resolve()` --calls--> `resolveCheck()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/rules.ts
-- `resolve()` --calls--> `sanitizeIntent()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/state.ts
-- `rulesValidate()` --calls--> `applyMutation()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/validator.ts
-- `narrate()` --calls--> `narrateWithFallback()`  [EXTRACTED]
-  perf-breakdown.ts → src/harness/narration.ts
-- `Rendering Pipeline Subsystem` --semantically_similar_to--> `Rendering Subsystem`  [INFERRED] [semantically similar]
-  .agents/skills/game-engine/references/game-engine-core-principles.md → .agents/skills/game-engine/SKILL.md
+- `LLM Orchestration Frameworks Research` --references--> `narrateWithFallback()`  [EXTRACTED]
+  docs/research/llm-orchestration-frameworks.md → src/harness/narration.ts
+- `Research: OpenRouter Free-Tier Model Candidates for LOGIC_MODEL / CREATIVE_MODEL` --references--> `resolve()`  [EXTRACTED]
+  docs/research/2026-08-05-openrouter-free-model-candidates-research.md → src/harness/graph.ts
+- `Research: Battle/Stat-Resolution Mechanics for the AI-DM Coterie-Sim` --references--> `resolve()`  [EXTRACTED]
+  docs/research/2026-08-05-rpg-battle-and-stat-resolution-mechanics-research.md → src/harness/graph.ts
+- `LLM Orchestration Frameworks Research` --references--> `resolve()`  [EXTRACTED]
+  docs/research/llm-orchestration-frameworks.md → src/harness/graph.ts
+- `LLM Orchestration Frameworks Research` --references--> `narrate()`  [EXTRACTED]
+  docs/research/llm-orchestration-frameworks.md → src/harness/graph.ts
 
 ## Import Cycles
 - None detected.
 
 ## Hyperedges (group relationships)
-- **Shipped AI Game Platforms (2026)** — ai_dungeon_platform, novelai_platform, character_ai_platform, hidden_door_platform, voyage_platform [EXTRACTED 1.00]
-- **Game Engine Alternatives for Text+Card Games** — phaser_engine, pixi_engine, konva_engine, dom_css_approach, babylon_engine, threejs_engine, godot_engine [EXTRACTED 1.00]
-- **LLM Orchestration Framework Options** — langgraph_framework, langchain_framework, vercel_ai_sdk, anthropic_agent_sdk, rivet_framework, huggingface_agents [EXTRACTED 1.00]
+- **AI Game Studio: game-lead orchestrates 5 specialists** — docs_production_recreate_game_dev_studio_game_lead, docs_production_recreate_game_dev_studio_gameplay_designer, docs_production_recreate_game_dev_studio_gameplay_engineer, docs_production_recreate_game_dev_studio_performance_engineer, docs_production_recreate_game_dev_studio_qa_tester, docs_production_recreate_game_dev_studio_game_researcher [EXTRACTED 1.00]
+- **M7.1 five live doc contradictions (frontend engine, Ink/inkjs, launch date, art latency gate, success metric)** — claude_tech_stack_frontend, docs_reference_design_frontend_engine, claude_tech_stack_narrative, docs_production_roadmap_locked_tech_stack, docs_production_roadmap_quality_gates_pre_launch, docs_production_roadmap_t15_finding, docs_project_facts_field5_deadline [EXTRACTED 1.00]
+- **Postgres persistence bring-up (compose service, checkpointer setup, raw-SQL casing fix)** — docker_compose_postgres_service, todo_m1_1_rewrite_raw_sql_to_typeorm_querybuilder, todo_m5_1_postgres_saver_setup, changelog_v0_1_0_0 [INFERRED 0.85]
+- **Permadeath-Retention Precedent Games (death as information gain / named consequence)** — docs_research_2026_08_06_permadeath_retention_mechanics_hades, docs_research_2026_08_06_permadeath_retention_mechanics_ftl, docs_research_2026_08_06_permadeath_retention_mechanics_slaythespire, docs_research_2026_08_03_game_design_inspiration_roguelegacy, docs_research_2026_08_03_game_design_inspiration_darkestdungeon [INFERRED 0.85]
+- **AI-DM / Narrative-Game Competitive Landscape Analyzed Across Research Passes** — docs_research_2026_08_03_game_design_inspiration_aidungeon, docs_research_2026_08_03_game_design_inspiration_hiddendoor, docs_research_ai_game_platforms_ai_dungeon_platform, docs_research_ai_game_platforms_hidden_door_platform, docs_research_ai_game_platforms_voyage_platform, docs_research_ai_game_platforms_character_ai_platform [INFERRED 0.80]
+- **LOGIC_MODEL Selection Decision Chain (two research passes, conflicting baselines)** — docs_research_2026_08_05_openrouter_free_model_candidates_research_cohere_north_mini_code_free, docs_research_2026_08_05_openrouter_free_model_candidates_research_nvidia_nemotron_3_super_120b, docs_research_2026_08_06_t15_cost_model_reevaluation_logic_model_gemini_2_flash, docs_research_2026_08_06_t15_cost_model_reevaluation_decision15_model_baseline [INFERRED 0.75]
 - **JWT Authentication Implementation Components** — jwt_strategy, jwt_auth_guard, src_backend_auth_service, jwt_ws_gateway [EXTRACTED 1.00]
 
-## Communities (82 total, 17 thin omitted)
+## Communities (63 total, 11 thin omitted)
 
-### Community 0 - "character.ts"
-Cohesion: 0.19
-Nodes (12): Attribute, Character, CHARACTER_STATUSES, CharacterSchema, CharacterStatus, CharacterStatusSchema, Skill, SkillSchema (+4 more)
-
-### Community 1 - "install.sh"
-Cohesion: 0.10
-Nodes (59): attempt_install_git(), check_git(), check_network_prerequisites(), check_node(), check_python(), clone_repo(), configure_browser_env_from_system_browser(), configure_managed_node_npm_prefix() (+51 more)
-
-### Community 2 - "Game Development Terminology"
+### Community 0 - "Project Root Documentation"
 Cohesion: 0.05
-Nodes (40): AAA (Triple-A) Games, AABB (Axis-Aligned Bounding Box), Game Development Techniques, Game UI Design Skill, Async Scripts Technique, Audio for Web Games Technique, Bresenham's Line Algorithm, Buff/Debuff Mechanic (+32 more)
+Nodes (57): CI Workflow, Changelog [0.1.0.0] — first tracked version, CLAUDE.md (project instructions), Research Docs Convention, Tech Stack (Locked): Frontend DOM+CSS+Motion.dev, Tech Stack (Locked): LLM LangGraph.js, Tech Stack (Locked): Narrative Ink+inkjs, Postgres service definition (docker-compose) (+49 more)
 
-### Community 3 - "dependencies"
+### Community 1 - "Documentation Structure Guide"
+Cohesion: 0.04
+Nodes (45): docs/README.md — Documentation Structure, Documentation Structure, File Count, Folders, `game-dev/` — @game-dev Studio Documentation (8 files), How to Use, `production/` — Production Fixes & Recreation (3 files), Quick Navigation (+37 more)
+
+### Community 2 - "Game-Dev Agent Specialists"
+Cohesion: 0.06
+Nodes (42): 1. **gameplay-engineer** — Code Quality + Architecture, 2. **performance-engineer** — Metrics + Profiling, 3. **qa-tester** — Test Automation + Regression, 4. **gameplay-designer** — Fun Metrics + Design, 5. **game-researcher** — Industry Precedent + Risk, 6. **game-lead** — Orchestration (No Changes), Agent Improvements, Collaboration Pattern (+34 more)
+
+### Community 3 - "P0 Fix Plan Backlog"
+Cohesion: 0.05
+Nodes (44): EXECUTION ORDER, INNOVATION RISKS (surfaced, not buried), M1.2 — Validate chronicleId ownership at WS trust boundary, M1.3 — Delete `'placeholder-chronicle-id'` fallback, M1.4 — `@Public()` on HealthController, M1.5 — roles.guard fail-closed default, M1 — Production Blockers (SHIP STOPPERS), M2.1 — Add `npcContext` to harness State schema (+36 more)
+
+### Community 4 - "Backend NPM Dependencies"
 Cohesion: 0.05
 Nodes (43): dotenv, @langchain/langgraph, @langchain/langgraph-checkpoint-postgres, @langchain/openrouter, @nestjs/common, @nestjs/config, @nestjs/core, @nestjs/jwt (+35 more)
 
-### Community 4 - "Game Development Basics"
+### Community 5 - "Platform & Monetization Research"
+Cohesion: 0.06
+Nodes (40): AI Dungeon monthly-credit monetization template, Research: Platform, Distribution, Monetization, Retention, DOM+CSS-first frontend finding (game shape doesn't need full game engine), Freemium + capped free daily turns + one-time unlock monetization model, Ship browser + itch.io first, delay webview wrap, prefer Electron over Tauri, Motion.dev (tween library, ~90% smaller than GSAP), Phaser/PixiJS frontend option (flagged possibly overkill), Tauri vs Electron distribution-wrap tradeoff (+32 more)
+
+### Community 6 - "Game Dev Technique Reference"
+Cohesion: 0.05
+Nodes (40): AAA (Triple-A) Games, AABB (Axis-Aligned Bounding Box), Game Development Techniques, Game UI Design Skill, Async Scripts Technique, Audio for Web Games Technique, Bresenham's Line Algorithm, Buff/Debuff Mechanic (+32 more)
+
+### Community 7 - "Game Engine Skill Reference"
 Cohesion: 0.06
 Nodes (37): Game Engine Core Design Principles, Game Engine Skill, Canvas 2D API, Canvas API (2D Drawing), CSS Styling, Data-Driven Design Principle, Entity-Component-System (ECS) Pattern, Event System Subsystem (+29 more)
 
-### Community 5 - "scripts"
+### Community 8 - "OpenRouter Free-Model Research"
+Cohesion: 0.07
+Nodes (34): cohere/north-mini-code:free — baseline LOGIC_MODEL, ~33% structured-output reliability observed, Darkbloom-routed backend rejects LangChain/Zod-v4-generated `$schema` field in tool params (cross-model provider-routing incompatibility), Research: OpenRouter Free-Tier Model Candidates for LOGIC_MODEL / CREATIVE_MODEL, google/gemma-4-26b-a4b-it:free — Darkbloom backend rejects $schema field, google/gemma-4-31b-it:free — untestable, upstream shared-pool rate-limited every attempt, Recommendation: switch LOGIC_MODEL from cohere/north-mini-code:free to nvidia/nemotron-3-super-120b-a12b:free, keep CREATIVE_MODEL unchanged, nvidia/nemotron-3-super-120b-a12b:free — 2/2 clean structured output, recommended LOGIC_MODEL, nvidia/nemotron-3-ultra-550b-a55b:free — current CREATIVE_MODEL, best Spanish gothic prose (+26 more)
+
+### Community 9 - "Installed Agent Skills"
+Cohesion: 0.07
+Nodes (30): Agent Configuration, Backend Engineering, `cpu-profiling` (aj-geddes/useful-ai-prompts), `data-analysis` (claude-office-skills/skills), Database Engineering, `e2e-playwright-testing` (asyrafhussin/agent-skills), Future Custom Skills (Post-Playtest), `game-analytics` (alphaonedev/claude-skills) (+22 more)
+
+### Community 10 - "Harness NPM Dependencies"
 Cohesion: 0.07
 Nodes (28): devDependencies, ts-node, tsx, @types/express, @types/node, @types/passport-jwt, typescript, name (+20 more)
 
-### Community 6 - "data-source.ts"
-Cohesion: 0.16
-Nodes (11): ChronicleEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Column, CreateDateColumn (+3 more)
+### Community 11 - "Harness LangGraph Pipeline"
+Cohesion: 0.14
+Nodes (19): resolve(), State, OPPONENT_TIERS, AttributeSchema, CriticalTier, CriticalTierSchema, LogicIntent, LogicIntentRaw (+11 more)
 
-### Community 7 - "art.ts"
-Cohesion: 0.26
-Nodes (8): ArtResult, extractImageUrl(), generateArt(), placeholderUrl(), main(), saveImage(), imageModelId(), openRouterApiKey()
+### Community 12 - "Art Generation Module"
+Cohesion: 0.19
+Nodes (13): ArtResult, extractImageUrl(), generateArt(), placeholderUrl(), main(), saveImage(), apiKey(), creativeAltModel() (+5 more)
 
-### Community 8 - "pipeline.py"
+### Community 13 - "Image Compositing Pipeline"
 Cohesion: 0.21
 Nodes (16): composite_cross(), _cut_axis(), _edge_energy(), flatten_luminance(), _hcut_cyclic(), make_seamless(), match_colors(), offset_blend() (+8 more)
 
-### Community 9 - "compilerOptions"
+### Community 14 - "Backend NPC/Turn Entities"
+Cohesion: 0.21
+Nodes (10): PrimaryColumn, Column, CreateDateColumn, Entity, Index, TURN_STATUSES, TurnEntity, TurnStatus (+2 more)
+
+### Community 15 - "Character Schema & Attributes"
+Cohesion: 0.18
+Nodes (13): Attribute, ATTRIBUTES, Character, CHARACTER_STATUSES, CharacterSchema, CharacterStatus, CharacterStatusSchema, Skill (+5 more)
+
+### Community 16 - "Design Doc & Competitors"
+Cohesion: 0.14
+Nodes (14): Hidden Door — game-engine layer + trope-engine narration, 1. AI Dungeon (Latitude), 2. AI Roguelite, 3. Hidden Door, 4. Fallen London (Failbetter Games) — added as narrative-first slow-pacing precedent, AI Dungeon April 2021 content-filter controversy — trust damage from under-communicated moderation, AI Roguelite Insane Mode — true permadeath, manual console memory-pin workaround, uncalibrated stakes, Differentiation Analysis (+6 more)
+
+### Community 17 - "Backend TS Config"
+Cohesion: 0.12
+Nodes (15): src/backend/**/__tests__/**, src/backend/**/*.ts, compilerOptions, emitDecoratorMetadata, esModuleInterop, experimentalDecorators, module, moduleResolution (+7 more)
+
+### Community 18 - "Harness TS Config"
 Cohesion: 0.13
 Nodes (14): src, src/backend, compilerOptions, esModuleInterop, module, moduleResolution, outDir, resolveJsonModule (+6 more)
 
-### Community 10 - "compilerOptions"
-Cohesion: 0.14
-Nodes (13): src/backend/**/*.ts, compilerOptions, emitDecoratorMetadata, esModuleInterop, experimentalDecorators, module, moduleResolution, outDir (+5 more)
+### Community 19 - "Backend Auth Module"
+Cohesion: 0.21
+Nodes (5): JwtPayload, JwtAuthGuard, Injectable, JwtStrategy, Injectable
 
-### Community 11 - "glb_merge_anims.py"
-Cohesion: 0.32
-Nodes (11): accessor_bytes(), append_accessor(), f32_bytes(), f32_list(), fix_root_scale(), main(), merge_clip(), node_names() (+3 more)
-
-### Community 12 - "TurnEntity"
-Cohesion: 0.16
-Nodes (10): InjectRepository, PrimaryColumn, Column, CreateDateColumn, Entity, Index, TurnEntity, GraphService (+2 more)
-
-### Community 13 - "JwtWsGateway"
-Cohesion: 0.20
-Nodes (7): ConnectedSocket, MessageBody, JwtWsGateway, Injectable, SubscribeMessage, WebSocketGateway, WebSocketServer
-
-### Community 14 - "graph.service.ts"
+### Community 20 - "Permadeath Retention Research"
 Cohesion: 0.18
-Nodes (10): NpcEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, TURN_STATUSES, TurnStatus (+2 more)
+Nodes (13): Single-player 'chronicle ledger' screen, Dwarf-Fortress-Legends-lite (candidate amendment), Dwarf Fortress — Legends Mode (seeded, browsable, comparable history), Slay the Spire / Slay the Spire 2 — unlocks as lore delivery (Epochs), power-unlock failure mode, Cross-game pattern: death is not loss, it's asymmetric information gain, made visible before next run, FTL: Faster Than Light — permanent cross-run progression, death as research, FTL: Faster Than Light (Subset Games), Gap in Current Game, Hades (Supergiant Games) (+5 more)
 
-### Community 16 - "app.module.ts"
-Cohesion: 0.14
-Nodes (7): AuthService, JwtPayload, Injectable, JwtAuthGuard, Injectable, JwtStrategy, Injectable
-
-### Community 17 - "RolesGuard"
-Cohesion: 0.25
-Nodes (3): RolesGuard, Injectable, UserRole
-
-### Community 18 - "fbx2glb.py"
-Cohesion: 0.46
-Nodes (7): clean_action_name(), fix_normals(), force_opaque_materials(), get_args(), main(), patch_glb_opaque(), push_all_actions_to_nla()
-
-### Community 19 - "merge_anim_glbs.py"
-Cohesion: 0.39
-Nodes (7): fix_root_scale(), get_args(), import_clip(), main(), Import an animation GLB, keep its action (renamed), delete its objects., Detect & fix baked root scale; returns the factor or None., root_bone_name()
-
-### Community 20 - "Voyage (Latitude AI RPG)"
-Cohesion: 0.29
-Nodes (8): AI Dungeon (Latitude), Character.AI, Hidden Door, Midjourney Storytelling Lab, NovelAI, Cross-playthrough NPC memory + recall surfacing, Voyage as direct competitor, Voyage (Latitude AI RPG)
-
-### Community 21 - "main.ts"
-Cohesion: 0.29
-Nodes (4): Catch, Module, AppModule, AllExceptionsFilter
-
-### Community 22 - "Research: Game-Design Inspiration for AI-DM Coterie-Sim"
-Cohesion: 0.67
-Nodes (3): AI Dungeon (Latitude) — AI DM competitor, Research: Game-Design Inspiration for AI-DM Coterie-Sim, Hidden Door — hybrid AI narrative competitor
-
-### Community 23 - "LangGraph.js"
-Cohesion: 0.29
-Nodes (7): Anthropic Claude Agent SDK, HuggingFace Transformers Agents, LangChain.js, LangGraph.js current orchestration, LangGraph.js, Rivet (Visual AI App Builder), Vercel AI SDK
-
-### Community 24 - "HealthController"
-Cohesion: 0.29
-Nodes (4): Controller, Get, InjectDataSource, HealthController
-
-### Community 25 - "Phaser 3"
-Cohesion: 0.29
-Nodes (7): DOM + CSS + Canvas Hybrid, DOM+CSS-first frontend architecture, Godot (Web Export), KaPlay (Kaboom fork), Konva.js, Phaser 3, Pixi.js
-
-### Community 26 - "glb_inspect.py"
-Cohesion: 0.53
-Nodes (5): accessor_values(), find_skeleton_roots(), main(), Joint nodes whose parent is not itself a joint (per skin)., read_glb()
-
-### Community 27 - "Decision #26: Ink + inkjs for narrative (v1 scope)"
-Cohesion: 0.50
-Nodes (4): Decision #26: Ink + inkjs for narrative (v1 scope), Ink + inkjs narrative templating engine, Quality over velocity principle (2026-08-06), Scope Decision #4: Persistent NPC recall (v1 scope)
-
-### Community 28 - "TODO — Implementation Backlog"
-Cohesion: 0.04
-Nodes (46): EXECUTION ORDER, INNOVATION RISKS (surfaced, not buried), M1.1 — Rewrite raw SQL to TypeORM QueryBuilder, M1.2 — Validate chronicleId ownership at WS trust boundary, M1.3 — Delete `'placeholder-chronicle-id'` fallback, M1.4 — `@Public()` on HealthController, M1.5 — roles.guard fail-closed default, M1 — Production Blockers (SHIP STOPPERS) (+38 more)
-
-### Community 29 - "Web APIs for Game Development"
-Cohesion: 0.40
-Nodes (5): Web APIs for Game Development, asm.js Subset, Emscripten Toolchain, Fullscreen API, WebAssembly (Wasm)
-
-### Community 30 - "glb_patch.py"
-Cohesion: 0.70
-Nodes (4): main(), patch_materials(), read_glb(), write_glb()
-
-### Community 31 - "proc_anim_dragon.py"
-Cohesion: 0.60
-Nodes (3): bake_action(), get_args(), main()
-
-### Community 32 - "rig_transfer.py"
-Cohesion: 0.70
-Nodes (4): clean_action_name(), get_args(), main(), world_bbox()
-
-### Community 33 - "seamless.py"
-Cohesion: 0.70
-Nodes (4): flatten_luminance(), make_seamless(), offset_blend(), periodic_component()
-
-### Community 34 - "Asset Generation Workflow"
-Cohesion: 0.40
-Nodes (5): Asset Generation Workflow, AutoSprite Generation Model, Game Design System Reference, Higgsfield Game Generation Skill, Spritesheet Generation
-
-### Community 35 - "@game-dev — Índice Completo"
-Cohesion: 0.05
-Nodes (41): "Agent type not found", "¿Agregamos feature X?", ⚡ Common Issues & Solutions, "¿Cómo Empiezo?", "¿Cómo Fixo los P0s?", "¿Cómo Funciona la Delegación?", "¿Cómo Uso Especialistas Directos?", "¿Cómo Validar que Funciona?" (+33 more)
-
-### Community 36 - "Final Test Results — @game-dev Hierarchy Validation + Production Blockers"
-Cohesion: 0.06
-Nodes (32): Blocker 1: turnNumber Recall Query Broken, Blocker 2: chronicleId Not Scoped in Recall, Codebase: ⚠️ B Grade (with P0 fixes), Conclusion, Core Tests (10), Critical Finding: 2 P0 Blockers in Recall Feature, Crosstalk Prevention, Current Status: BLOCKED (2 P0 Fixes Required) (+24 more)
-
-### Community 37 - "seg_dist"
-Cohesion: 0.67
-Nodes (3): main(), distance from point p to segment ab, seg_dist()
-
-### Community 38 - "DOM+CSS-first frontend (post-v1 alternative)"
-Cohesion: 0.50
-Nodes (4): DOM+CSS-first frontend (post-v1 alternative), itch.io-first distribution strategy, Motion.dev for CSS tweens (5 KB alternative), Phaser/PixiJS game frontend engine
-
-### Community 39 - "JwtAuthGuard"
-Cohesion: 0.67
-Nodes (4): JwtAuthGuard, JWT Strategy, JwtWsGateway, AuthService
-
-### Community 47 - "Edge Cases — @game-dev Boundary Testing"
-Cohesion: 0.06
-Nodes (31): Category 10: Decision Reversals (Context Change), Category 11: Error Scenarios (System Under Stress), Category 1: Ambiguous Requests (Design vs Code), Category 2: Missing Context (Incomplete Brief), Category 3: Conflicting Requirements (Tradeoffs), Category 4: Novel Features (No Precedent), Category 5: Extreme Scale (Stress Testing), Category 6: Incomplete Bug Reports (QA Edge Cases) (+23 more)
-
-### Community 48 - "Installed Skills Reference"
-Cohesion: 0.06
-Nodes (30): Agent Configuration, Backend Engineering, `cpu-profiling` (aj-geddes/useful-ai-prompts), `data-analysis` (claude-office-skills/skills), Database Engineering, `e2e-playwright-testing` (asyrafhussin/agent-skills), Future Custom Skills (Post-Playtest), `game-analytics` (alphaonedev/claude-skills) (+22 more)
-
-### Community 49 - "Test Cases — Validación de Jerarquía @game-dev"
-Cohesion: 0.08
-Nodes (23): Caso: Bug Report, Caso: Code Architecture Question, Caso: Core Loop Fun Factor, Caso: Engineer Gets Design Question, Caso: Feature Design Evaluation, Caso: Feature Precedent, Caso: Full Ship Readiness Audit, Caso: Slow Turn Resolution (+15 more)
-
-### Community 50 - "Validación Completa — @game-dev Jerarquía"
-Cohesion: 0.09
-Nodes (22): Checklist de Validación, Cómo Correr Tests, Cómo Usar Resultados, During Tests, Error Recovery (Tests 8-10), Iteration Process, Métricas de Validación, Opción 1: Manual (Práctico) (+14 more)
-
-### Community 51 - "Uso de @game-dev — Studio de Desarrollo de Juegos"
-Cohesion: 0.09
-Nodes (21): 1. Decisión Compleja → Use @game-lead, 2. Especialista Específico → Use Directo, 3. Bug o Issue → Use @qa-tester, 4. Feature Research → Use @game-researcher, Code: "¿Está listo para deploy?", Dimensiones de Análisis, Ejemplos Reales, Especialistas (+13 more)
-
-### Community 52 - "P0 Fix Plan — Recall Feature Blockers"
-Cohesion: 0.09
-Nodes (21): Blocker 1: turnNumber Parameter Missing, Blocker 2: chronicleId Scope Missing, Current Code, Current Code, Deployment Checklist, Effort: 30 minutes code + 15 min test = 45 minutes, Effort: 5 minutes code + 10 min test = 15 minutes, Fix (+13 more)
-
-### Community 53 - "Delegación @game-dev — Sistema Robusto de Especialistas"
-Cohesion: 0.10
-Nodes (20): Best Practices de Comunicación, Bugs / Issues / Reproducibilidad, Caso 1: "¿El juego está listo para ship?", Caso 2: "Performance spike en art cache", Casos de Uso — Workflow Completo, CON game-lead, Código / Arquitectura / Mantenibilidad, Delegación @game-dev — Sistema Robusto de Especialistas (+12 more)
-
-### Community 54 - "T15 Cost-Model Re-evaluation (Quality > Velocity Pass)"
-Cohesion: 0.11
-Nodes (17): 1. Logic Model: Gemini 2.0 Flash, 2. Creative Model: Claude 3.5 Sonnet, 3. Image Model: OpenRouter Image APIs, Action Items, Before Launch, Context, Cost Analysis, Decision Framework (+9 more)
-
-### Community 55 - "graph.ts"
+### Community 21 - "Project README Overview"
 Cohesion: 0.15
-Nodes (21): graph, narrate(), resolve(), rulesValidate(), State, ATTRIBUTES, narrate(), resolve() (+13 more)
-
-### Community 56 - "state.ts"
-Cohesion: 0.14
-Nodes (15): AttributeSchema, CriticalTier, CriticalTierSchema, LogicIntent, LogicIntentRaw, LogicIntentSchema, nullableString, nullableStringOrNumber (+7 more)
-
-### Community 57 - "Empezá Aquí — @game-dev Quick Start"
-Cohesion: 0.10
-Nodes (20): 5 Segundos, Cómo Sé Si Funciona, Documentación (En Orden de Lectura), Ejemplo Salida Real, Ejemplos Rápidos (Copy-Paste), Empezá Aquí — @game-dev Quick Start, "¿Es divertido el core loop?", Especialista responde fuera de su rol (+12 more)
-
-### Community 58 - "Research: Blockchain NPCs (On-Chain AI State) for Retention Viability"
-Cohesion: 0.13
-Nodes (14): Centralized DB cost:, Context: What We're Optimizing For, Finding 1: Blockchain Games Have Modest Retention; It's Driven by Speculation, Not Narrative, Finding 2: Latency Kills the Slow-Paced Narrative Experience, Finding 3: Wallet UX Remains a Massive Barrier, Even with Embedded Wallets, Finding 4: No Shipping Games Store NPC AI State On-Chain, Finding 5: Cost Analysis Shows Centralized DB Wins on Every Axis, Finding 6: No Cross-Game NPC Trading/Interop Use Case Exists (+6 more)
-
-### Community 59 - "AI Dungeon Master Coterie-Sim"
-Cohesion: 0.14
 Nodes (13): AI Dungeon Master Coterie-Sim, Architecture, Commands, Deployment, Development Conventions, Docs, Environment Variables, Key Files (+5 more)
 
-### Community 60 - "rules.ts"
+### Community 22 - "Dice Rules Engine"
 Cohesion: 0.31
 Nodes (11): clampAttributeModifier(), modifierFor(), clampTargetNumber(), computeCriticalTier(), generateConsequences(), OpponentTier, PlayerRoll, resolveCheck() (+3 more)
 
-### Community 61 - "Test Results — @game-dev Hierarchy Validation"
-Cohesion: 0.10
-Nodes (20): Appendix: Raw Outputs, Executive Summary, Issue 1: [Title], Issue 2: [Title], Issues Found, Metric Summary, Next Iteration Planning, Observations & Recommendations (+12 more)
+### Community 23 - "GLB Animation Merge Tool"
+Cohesion: 0.32
+Nodes (11): accessor_bytes(), append_accessor(), f32_bytes(), f32_list(), fix_root_scale(), main(), merge_clip(), node_names() (+3 more)
 
-### Community 62 - "Ejemplos Prácticos — Cómo Usar @game-dev/game-lead"
-Cohesion: 0.12
-Nodes (15): Conflicto entre especialistas, Cómo Leer Respuestas de Game-Lead, Ejemplos Prácticos — Cómo Usar @game-dev/game-lead, Especialista responde fuera de su rol, Game-lead no entiende tu request, Game-lead no sintetiza, Pro Tips, Template 1: ¿Es Divertido? (+7 more)
+### Community 24 - "LLM Framework Research"
+Cohesion: 0.21
+Nodes (12): Anthropic Claude Agent SDK — declarative, minimal boilerplate, Claude-locked, best fit if starting fresh, LLM Orchestration Frameworks Research, HuggingFace Transformers Agents — Python-only, not fit for TS/Node backend, Recommendation: keep LangGraph.js for now; Anthropic Agent SDK best fit if starting fresh, LangChain.js — composable components/agent toolkit, complementary not alternative to LangGraph, LangGraph.js — current orchestration, StateGraph 4-node linear pipeline, minimal overhead for this scope, Raw async/await orchestration — ~30 lines vs 147 in graph.ts, viable if game never branches, Rivet (Ironclad) — visual node-based AI workflow builder, prototyping only not production (+4 more)
 
-### Community 63 - "narration.ts"
+### Community 25 - "Harness Env & Bootstrap"
+Cohesion: 0.27
+Nodes (8): SAMPLE_CHARACTERS, loadEnv(), ensureCheckpointer(), harnessGraph, main(), ITERATIONS, main(), SAMPLE_ACTIONS
+
+### Community 26 - "WebSocket Gateway"
+Cohesion: 0.20
+Nodes (7): ConnectedSocket, MessageBody, JwtWsGateway, Injectable, SubscribeMessage, WebSocketGateway, WebSocketServer
+
+### Community 27 - "Game Design Inspiration"
+Cohesion: 0.25
+Nodes (11): AI Roguelite (Steam) — LLM-as-engine, no rules-legal validation layer, Bloodborne — Insight, coined stat name carrying lore+mechanical weight, Darkest Dungeon — Affliction System (Stress/Affliction, named quirks), Research: Game-Design Inspiration for the AI-DM Coterie-Sim Plan, Fallen London / Sunless Sea — differentiation via invented vocabulary (Terror Meter), 'Hunger'/'Humanity' naming overlap with VTM V5 flagged vs Decision #1's no-VTM-terms rule, Monster Hunter — Hunter's Notes progressive research-level entry completion, NarrativeEngine-P (Sagesheep) — Dice Fairness pre-rolled pools + within-campaign recall (+3 more)
+
+### Community 28 - "Portrait Generation Research"
+Cohesion: 0.31
+Nodes (10): Character Card V2 spec — one fixed pre-authored portrait per character, no per-user regeneration, Research: Player Character Portraits, Dynamic Portrait Evolution, Story Reuse, Gemini 2.5 Flash Image (Nano Banana) — targeted edit/consistency support, ~$0.039/image, Higgsfield Soul ID — trained reusable identity (fallback if per-call reference edit drifts), LangGraph.js self-hosted PostgresSaver checkpointer has no fork/clone primitive, LangGraph Platform `copy_thread` API (hosted-only, rejected by self-hosting decision), NovelAI consistent-character technique — tag density in prompt, not image-to-image/embeddings, OpenRouter Image API `input_references` parameter (image-to-image edit path) (+2 more)
+
+### Community 29 - "AI Storytelling Platforms Survey"
+Cohesion: 0.25
+Nodes (9): AI Dungeon (Latitude) — commodity narration, unmanaged context, AI Dungeon — Auto Summarization + Memory Bank, scoped to single adventure, oldest memories evicted, AI Dungeon — commodity offering, saturated red-ocean baseline, four-tier subscription, Character.AI — chatbot-companion red ocean, age-tiered moderation, inconsistent memory, Research: Existing AI-Driven Game/Storytelling Platforms, Lore Machine — no 2026 web presence found, flagged as gap, NovelAI — underserved adult-fiction + privacy niche, subscription-only, Voyage direct-competition risk — 'unscripted AI RPG with world memory' space, well-funded, 5yr World Engine head start (+1 more)
+
+### Community 30 - "Role-Based Access Guards"
+Cohesion: 0.25
+Nodes (3): RolesGuard, Injectable, UserRole
+
+### Community 31 - "Narration Fallback Module"
 Cohesion: 0.42
 Nodes (6): contentToString(), deterministicNarration(), isRefusal(), narrateWithFallback(), NarrationResponse, outcomeLabel()
 
-### Community 64 - "Agent Improvements"
-Cohesion: 0.14
-Nodes (13): 1. **gameplay-engineer** — Code Quality + Architecture, 2. **performance-engineer** — Metrics + Profiling, 3. **qa-tester** — Test Automation + Regression, 4. **gameplay-designer** — Fun Metrics + Design, 5. **game-researcher** — Industry Precedent + Risk, 6. **game-lead** — Orchestration (No Changes), Agent Improvements, Collaboration Pattern (+5 more)
+### Community 32 - "FBX to GLB Converter"
+Cohesion: 0.46
+Nodes (7): clean_action_name(), fix_normals(), force_opaque_materials(), get_args(), main(), patch_glb_opaque(), push_all_actions_to_nla()
 
-### Community 74 - "SAMPLE_CHARACTERS"
-Cohesion: 0.25
-Nodes (5): SAMPLE_CHARACTERS, loadEnv(), harnessGraph, ITERATIONS, SAMPLE_ACTIONS
+### Community 33 - "GLB Animation Import Tool"
+Cohesion: 0.39
+Nodes (7): fix_root_scale(), get_args(), import_clip(), main(), Import an animation GLB, keep its action (renamed), delete its objects., Detect & fix baked root scale; returns the factor or None., root_bone_name()
 
-### Community 75 - "PROMPT START HERE"
-Cohesion: 0.15
-Nodes (12): Agents to Create, Backup This File, Documentation to Create, How to Use This File, Key Behaviors Embedded, One-Shot: Recreate Game Dev Studio, Output After Creation, Project Integration (+4 more)
-
-### Community 76 - "Design System — AI Dungeon Master Coterie-Sim"
-Cohesion: 0.17
-Nodes (11): Accessibility (carries forward from research already done this session), Aesthetic Direction, Color, Decisions Log, Design System — AI Dungeon Master Coterie-Sim, Layout, Motion, Product Context (+3 more)
-
-### Community 77 - "Roadmap — AI DM Coterie-Sim"
-Cohesion: 0.18
-Nodes (10): Current Sprint, Decision References, Deferred (Post-v1), Known Issues, Locked Decisions, P0 Fixes (Complete), Quality Gates (Pre-Launch), Roadmap — AI DM Coterie-Sim (+2 more)
-
-### Community 78 - "Folders"
-Cohesion: 0.18
-Nodes (10): Documentation Structure, File Count, Folders, `game-dev/` — @game-dev Studio Documentation (8 files), How to Use, `production/` — Production Fixes & Recreation (3 files), Quick Navigation, `reference/` — Reference & System Design (1 file) (+2 more)
-
-### Community 79 - "Research: LLM-Narrated Permadeath Precedent — AI Dungeon, AI Roguelite, Hidden Door, Fallen London"
+### Community 34 - "Global Exception Filter"
 Cohesion: 0.29
-Nodes (6): 1. AI Dungeon (Latitude), 2. AI Roguelite, 3. Hidden Door, 4. Fallen London (Failbetter Games) — added as narrative-first slow-pacing precedent, Differentiation Analysis, Research: LLM-Narrated Permadeath Precedent — AI Dungeon, AI Roguelite, Hidden Door, Fallen London
+Nodes (4): Catch, Module, AppModule, AllExceptionsFilter
 
-### Community 80 - "Permadeath Retention Mechanics: Hades, FTL, Slay the Spire"
+### Community 35 - "Battle/Stat Resolution Research"
+Cohesion: 0.43
+Nodes (8): Recommended resolution model: D&D-style d20-vs-DC base, Craving as tagged second-d20 advantage-style bolt-on (not full VTM dice pool), D&D 5e SRD 5.1 — d20 + modifier vs DC ability-check/attack model, advantage/disadvantage, contests, Research: Battle/Stat-Resolution Mechanics for the AI-DM Coterie-Sim, Foundry VTT Roll/RollTerm classes — roll definition vs roll result separation, GameEventSchema evolution proposal (rollType, targetNumber, cravingDie, recomputable success), OpenCombatEngine — SRD-5.1-compliant open-source engine, Result<T> pattern, IDiceRoller, Vampire: The Masquerade V5 — Attribute+Skill d10 dice-pool, success-counting, opposed-roll-as-damage, VTM V5 Hunger dice — substitute pool dice, Messy Critical / Bestial Failure narrative tags
+
+### Community 36 - "Backend Chronicle Entity"
 Cohesion: 0.29
-Nodes (6): FTL: Faster Than Light (Subset Games), Gap in Current Game, Hades (Supergiant Games), Pattern Across All Three, Permadeath Retention Mechanics: Hades, FTL, Slay the Spire, Slay the Spire (Mega Crit Games)
+Nodes (6): ChronicleEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn
 
-### Community 81 - "Complete One-Shot Recreation — @game-dev with Inline Documentation"
+### Community 37 - "GraphService Turn Orchestration"
+Cohesion: 0.32
+Nodes (3): GraphService, Injectable, HarnessGraphState
+
+### Community 38 - "TypeORM Entity Decorators"
+Cohesion: 0.29
+Nodes (6): Column, CreateDateColumn, Entity, InjectRepository, PrimaryGeneratedColumn, UserEntity
+
+### Community 39 - "Health Check Controller"
+Cohesion: 0.29
+Nodes (4): Controller, Get, InjectDataSource, HealthController
+
+### Community 40 - "NPC Memory & Retention Hooks"
+Cohesion: 0.29
+Nodes (7): Death Stranding — Social Strand System, attribution of world-state change to past action, Hades — repetition reframed as continuity via NPC relationship state, Named 'returning face' surfaced at chronicle start (candidate amendment), Retention hooks: cliffhangers, consequence webs, fixed pacing, session recap, sustained-play unlocks, Hades — relationship-state gating + character acknowledgment of loop, Cross-playthrough NPC memory + surfacing mechanic — no shipped platform found doing this, @game-dev hierarchy validation — 92% routing accuracy, 0% crosstalk, A-grade, production-ready for delegation
+
+### Community 41 - "GLB Inspection Tool"
+Cohesion: 0.53
+Nodes (5): accessor_values(), find_skeleton_roots(), main(), Joint nodes whose parent is not itself a joint (per skin)., read_glb()
+
+### Community 43 - "Backend NPC Entity"
 Cohesion: 0.33
-Nodes (5): Complete One-Shot Recreation — @game-dev with Inline Documentation, COMPLETE RECREATION PROMPT (Copy Everything Below), Expected Output, How to Use This Complete Prompt, What This Prompt Does Differently
+Nodes (6): NpcEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn
+
+### Community 44 - "Web Game APIs Reference"
+Cohesion: 0.40
+Nodes (5): Web APIs for Game Development, asm.js Subset, Emscripten Toolchain, Fullscreen API, WebAssembly (Wasm)
+
+### Community 45 - "GLB Material Patch Tool"
+Cohesion: 0.70
+Nodes (4): main(), patch_materials(), read_glb(), write_glb()
+
+### Community 46 - "Procedural Dragon Animation"
+Cohesion: 0.60
+Nodes (3): bake_action(), get_args(), main()
+
+### Community 47 - "Rig Transfer Tool"
+Cohesion: 0.70
+Nodes (4): clean_action_name(), get_args(), main(), world_bbox()
+
+### Community 48 - "Seamless Texture Tool"
+Cohesion: 0.70
+Nodes (4): flatten_luminance(), make_seamless(), offset_blend(), periodic_component()
+
+### Community 49 - "Asset Generation Skills"
+Cohesion: 0.40
+Nodes (5): Asset Generation Workflow, AutoSprite Generation Model, Game Design System Reference, Higgsfield Game Generation Skill, Spritesheet Generation
+
+### Community 50 - "Art Style Formula"
+Cohesion: 0.60
+Nodes (3): STYLE_FORMULA, STYLE_TOKEN, VALID_INTENT
+
+### Community 51 - "Procedural Weight Painting"
+Cohesion: 0.67
+Nodes (3): main(), distance from point p to segment ab, seg_dist()
+
+### Community 52 - "Auth Component Cluster"
+Cohesion: 0.67
+Nodes (4): JwtAuthGuard, JWT Strategy, JwtWsGateway, AuthService
+
+## Ambiguous Edges - Review These
+- `Tech Stack (Locked): Frontend DOM+CSS+Motion.dev` → `Design doc: Browser-based game, Phaser/PixiJS frontend`  [AMBIGUOUS]
+  CLAUDE.md · relation: conceptually_related_to
+- `M2 — NPC Recall Feature Actually Wire-In (Flagship)` → `Changelog [0.1.0.0] — first tracked version`  [AMBIGUOUS]
+  CHANGELOG.md · relation: conceptually_related_to
+- `Recommendation: switch LOGIC_MODEL from cohere/north-mini-code:free to nvidia/nemotron-3-super-120b-a12b:free, keep CREATIVE_MODEL unchanged` → `Foundational Decision #15 baseline — Gemini 2.0 Flash (logic) / Claude 3.5 Sonnet (creative) / OpenRouter image models`  [AMBIGUOUS]
+  docs/research/2026-08-06-t15-cost-model-reevaluation.md · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **532 isolated node(s):** `UV_NO_CONFIG`, `name`, `version`, `private`, `type` (+527 more)
+- **346 isolated node(s):** `TURN_STATUSES`, `TurnStatus`, `type`, `VALID_INTENT`, `ArtResult` (+341 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `TurnEntity` connect `TurnEntity` to `app.module.ts`, `data-source.ts`, `graph.service.ts`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `CharacterSchema` connect `character.ts` to `app.module.ts`, `state.ts`, `JwtWsGateway`, `graph.ts`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `scripts`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **What connects `UV_NO_CONFIG`, `name`, `version` to the rest of the system?**
-  _532 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `install.sh` be split into smaller, more focused modules?**
-  _Cohesion score 0.10359964881474978 - nodes in this community are weakly interconnected._
-- **Should `Game Development Terminology` be split into smaller, more focused modules?**
-  _Cohesion score 0.052564102564102565 - nodes in this community are weakly interconnected._
-- **Should `dependencies` be split into smaller, more focused modules?**
-  _Cohesion score 0.046511627906976744 - nodes in this community are weakly interconnected._
+- **What is the exact relationship between `Tech Stack (Locked): Frontend DOM+CSS+Motion.dev` and `Design doc: Browser-based game, Phaser/PixiJS frontend`?**
+  _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
+- **What is the exact relationship between `M2 — NPC Recall Feature Actually Wire-In (Flagship)` and `Changelog [0.1.0.0] — first tracked version`?**
+  _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
+- **What is the exact relationship between `Recommendation: switch LOGIC_MODEL from cohere/north-mini-code:free to nvidia/nemotron-3-super-120b-a12b:free, keep CREATIVE_MODEL unchanged` and `Foundational Decision #15 baseline — Gemini 2.0 Flash (logic) / Claude 3.5 Sonnet (creative) / OpenRouter image models`?**
+  _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
+- **Why does `Recreate Game Dev Studio (one-shot prompt)` connect `Game-Dev Agent Specialists` to `Project Root Documentation`, `Documentation Structure Guide`?**
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **Why does `Final Test Results — @game-dev Hierarchy Validation + Production Blockers` connect `Documentation Structure Guide` to `NPC Memory & Retention Hooks`, `Project Root Documentation`?**
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
+- **Why does `docs/README.md — Documentation Structure` connect `Documentation Structure Guide` to `Project Root Documentation`, `Game-Dev Agent Specialists`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+- **What connects `TURN_STATUSES`, `TurnStatus`, `type` to the rest of the system?**
+  _346 weakly-connected nodes found - possible documentation gaps or missing edges._

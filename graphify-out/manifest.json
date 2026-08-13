@@ -1,18 +1,13 @@
 {
-  "install.sh": {
-    "mtime": 1785883438.0087607,
-    "ast_hash": "6c8779bab2a79a769483c90365b3c7fc",
-    "semantic_hash": "6c8779bab2a79a769483c90365b3c7fc"
-  },
   "package.json": {
-    "mtime": 1786107977.5858226,
-    "ast_hash": "1e6e7c5bea8e0e0b95ebfafe77fcfad1",
-    "semantic_hash": ""
+    "mtime": 1786580855.8799024,
+    "ast_hash": "78301420417196c706be6ae0deacda6f",
+    "semantic_hash": "78301420417196c706be6ae0deacda6f"
   },
   "src/backend/app.module.ts": {
-    "mtime": 1786036040.6227095,
-    "ast_hash": "d1440c96646b3653375673b5fece975b",
-    "semantic_hash": "d1440c96646b3653375673b5fece975b"
+    "mtime": 1786580487.4426513,
+    "ast_hash": "1cc1dc39bf50cd63e83842a56869dd25",
+    "semantic_hash": "1cc1dc39bf50cd63e83842a56869dd25"
   },
   "src/backend/auth/auth.decorators.ts": {
     "mtime": 1786021717.9004238,
@@ -30,9 +25,9 @@
     "semantic_hash": "999cc5281853014b17d8849167dbc078"
   },
   "src/backend/auth/jwt-ws.gateway.ts": {
-    "mtime": 1786107647.5973914,
-    "ast_hash": "96534ddf5a62c0a7401d6cbed97d2845",
-    "semantic_hash": ""
+    "mtime": 1786580478.9787378,
+    "ast_hash": "dcf664d781606e8329149f8ad5f6ad63",
+    "semantic_hash": "dcf664d781606e8329149f8ad5f6ad63"
   },
   "src/backend/auth/jwt.strategy.ts": {
     "mtime": 1786021867.1004503,
@@ -45,9 +40,9 @@
     "semantic_hash": "a899e6582400d92c2f47418723eb4cf7"
   },
   "src/backend/common/all-exceptions.filter.ts": {
-    "mtime": 1786021838.9980729,
-    "ast_hash": "128a04925938154092ef014103702702",
-    "semantic_hash": "128a04925938154092ef014103702702"
+    "mtime": 1786580256.6878655,
+    "ast_hash": "21abf877fce2b89eeafa0f2256b88a37",
+    "semantic_hash": "21abf877fce2b89eeafa0f2256b88a37"
   },
   "src/backend/data-source.ts": {
     "mtime": 1786033929.9193237,
@@ -72,17 +67,17 @@
   "src/backend/entities/user.entity.ts": {
     "mtime": 1786045823.3719635,
     "ast_hash": "9a261268feb3cb90714aa7c0fe95110e",
-    "semantic_hash": ""
+    "semantic_hash": "9a261268feb3cb90714aa7c0fe95110e"
   },
   "src/backend/graph/graph.service.ts": {
-    "mtime": 1786107729.1895835,
-    "ast_hash": "ab407cef982d288ef101ace3021a8047",
-    "semantic_hash": ""
+    "mtime": 1786580547.669037,
+    "ast_hash": "dd70470b2bb2db89c174b880de76d2d6",
+    "semantic_hash": "dd70470b2bb2db89c174b880de76d2d6"
   },
   "src/backend/graph/turn-reservation.service.ts": {
-    "mtime": 1786035964.098064,
-    "ast_hash": "cafa221d0e2326fdf439aba9d646c3ac",
-    "semantic_hash": "cafa221d0e2326fdf439aba9d646c3ac"
+    "mtime": 1786580377.5837336,
+    "ast_hash": "633bd6e571d27cfd1e3de914db4a34a5",
+    "semantic_hash": "633bd6e571d27cfd1e3de914db4a34a5"
   },
   "src/backend/health/health.controller.ts": {
     "mtime": 1785983977.5766075,
@@ -90,9 +85,9 @@
     "semantic_hash": "aa7dd2ac2f036b83389f87b0d89f04ec"
   },
   "src/backend/main.ts": {
-    "mtime": 1786021844.886152,
-    "ast_hash": "6d7bcb80d0f5c14314927f0b85c2108a",
-    "semantic_hash": "6d7bcb80d0f5c14314927f0b85c2108a"
+    "mtime": 1786580455.8789735,
+    "ast_hash": "1c3aa9cd81ae19b8d27183790add1add",
+    "semantic_hash": "1c3aa9cd81ae19b8d27183790add1add"
   },
   "src/backend/migrations/1786034027189-InitSchema.ts": {
     "mtime": 1786034030.010467,
@@ -110,14 +105,14 @@
     "semantic_hash": "43eb380d8a03301049daa1a064a3cd9b"
   },
   "src/harness/__tests__/narration.test.ts": {
-    "mtime": 1785983443.7402318,
-    "ast_hash": "797d7041c38e4f8aaf7ce91b880a5c03",
-    "semantic_hash": "797d7041c38e4f8aaf7ce91b880a5c03"
+    "mtime": 1786578826.7627208,
+    "ast_hash": "1dc8e53c0b3f5f54fd7c61fa6d177fe2",
+    "semantic_hash": "1dc8e53c0b3f5f54fd7c61fa6d177fe2"
   },
   "src/harness/__tests__/rules.test.ts": {
-    "mtime": 1785980307.0881147,
-    "ast_hash": "70a1978d4562cf0726be98920c57261f",
-    "semantic_hash": "70a1978d4562cf0726be98920c57261f"
+    "mtime": 1786579010.1158721,
+    "ast_hash": "98a3184ccaae0eee3af8d9a3d3f1ed3b",
+    "semantic_hash": "98a3184ccaae0eee3af8d9a3d3f1ed3b"
   },
   "src/harness/__tests__/smoke.test.ts": {
     "mtime": 1786036226.9417155,
@@ -125,9 +120,9 @@
     "semantic_hash": "bac5abf6537180a98c3da3bdb36c2077"
   },
   "src/harness/__tests__/validator.test.ts": {
-    "mtime": 1785982644.177645,
-    "ast_hash": "bed65c4efee3815197813702c1f66910",
-    "semantic_hash": "bed65c4efee3815197813702c1f66910"
+    "mtime": 1786502002.7829213,
+    "ast_hash": "d0579e93d35a4d9ada6517d94036032c",
+    "semantic_hash": "d0579e93d35a4d9ada6517d94036032c"
   },
   "src/harness/art.ts": {
     "mtime": 1785977645.5778606,
@@ -147,12 +142,12 @@
   "src/harness/env.ts": {
     "mtime": 1786046234.931551,
     "ast_hash": "3e9eaaa426b66e033d39ec04689c3aa4",
-    "semantic_hash": ""
+    "semantic_hash": "3e9eaaa426b66e033d39ec04689c3aa4"
   },
   "src/harness/graph.ts": {
-    "mtime": 1786108014.0592675,
-    "ast_hash": "9d1dee0f2479a1cb69ca103d39e09458",
-    "semantic_hash": ""
+    "mtime": 1786580394.373602,
+    "ast_hash": "18fb05b66b7d0a61c1ddb798cd1a9220",
+    "semantic_hash": "18fb05b66b7d0a61c1ddb798cd1a9220"
   },
   "src/harness/models.ts": {
     "mtime": 1785983411.3335721,
@@ -165,19 +160,19 @@
     "semantic_hash": "3084f6bc4869ca733c8e1fb77158372e"
   },
   "src/harness/rules.ts": {
-    "mtime": 1786062320.493801,
-    "ast_hash": "6183b022d001b6626717331840fa7d56",
-    "semantic_hash": ""
+    "mtime": 1786578997.7769964,
+    "ast_hash": "1dd93f98b6e8eff8151106b90f8c0569",
+    "semantic_hash": "1dd93f98b6e8eff8151106b90f8c0569"
   },
   "src/harness/run.ts": {
-    "mtime": 1785982284.606456,
-    "ast_hash": "42bf704558b3c242eeac0521a715e312",
-    "semantic_hash": "42bf704558b3c242eeac0521a715e312"
+    "mtime": 1786580412.5333467,
+    "ast_hash": "6f7932f0c58714371c767e5ad1d0fa53",
+    "semantic_hash": "6f7932f0c58714371c767e5ad1d0fa53"
   },
   "src/harness/state.ts": {
     "mtime": 1786062290.106164,
     "ast_hash": "6f786fef0375cf6a36e70cb72c582056",
-    "semantic_hash": ""
+    "semantic_hash": "6f786fef0375cf6a36e70cb72c582056"
   },
   "src/harness/style-formula.ts": {
     "mtime": 1785974209.5043335,
@@ -190,9 +185,9 @@
     "semantic_hash": "824ed9d807f00c441848181476315074"
   },
   "tsconfig.backend.json": {
-    "mtime": 1785983921.8492153,
-    "ast_hash": "25893b88edd194a7ebda95802051c469",
-    "semantic_hash": "25893b88edd194a7ebda95802051c469"
+    "mtime": 1786580568.3608263,
+    "ast_hash": "d1968d94ce118fdaeee9577dc6bb465c",
+    "semantic_hash": "d1968d94ce118fdaeee9577dc6bb465c"
   },
   "tsconfig.json": {
     "mtime": 1785984035.0179615,
@@ -200,54 +195,54 @@
     "semantic_hash": "67e2177f9233df148a335db5e8900d0b"
   },
   "CLAUDE.md": {
-    "mtime": 1786326939.3484406,
-    "ast_hash": "dd4b90e382b3e5b9c9c3093d3bc23b97",
-    "semantic_hash": ""
+    "mtime": 1786577271.0888665,
+    "ast_hash": "9e03156451a52ab5e4f8ad2e3196deab",
+    "semantic_hash": "9e03156451a52ab5e4f8ad2e3196deab"
   },
   "docs/research/2026-08-03-game-design-inspiration.md": {
-    "mtime": 1785810281.5498872,
-    "ast_hash": "e9c10c578699631957af17df212073b5",
-    "semantic_hash": "e9c10c578699631957af17df212073b5"
+    "mtime": 1786329265.68859,
+    "ast_hash": "71669c385778962b18262d82c25f5d02",
+    "semantic_hash": "71669c385778962b18262d82c25f5d02"
   },
   "docs/research/2026-08-04-platform-and-business-research.md": {
-    "mtime": 1785882565.567749,
-    "ast_hash": "f3ac4f16876b80b8f55ae68677e872eb",
-    "semantic_hash": "f3ac4f16876b80b8f55ae68677e872eb"
+    "mtime": 1786386318.3885593,
+    "ast_hash": "aa07b3687b94e63624cc0e95bd918642",
+    "semantic_hash": "aa07b3687b94e63624cc0e95bd918642"
   },
   "docs/research/2026-08-04-text-format-tooling-research.md": {
-    "mtime": 1785885639.950988,
-    "ast_hash": "ed75c9dfb9afbf837293bec88e2907ce",
-    "semantic_hash": "ed75c9dfb9afbf837293bec88e2907ce"
+    "mtime": 1786386360.0880506,
+    "ast_hash": "e86a2055c3f9f06e47d92e5ee2c66038",
+    "semantic_hash": "e86a2055c3f9f06e47d92e5ee2c66038"
   },
   "docs/research/2026-08-05-character-portraits-and-story-reuse-research.md": {
-    "mtime": 1785951049.5564861,
-    "ast_hash": "ebf5b15ee695d9ea6382411e5f1b8cb5",
-    "semantic_hash": "ebf5b15ee695d9ea6382411e5f1b8cb5"
+    "mtime": 1786329917.6259353,
+    "ast_hash": "30a78f6c6e9e6f68358ce35a4ce3b0b4",
+    "semantic_hash": "30a78f6c6e9e6f68358ce35a4ce3b0b4"
   },
   "docs/research/2026-08-05-openrouter-free-model-candidates-research.md": {
-    "mtime": 1785978598.9526122,
-    "ast_hash": "5bb1e2918a4371b462b03df9013bb3fd",
-    "semantic_hash": "5bb1e2918a4371b462b03df9013bb3fd"
+    "mtime": 1786386502.1166887,
+    "ast_hash": "6bb950cbdf8f3a14604f7fb5f4c5a2f4",
+    "semantic_hash": "6bb950cbdf8f3a14604f7fb5f4c5a2f4"
   },
   "docs/research/2026-08-05-rpg-battle-and-stat-resolution-mechanics-research.md": {
-    "mtime": 1785975941.891555,
-    "ast_hash": "443bffb20b5e0e4d47dbad23fcc85dbe",
-    "semantic_hash": "443bffb20b5e0e4d47dbad23fcc85dbe"
+    "mtime": 1786386697.1089442,
+    "ast_hash": "a6307c66ae1a23092a0281f93f49155b",
+    "semantic_hash": "a6307c66ae1a23092a0281f93f49155b"
   },
   "docs/research/ai-game-platforms.md": {
-    "mtime": 1786022567.587612,
-    "ast_hash": "e92324878da037cfb19f6f565305f25e",
-    "semantic_hash": "e92324878da037cfb19f6f565305f25e"
+    "mtime": 1786329371.8563867,
+    "ast_hash": "b23a70d7a72457538188309969558a2e",
+    "semantic_hash": "b23a70d7a72457538188309969558a2e"
   },
   "docs/research/game-engines-lightweight.md": {
-    "mtime": 1786022569.066631,
-    "ast_hash": "2957cf64a487a378d8a2c6eae8f595c2",
-    "semantic_hash": "2957cf64a487a378d8a2c6eae8f595c2"
+    "mtime": 1786330055.3712204,
+    "ast_hash": "72bd5d21a1e18f8db0f0ec78f763de67",
+    "semantic_hash": "72bd5d21a1e18f8db0f0ec78f763de67"
   },
   "docs/research/llm-orchestration-frameworks.md": {
-    "mtime": 1786022889.7737772,
-    "ast_hash": "d3080a672bb0fe5bfcc7e1c25a47c959",
-    "semantic_hash": "d3080a672bb0fe5bfcc7e1c25a47c959"
+    "mtime": 1786329985.7193615,
+    "ast_hash": "caaacba3d1a300c25360b287ccedaed3",
+    "semantic_hash": "caaacba3d1a300c25360b287ccedaed3"
   },
   "src/backend/AUTH.md": {
     "mtime": 1786021890.904769,
@@ -255,163 +250,113 @@
     "semantic_hash": "b0a2565e1d02e829b0dd33d7a29e4667"
   },
   "src/backend/graph/__tests__/graph.service.test.ts": {
-    "mtime": 1786107661.5856023,
-    "ast_hash": "337261fde4e32e58018f21f93caf784b",
-    "semantic_hash": ""
+    "mtime": 1786580493.459539,
+    "ast_hash": "08293d376c0d897e4d8461b848b94e79",
+    "semantic_hash": "08293d376c0d897e4d8461b848b94e79"
   },
   "src/backend/graph/__tests__/turn-reservation.service.test.ts": {
     "mtime": 1786046177.7443583,
     "ast_hash": "8535a46226051a72578bbc41d5e58947",
-    "semantic_hash": ""
+    "semantic_hash": "8535a46226051a72578bbc41d5e58947"
   },
   "src/backend/migrations/1786046005821-AddActiveChronicleIdToUser.ts": {
     "mtime": 1786046013.1909254,
     "ast_hash": "9b60eb557f4e512e87b5df6f864c0021",
-    "semantic_hash": ""
+    "semantic_hash": "9b60eb557f4e512e87b5df6f864c0021"
   },
   "README.md": {
     "mtime": 1786107899.7458525,
     "ast_hash": "edea67a6cee82ab2b899536579ba17cd",
-    "semantic_hash": ""
+    "semantic_hash": "edea67a6cee82ab2b899536579ba17cd"
   },
   "docker-compose.yml": {
     "mtime": 1785983963.7758973,
     "ast_hash": "dacd67210d97be338082da7145513bb6",
-    "semantic_hash": ""
+    "semantic_hash": "dacd67210d97be338082da7145513bb6"
   },
   "docs/research/2026-08-06-blockchain-npcs-for-retention-viability.md": {
-    "mtime": 1786054728.538796,
-    "ast_hash": "f4f70e0193a8ad63b8db538d519d8881",
-    "semantic_hash": ""
+    "mtime": 1786386736.2156982,
+    "ast_hash": "69621217ca285f2f851004d31b9ecb2b",
+    "semantic_hash": "69621217ca285f2f851004d31b9ecb2b"
   },
   "docs/research/2026-08-06-t15-cost-model-reevaluation.md": {
     "mtime": 1786045390.0159023,
     "ast_hash": "6622128dd233fc0ce609106c251c2d7c",
-    "semantic_hash": ""
-  },
-  "multi-turn-perf.ts": {
-    "mtime": 1786055064.2985225,
-    "ast_hash": "9bcfe15300c9654c5cd35a92217212df",
-    "semantic_hash": ""
-  },
-  "perf-breakdown.ts": {
-    "mtime": 1786054923.956765,
-    "ast_hash": "7271b8812c2cfbc3aa9746b973048112",
-    "semantic_hash": ""
-  },
-  "perf-test.ts": {
-    "mtime": 1786054860.8254821,
-    "ast_hash": "ef5f8503ddef5936b3ac56742babeb48",
-    "semantic_hash": ""
+    "semantic_hash": "6622128dd233fc0ce609106c251c2d7c"
   },
   "volume-test.ts": {
-    "mtime": 1786107971.0717425,
-    "ast_hash": "324e05c739db91c1b815c79b7ec913f6",
-    "semantic_hash": ""
+    "mtime": 1786580412.5337367,
+    "ast_hash": "6a24a89562c363d9a0bbf1f2ab8d3708",
+    "semantic_hash": "6a24a89562c363d9a0bbf1f2ab8d3708"
   },
   "AGENT_UPGRADES.md": {
     "mtime": 1786063933.6662214,
     "ast_hash": "84fb8e31a9ac9d2fb8c958ae32fd6b6a",
-    "semantic_hash": ""
+    "semantic_hash": "84fb8e31a9ac9d2fb8c958ae32fd6b6a"
   },
   "SKILLS_INSTALLED.md": {
     "mtime": 1786065469.8904397,
     "ast_hash": "baf3a289ce603ccb842e6b3b07c6cc1f",
-    "semantic_hash": ""
+    "semantic_hash": "baf3a289ce603ccb842e6b3b07c6cc1f"
   },
   "TODO.md": {
-    "mtime": 1786128834.6664393,
-    "ast_hash": "cd1188c80d775b5d22c23e60baa56d04",
-    "semantic_hash": ""
+    "mtime": 1786580636.9891274,
+    "ast_hash": "21f91039217c1969fdeca11d4ccb9f3b",
+    "semantic_hash": "21f91039217c1969fdeca11d4ccb9f3b"
   },
   "docs/README.md": {
-    "mtime": 1786061166.6878653,
-    "ast_hash": "409e421f2c205e25e662d7110447c30b",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/DELEGACION_GAME_LEAD.md": {
-    "mtime": 1786053248.0048382,
-    "ast_hash": "d6e4072f8eba326deacdbd54c135e8b5",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/GAME_DEV_EDGE_CASES.md": {
-    "mtime": 1786055090.832044,
-    "ast_hash": "5606683dcc743d0e4f96430c1afb8595",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/GAME_DEV_INDEX.md": {
-    "mtime": 1786059529.467085,
-    "ast_hash": "ecbfa3f33a442e4310700b5192133af6",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/GAME_DEV_START.md": {
-    "mtime": 1786053518.0165112,
-    "ast_hash": "1c939b2adbddd58d24cb51eb0709be01",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/GAME_DEV_TEST_CASES.md": {
-    "mtime": 1786053738.559858,
-    "ast_hash": "0fd062a3fe5e0fba8b9d1cf873c620d1",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/GAME_DEV_USAGE.md": {
-    "mtime": 1786052647.207634,
-    "ast_hash": "b903f2ae388f1137da56c55ac2e0c459",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/GAME_DEV_VALIDATION.md": {
-    "mtime": 1786053774.2355669,
-    "ast_hash": "e9435ac11808225f6e7455bd20296db3",
-    "semantic_hash": ""
-  },
-  "docs/game-dev/GAME_LEAD_EJEMPLOS.md": {
-    "mtime": 1786053333.068925,
-    "ast_hash": "67446ab527bd4929d1deaabbcb296e5a",
-    "semantic_hash": ""
-  },
-  "docs/production/P0_FIX_PLAN.md": {
-    "mtime": 1786055739.0269608,
-    "ast_hash": "267d64478584ad8d8af7d69f30542f57",
-    "semantic_hash": ""
-  },
-  "docs/production/RECREATE_GAME_DEV_COMPLETE.md": {
-    "mtime": 1786325805.2763727,
-    "ast_hash": "d6b64298da760455fe348cec9c7f85d2",
-    "semantic_hash": ""
+    "mtime": 1786455569.4831336,
+    "ast_hash": "6ad8fa65026b46fe1e513bf420283e0b",
+    "semantic_hash": "6ad8fa65026b46fe1e513bf420283e0b"
   },
   "docs/production/RECREATE_GAME_DEV_STUDIO.md": {
-    "mtime": 1786050040.304889,
-    "ast_hash": "5b0ca8606776f57db045a84cda82251f",
-    "semantic_hash": ""
+    "mtime": 1786386217.8604052,
+    "ast_hash": "74b70a52f7729c586e938e0c6f92a47f",
+    "semantic_hash": "74b70a52f7729c586e938e0c6f92a47f"
   },
   "docs/production/ROADMAP.md": {
-    "mtime": 1786115969.4934423,
+    "mtime": 1786455556.235826,
     "ast_hash": "fd94cc0af98ced60fd2c0e577d3e7367",
-    "semantic_hash": ""
+    "semantic_hash": "fd94cc0af98ced60fd2c0e577d3e7367"
   },
   "docs/reference/DESIGN.md": {
-    "mtime": 1785895550.2602303,
-    "ast_hash": "c6500f8cdd17d357a7d6607d35dc023d",
-    "semantic_hash": ""
+    "mtime": 1786386282.3540988,
+    "ast_hash": "ba3a3c88f5e7b03d2f9652ae82288547",
+    "semantic_hash": "ba3a3c88f5e7b03d2f9652ae82288547"
   },
   "docs/research/2026-08-06-llm-narrated-permadeath-precedent.md": {
-    "mtime": 1786070212.3198586,
-    "ast_hash": "b89d090c945df1140fe80d6726585093",
-    "semantic_hash": ""
+    "mtime": 1786386790.6548011,
+    "ast_hash": "0f34b905c53c69de3ac244e021e9e23b",
+    "semantic_hash": "0f34b905c53c69de3ac244e021e9e23b"
   },
   "docs/research/2026-08-06-permadeath-retention-mechanics.md": {
     "mtime": 1786062556.101745,
     "ast_hash": "dcccae053bd1da8b67f56f7df31a0f99",
-    "semantic_hash": ""
+    "semantic_hash": "dcccae053bd1da8b67f56f7df31a0f99"
   },
   "docs/testing/TEST_RESULTS_FINAL.md": {
-    "mtime": 1786055710.9853973,
+    "mtime": 1786455556.236826,
     "ast_hash": "59d2f12a2afc336169acc659574825e6",
-    "semantic_hash": ""
+    "semantic_hash": "59d2f12a2afc336169acc659574825e6"
   },
-  "docs/testing/TEST_RESULTS_TEMPLATE.md": {
-    "mtime": 1786053808.9932582,
-    "ast_hash": "5981590a55bfcd6a0420445509f1cf1d",
-    "semantic_hash": ""
+  ".github/workflows/ci.yml": {
+    "mtime": 1786580593.0715747,
+    "ast_hash": "ef0eada87e08eff265249ae66aeb053d",
+    "semantic_hash": "ef0eada87e08eff265249ae66aeb053d"
+  },
+  "CHANGELOG.md": {
+    "mtime": 1786580889.787558,
+    "ast_hash": "b29dda9a39ad499e3b0ace55646b3cbf",
+    "semantic_hash": "b29dda9a39ad499e3b0ace55646b3cbf"
+  },
+  "docs/PROJECT_FACTS.md": {
+    "mtime": 1786579849.529222,
+    "ast_hash": "442fee2cc5053aaf3dba7a13f0057874",
+    "semantic_hash": "442fee2cc5053aaf3dba7a13f0057874"
+  },
+  "docs/game-auditor.md": {
+    "mtime": 1786580057.329064,
+    "ast_hash": "db8ced4483677fce325eb7c26e34a739",
+    "semantic_hash": "db8ced4483677fce325eb7c26e34a739"
   }
 }
