@@ -1,13 +1,6 @@
 import { ChatOpenRouter } from "@langchain/openrouter";
 
-export interface LogicConfig {
-  modelId: string;
-  temperature: number;
-  retryBudget: number;
-  maxTokens: number;
-}
-
-export interface CreativeConfig {
+export interface ModelConfig {
   modelId: string;
   temperature: number;
   retryBudget: number;
@@ -35,10 +28,10 @@ function requireEnv(name: string): string {
 }
 
 export class LogicAdapter implements PromptAdapter {
-  private config: LogicConfig;
+  private config: ModelConfig;
   private apiKey: string;
 
-  constructor(config: LogicConfig) {
+  constructor(config: ModelConfig) {
     this.config = config;
     this.apiKey = requireEnv("OPENROUTER_API_KEY");
   }
@@ -71,11 +64,11 @@ export class LogicAdapter implements PromptAdapter {
 }
 
 export class CreativeAdapter implements PromptAdapter {
-  private config: CreativeConfig;
+  private config: ModelConfig;
   private apiKey: string;
   private altAdapter: LogicAdapter;
 
-  constructor(config: CreativeConfig, altConfig?: CreativeConfig) {
+  constructor(config: ModelConfig, altConfig?: ModelConfig) {
     this.config = config;
     this.apiKey = requireEnv("OPENROUTER_API_KEY");
     // Alt adapter for fallback (content refusal retry)

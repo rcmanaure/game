@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert";
-import type { PromptAdapter } from "../adapters.js";
+import type { PromptAdapter, ModelConfig } from "../adapters.js";
 import { LogicAdapter, CreativeAdapter } from "../adapters.js";
 
 test("LogicAdapter builds model with correct config", () => {
