@@ -9,7 +9,8 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist/backend",
-    "rootDir": "src/backend"
+    "rootDir": "src"
   },
-  "include": ["src/backend/**/*.ts"]
+  "include": ["src/backend/**/*.ts", "src/harness/**/*.ts"],
+  "exclude": ["**/*.spec.ts"]
 }

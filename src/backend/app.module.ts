@@ -2,13 +2,13 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { HealthController } from "./health/health.controller";
+import { GameModule } from "./game/game.module";
 
-// Scaffold only (per Decision #19: "existing NestJS backend/Docker Compose
-// on the Hostinger VPS") — T3/T4/T7/T14 build real modules/entities on top
-// of this. No entities yet, so autoLoadEntities has nothing to load; that's
-// expected until the first real module (T3's rate-limit table) adds one.
-// synchronize is always false — schema changes are migrations, never
-// auto-sync, per the plan's own migration-tested-before-VPS discipline.
+// Scaffold now has real orchestration (Candidate 4): GameService wraps
+// HarnessGraphService, which invokes the LangGraph. CharacterRepository
+// shows the seam. T3/T4 can now implement their entities/services on top
+// of this example pattern, not blindly. synchronize is always false —
+// schema changes are migrations, never auto-sync.
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,6 +21,7 @@ import { HealthController } from "./health/health.controller";
         synchronize: false,
       }),
     }),
+    GameModule,
   ],
   controllers: [HealthController],
 })
