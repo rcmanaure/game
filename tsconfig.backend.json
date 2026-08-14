@@ -12,5 +12,5 @@
     "rootDir": "src"
   },
   "include": ["src/backend/**/*.ts", "src/harness/**/*.ts"],
-  "exclude": ["**/*.spec.ts"]
+  "exclude": ["**/*.test.ts"]
 }

@@ -9,6 +9,7 @@ test("LogicAdapter builds model with correct config", () => {
     temperature: 0,
     retryBudget: 2,
     maxTokens: 1024,
+    apiKey: "test-key",
   });
 
   const model = adapter.getModel();
@@ -23,6 +24,7 @@ test("CreativeAdapter builds model with correct config", () => {
     temperature: 0.8,
     retryBudget: 2,
     maxTokens: 2048,
+    apiKey: "test-key",
   });
 
   const model = adapter.getModel();
@@ -37,6 +39,7 @@ test("LogicAdapter uses default retry policy", () => {
     temperature: 0,
     retryBudget: 1,
     maxTokens: 1024,
+    apiKey: "test-key",
   });
 
   const policy = adapter.getRetryPolicy();
@@ -50,6 +53,7 @@ test("CreativeAdapter uses refusal retry policy", () => {
     temperature: 0.8,
     retryBudget: 2,
     maxTokens: 2048,
+    apiKey: "test-key",
   });
 
   const policy = adapter.getRetryPolicy();
@@ -57,9 +61,12 @@ test("CreativeAdapter uses refusal retry policy", () => {
   assert.strictEqual(policy.strategy, "content-refusal");
 });
 
+// fromEnv() is the one place that reads the environment, so these two tests
+// own the key themselves rather than depending on a populated .env.
 test("respects env-configured model IDs", () => {
   const original = process.env.LOGIC_MODEL;
   process.env.LOGIC_MODEL = "env/override";
+  process.env.OPENROUTER_API_KEY ??= "test-key";
 
   const adapter = LogicAdapter.fromEnv();
   const model = adapter.getModel();
@@ -73,6 +80,7 @@ test("respects env-configured model IDs", () => {
 test("falls back to default model ID when env not set", () => {
   const original = process.env.LOGIC_MODEL;
   delete process.env.LOGIC_MODEL;
+  process.env.OPENROUTER_API_KEY ??= "test-key";
 
   const adapter = LogicAdapter.fromEnv();
   const model = adapter.getModel();
@@ -88,6 +96,7 @@ test("CreativeAdapter getAltModel returns a ChatOpenRouter instance", () => {
     temperature: 0.8,
     retryBudget: 1,
     maxTokens: 2048,
+    apiKey: "test-key",
   });
 
   const altModel = adapter.getAltModel();
@@ -104,6 +113,7 @@ test("CreativeAdapter alt model uses fallback model ID when env not set", () => 
     temperature: 0.8,
     retryBudget: 1,
     maxTokens: 2048,
+    apiKey: "test-key",
   });
 
   const altModel = adapter.getAltModel();
@@ -122,6 +132,7 @@ test("CreativeAdapter alt model respects env-configured model ID", () => {
     temperature: 0.8,
     retryBudget: 1,
     maxTokens: 2048,
+    apiKey: "test-key",
   });
 
   const altModel = adapter.getAltModel();

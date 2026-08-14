@@ -6,7 +6,7 @@
   "scripts": {
     "harness": "tsx src/harness/run.ts",
     "harness:drift": "tsx src/harness/drift.ts",
-    "test": "node --import tsx --test src/harness/__tests__/*.test.ts",
+    "test": "node --import tsx --test \"src/**/*.test.ts\"",
     "backend:dev": "ts-node -P tsconfig.backend.json src/backend/main.ts",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down"

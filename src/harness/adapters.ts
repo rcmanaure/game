@@ -5,6 +5,7 @@ export interface ModelConfig {
   temperature: number;
   retryBudget: number;
   maxTokens: number;
+  apiKey: string;
 }
 
 export interface RetryPolicy {
@@ -27,13 +28,13 @@ function requireEnv(name: string): string {
   return value;
 }
 
+// Reading the environment is `fromEnv`'s job alone — construction stays pure
+// so an adapter can be built (and asserted on) without an ambient API key.
 export class LogicAdapter implements PromptAdapter {
   private config: ModelConfig;
-  private apiKey: string;
 
   constructor(config: ModelConfig) {
     this.config = config;
-    this.apiKey = requireEnv("OPENROUTER_API_KEY");
   }
 
   static fromEnv(): LogicAdapter {
@@ -43,12 +44,13 @@ export class LogicAdapter implements PromptAdapter {
       temperature: 0,
       retryBudget: 1,
       maxTokens: 1024,
+      apiKey: requireEnv("OPENROUTER_API_KEY"),
     });
   }
 
   getModel(): ChatOpenRouter {
     return new ChatOpenRouter({
-      apiKey: this.apiKey,
+      apiKey: this.config.apiKey,
       model: this.config.modelId,
       temperature: this.config.temperature,
       maxTokens: this.config.maxTokens,
@@ -65,12 +67,10 @@ export class LogicAdapter implements PromptAdapter {
 
 export class CreativeAdapter implements PromptAdapter {
   private config: ModelConfig;
-  private apiKey: string;
   private altAdapter: LogicAdapter;
 
   constructor(config: ModelConfig, altConfig?: ModelConfig) {
     this.config = config;
-    this.apiKey = requireEnv("OPENROUTER_API_KEY");
     // Alt adapter for fallback (content refusal retry)
     this.altAdapter = new LogicAdapter({
       modelId:
@@ -81,6 +81,7 @@ export class CreativeAdapter implements PromptAdapter {
         altConfig?.temperature ?? this.config.temperature,
       retryBudget: 1,
       maxTokens: altConfig?.maxTokens ?? this.config.maxTokens,
+      apiKey: altConfig?.apiKey ?? this.config.apiKey,
     });
   }
 
@@ -91,12 +92,13 @@ export class CreativeAdapter implements PromptAdapter {
       temperature: 0.8,
       retryBudget: 1,
       maxTokens: 2048,
+      apiKey: requireEnv("OPENROUTER_API_KEY"),
     });
   }
 
   getModel(): ChatOpenRouter {
     return new ChatOpenRouter({
-      apiKey: this.apiKey,
+      apiKey: this.config.apiKey,
       model: this.config.modelId,
       temperature: this.config.temperature,
       maxTokens: this.config.maxTokens,
