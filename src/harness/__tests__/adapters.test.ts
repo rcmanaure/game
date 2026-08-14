@@ -81,3 +81,52 @@ test("falls back to default model ID when env not set", () => {
 
   if (original) process.env.LOGIC_MODEL = original;
 });
+
+test("CreativeAdapter getAltModel returns a ChatOpenRouter instance", () => {
+  const adapter = new CreativeAdapter({
+    modelId: "test/creative",
+    temperature: 0.8,
+    retryBudget: 1,
+    maxTokens: 2048,
+  });
+
+  const altModel = adapter.getAltModel();
+  assert(altModel, "alt model should be defined");
+  assert(altModel.model, "alt model should have a model ID");
+});
+
+test("CreativeAdapter alt model uses fallback model ID when env not set", () => {
+  const original = process.env.CREATIVE_MODEL_ALT;
+  delete process.env.CREATIVE_MODEL_ALT;
+
+  const adapter = new CreativeAdapter({
+    modelId: "test/creative",
+    temperature: 0.8,
+    retryBudget: 1,
+    maxTokens: 2048,
+  });
+
+  const altModel = adapter.getAltModel();
+  assert.strictEqual(altModel.model, "nvidia/nemotron-3-super-120b-a12b:free");
+
+  if (original) process.env.CREATIVE_MODEL_ALT = original;
+  else delete process.env.CREATIVE_MODEL_ALT;
+});
+
+test("CreativeAdapter alt model respects env-configured model ID", () => {
+  const original = process.env.CREATIVE_MODEL_ALT;
+  process.env.CREATIVE_MODEL_ALT = "test/alt-override";
+
+  const adapter = new CreativeAdapter({
+    modelId: "test/creative",
+    temperature: 0.8,
+    retryBudget: 1,
+    maxTokens: 2048,
+  });
+
+  const altModel = adapter.getAltModel();
+  assert.strictEqual(altModel.model, "test/alt-override");
+
+  if (original) process.env.CREATIVE_MODEL_ALT = original;
+  else delete process.env.CREATIVE_MODEL_ALT;
+});
