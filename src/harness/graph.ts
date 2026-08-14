@@ -12,7 +12,7 @@ import {
 import { ATTRIBUTES, CharacterSchema } from "./character.js";
 import { resolveCheck, rejectedEvent, OPPONENT_TIERS } from "./rules.js";
 import { applyMutation } from "./validator.js";
-import { logicModel, creativeModel, creativeAltModel } from "./models.js";
+import { LogicAdapter, CreativeAdapter } from "./adapters.js";
 import { narrateWithFallback } from "./narration.js";
 import { generateArt } from "./art.js";
 
@@ -36,6 +36,7 @@ const State = new StateSchema({
 // computed server-side by rules.ts, never trusted from the model.
 const resolve: GraphNode<typeof State> = async (state) => {
   const character = state.character;
+  const adapter = LogicAdapter.fromEnv();
 
   // withStructuredOutput needs the schema handed to it to be JSON-Schema-
   // representable (a transform/preprocess step throws building the tool
@@ -43,7 +44,7 @@ const resolve: GraphNode<typeof State> = async (state) => {
   // accepts number|string|null) and sanitizeIntent() coerces + validates
   // strictly afterward, inside the same try so a sanitize failure counts
   // toward the same retry-once-then-safe-default budget as a parse failure.
-  const model = logicModel().withStructuredOutput(LogicIntentRawSchema);
+  const model = adapter.getModel().withStructuredOutput(LogicIntentRawSchema);
   const prompt = `You are the logic/resolver model for a dark-fantasy coterie-sim TTRPG. The character "${character.name}" took this action: "${state.playerAction}". Decide: what kind of check this is (a plain check, an opposed check against another creature/NPC, or an attack), which attribute (one of ${ATTRIBUTES.join(", ")}) and skill (or null) governs it, and whether the character is pushing their Craving to gain an edge (cravingElevated). You do NOT decide success or roll any dice — that happens server-side. For "check"/"attack", set targetNumber (5=very easy, 10=easy, 15=medium, 20=hard, 25=very hard, 30=nearly impossible) and leave opponentTier null. For "opposedCheck" (a contest against an opposing creature/NPC), set opponentTier to one of ${OPPONENT_TIERS.join(", ")} instead, and leave targetNumber null — there is no target number in a contest, only two sides' rolls. Use JSON null (never the string "None") for any field you're leaving empty. Also emit an eventType, an archetype tag (short kebab-case, keys art generation, describes the SCENE not the opponent's difficulty), and a one-sentence factual summary of the attempt (not the outcome).`;
 
   let intent: LogicIntent;
@@ -95,6 +96,8 @@ const rulesValidate: GraphNode<typeof State> = async (state) => {
 // logic; this node only wires it to the two real ChatOpenRouter calls.
 const narrate: GraphNode<typeof State> = async (state) => {
   const event = state.gameEvent!;
+  const adapter = CreativeAdapter.fromEnv();
+
   const outcome = event.success
     ? event.criticalTier === "critical" || event.criticalTier === "cravingCritical"
       ? "a resounding, decisive success"
@@ -117,8 +120,8 @@ const narrate: GraphNode<typeof State> = async (state) => {
 
   const narration = await narrateWithFallback({
     event,
-    invokePrimary: () => creativeModel().invoke(prompt),
-    invokeAlt: () => creativeAltModel().invoke(prompt),
+    invokePrimary: () => adapter.getModel().invoke(prompt),
+    invokeAlt: () => adapter.getAltModel().invoke(prompt),
   });
   return { narration };
 };
