@@ -8,7 +8,7 @@ import {
   OPPONENT_TIERS,
 } from "./state.js";
 import { ATTRIBUTES, CharacterSchema } from "./character.js";
-import { resolveCheck, rejectedEvent, ResolvedEventSchema } from "./rules.js";
+import { resolveCheck, rejectedEvent, ResolvedEventSchema, resolveWithFallback } from "./rules.js";
 import { applyMutation, sanitizeIntent } from "./validator.js";
 import { LogicAdapter, CreativeAdapter } from "./adapters.js";
 import { narrateWithFallback } from "./narration.js";
@@ -36,34 +36,15 @@ const resolve: GraphNode<typeof State> = async (state) => {
   const character = state.character;
   const adapter = LogicAdapter.fromEnv();
 
-  // withStructuredOutput needs the schema handed to it to be JSON-Schema-
-  // representable (a transform/preprocess step throws building the tool
-  // definition — confirmed live), so the raw schema stays loose (targetNumber
-  // accepts number|string|null) and sanitizeIntent() coerces + validates
-  // strictly afterward, inside the same try so a sanitize failure counts
-  // toward the same retry-once-then-safe-default budget as a parse failure.
-  const model = adapter.getModel().withStructuredOutput(LogicIntentRawSchema);
   const prompt = `You are the logic/resolver model for a dark-fantasy coterie-sim TTRPG. The character "${character.name}" took this action: "${state.playerAction}". Decide: what kind of check this is (a plain check, an opposed check against another creature/NPC, or an attack), which attribute (one of ${ATTRIBUTES.join(", ")}) and skill (or null) governs it, and whether the character is pushing their Craving to gain an edge (cravingElevated). You do NOT decide success or roll any dice — that happens server-side. For "check"/"attack", set targetNumber (5=very easy, 10=easy, 15=medium, 20=hard, 25=very hard, 30=nearly impossible) and leave opponentTier null. For "opposedCheck" (a contest against an opposing creature/NPC), set opponentTier to one of ${OPPONENT_TIERS.join(", ")} instead, and leave targetNumber null — there is no target number in a contest, only two sides' rolls. Use JSON null (never the string "None") for any field you're leaving empty. Also emit an eventType, an archetype tag (short kebab-case, keys art generation, describes the SCENE not the opponent's difficulty), and a one-sentence factual summary of the attempt (not the outcome).`;
 
-  let intent: LogicIntent;
-  try {
-    intent = sanitizeIntent(await model.invoke(prompt));
-  } catch (firstErr) {
-    try {
-      const retryPrompt = `${prompt}\n\nYour previous response was not valid: ${(firstErr as Error).message}. Try again, strictly matching the schema.`;
-      intent = sanitizeIntent(await model.invoke(retryPrompt));
-    } catch {
-      intent = SAFE_DEFAULT_INTENT;
-    }
-  }
-
-  // Schema-valid but semantically incomplete (e.g. a "check" with no
-  // targetNumber) doesn't get a retry — the model already proved it can
-  // emit valid JSON, so a malformed *value* isn't something a retry
-  // reliably fixes. Straight to safe-default instead.
-  if (needsTargetNumber(intent) && intent.targetNumber == null) {
-    intent = SAFE_DEFAULT_INTENT;
-  }
+  // resolveWithFallback handles retry-once-then-safe-default logic (Decision
+  // #19), returning both the intent and a wasFallback flag for T14's
+  // conditional edges to branch on (metrics, escalation, etc.).
+  const { intent, wasFallback } = await resolveWithFallback(
+    adapter,
+    prompt,
+  );
 
   const gameEvent = resolveCheck(character, intent);
   return { gameEvent };

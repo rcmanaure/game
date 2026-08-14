@@ -8,13 +8,60 @@ import {
   OpponentTierSchema,
   OPPONENT_TIERS,
   type OpponentTier,
+  LogicIntentRawSchema,
+  needsTargetNumber,
+  SAFE_DEFAULT_INTENT,
 } from "./state.js";
+import { sanitizeIntent } from "./validator.js";
+import type { PromptAdapter } from "./adapters.js";
 
 // Server-authoritative d20 — the logic model NEVER supplies a roll value.
 // This is the whole point of Decision #7: dice results must not be
 // something an LLM can hallucinate or bias.
 export function rollD20(): number {
   return randomInt(1, 21); // crypto.randomInt is upper-exclusive
+}
+
+// Retry-once-then-safe-default logic (Decision #19). Invokes LLM once, retries
+// on parse failure, falls back to SAFE_DEFAULT_INTENT on second failure. Also
+// detects semantic incompleteness (e.g., missing targetNumber on a check) and
+// treats it as a fallback (no retry spent, the model already proved it can emit
+// valid JSON — a malformed *value* isn't something a retry reliably fixes).
+// T14's conditional edges can branch on wasFallback to decide whether to
+// escalate or log a metric. Extracted for testability: resolve node logic
+// stays clean, retry strategy is independently testable.
+export async function resolveWithFallback(
+  adapter: PromptAdapter,
+  prompt: string,
+): Promise<{ intent: LogicIntent; wasFallback: boolean }> {
+  const model = adapter.getModel().withStructuredOutput(LogicIntentRawSchema);
+
+  let intent: LogicIntent;
+  let wasFallback = false;
+
+  try {
+    intent = sanitizeIntent(await model.invoke(prompt));
+  } catch (firstErr) {
+    try {
+      const retryPrompt = `${prompt}\n\nYour previous response was not valid: ${(firstErr as Error).message}. Try again, strictly matching the schema.`;
+      intent = sanitizeIntent(await model.invoke(retryPrompt));
+      wasFallback = true;
+    } catch {
+      intent = SAFE_DEFAULT_INTENT;
+      wasFallback = true;
+    }
+  }
+
+  // Schema-valid but semantically incomplete (e.g. a "check" with no
+  // targetNumber) doesn't get a retry — the model already proved it can
+  // emit valid JSON, so a malformed *value* isn't something a retry
+  // reliably fixes. Straight to safe-default instead.
+  if (needsTargetNumber(intent) && intent.targetNumber == null) {
+    intent = SAFE_DEFAULT_INTENT;
+    wasFallback = true;
+  }
+
+  return { intent, wasFallback };
 }
 
 const DC_MIN = 5;

@@ -27,6 +27,16 @@ Key routing rules:
 - Resume context → invoke /context-restore
 - Author a backlog-ready spec/issue → invoke /spec
 
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as GitHub issues. Use the `gh` CLI for all operations. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context repo: read `CONTEXT.md` and `docs/adr/` before exploring. See `docs/agents/domain.md`.
+
 ## Design System
 Always read DESIGN.md before making any visual or UI decisions.
 All font choices, colors, spacing, and aesthetic direction are defined there.
