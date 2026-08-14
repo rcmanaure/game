@@ -4,6 +4,32 @@
   "graph": {},
   "nodes": [
     {
+      "label": "CriticalTier",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L91",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "src_harness_rules_criticaltier",
+      "community": 0,
+      "community_name": "rules.ts",
+      "norm_label": "criticaltier"
+    },
+    {
+      "label": "PlayerRoll",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L119",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "src_harness_rules_playerroll",
+      "community": 0,
+      "community_name": "rules.ts",
+      "norm_label": "playerroll"
+    },
+    {
       "label": "CreativeAdapter",
       "file_type": "code",
       "source_file": "src/harness/adapters.ts",
@@ -137,7 +163,7 @@
       "label": "HarnessGraphState",
       "file_type": "code",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L128",
+      "source_location": "L131",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -160,30 +186,43 @@
       "norm_label": "artresult"
     },
     {
-      "label": "CriticalTier",
+      "label": "ArtService",
       "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L91",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L14",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "src_harness_rules_criticaltier",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "criticaltier"
+      "id": "src_harness_art_service_artservice",
+      "community": 130,
+      "community_name": "art.ts",
+      "norm_label": "artservice"
     },
     {
-      "label": "PlayerRoll",
+      "label": "GenerateArtFn",
       "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L119",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L3",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "src_harness_rules_playerroll",
+      "id": "src_harness_art_service_generateartfn",
+      "community": 130,
+      "community_name": "art.ts",
+      "norm_label": "generateartfn"
+    },
+    {
+      "label": "CharacterStatus",
+      "file_type": "code",
+      "source_file": "src/harness/character.ts",
+      "source_location": "L28",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "src_harness_character_characterstatus",
       "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "playerroll"
+      "community_name": "state.ts",
+      "norm_label": "characterstatus"
     },
     {
       "label": "HarnessState",
@@ -195,8 +234,21 @@
       "_origin": "ast",
       "id": "src_harness_state_harnessstate",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "harnessstate"
+    },
+    {
+      "label": "LogicIntentRaw",
+      "file_type": "code",
+      "source_file": "src/harness/state.ts",
+      "source_location": "L57",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "src_harness_state_logicintentraw",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "logicintentraw"
     },
     {
       "label": "OpponentTier",
@@ -208,7 +260,7 @@
       "_origin": "ast",
       "id": "src_harness_state_opponenttier",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "opponenttier"
     },
     {
@@ -221,7 +273,7 @@
       "_origin": "ast",
       "id": "src_harness_state_rolltype",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "rolltype"
     },
     {
@@ -234,8 +286,21 @@
       "_origin": "ast",
       "id": "src_harness_validator_logicintent",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "logicintent"
+    },
+    {
+      "label": "TransitionResult",
+      "file_type": "code",
+      "source_file": "src/harness/validator.ts",
+      "source_location": "L64",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "src_harness_validator_transitionresult",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "transitionresult"
     },
     {
       "label": "Rule",
@@ -381,57 +446,6 @@
       "norm_label": "skill"
     },
     {
-      "label": "CharacterStatus",
-      "file_type": "code",
-      "source_file": "src/harness/character.ts",
-      "source_location": "L28",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "src_harness_character_characterstatus",
-      "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "characterstatus"
-    },
-    {
-      "label": "LogicIntentRaw",
-      "file_type": "code",
-      "source_file": "src/harness/state.ts",
-      "source_location": "L57",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "src_harness_state_logicintentraw",
-      "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "logicintentraw"
-    },
-    {
-      "label": "TransitionResult",
-      "file_type": "code",
-      "source_file": "src/harness/validator.ts",
-      "source_location": "L64",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "src_harness_validator_transitionresult",
-      "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "transitionresult"
-    },
-    {
-      "label": ".fromEnv()",
-      "file_type": "code",
-      "source_file": "src/harness/adapters.ts",
-      "source_location": "L39",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_adapters_logicadapter_fromenv",
-      "community": 0,
-      "community_name": "rules.test.ts",
-      "norm_label": ".fromenv()"
-    },
-    {
       "label": "clampAttributeModifier()",
       "file_type": "code",
       "source_file": "src/harness/character.ts",
@@ -440,7 +454,7 @@
       "_origin": "ast",
       "id": "src_harness_character_clampattributemodifier",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "clampattributemodifier()"
     },
     {
@@ -452,20 +466,8 @@
       "_origin": "ast",
       "id": "src_harness_character_modifierfor",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "modifierfor()"
-    },
-    {
-      "label": "resolve()",
-      "file_type": "code",
-      "source_file": "src/harness/graph.ts",
-      "source_location": "L35",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_graph_resolve",
-      "community": 0,
-      "community_name": "rules.test.ts",
-      "norm_label": "resolve()"
     },
     {
       "label": "clampTargetNumber()",
@@ -476,7 +478,7 @@
       "_origin": "ast",
       "id": "src_harness_rules_clamptargetnumber",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "clamptargetnumber()"
     },
     {
@@ -488,7 +490,7 @@
       "_origin": "ast",
       "id": "src_harness_rules_computecriticaltier",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "computecriticaltier()"
     },
     {
@@ -500,7 +502,7 @@
       "_origin": "ast",
       "id": "src_harness_rules_resolvecheck",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "resolvecheck()"
     },
     {
@@ -512,7 +514,7 @@
       "_origin": "ast",
       "id": "src_harness_rules_rolld20",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "rolld20()"
     },
     {
@@ -524,7 +526,7 @@
       "_origin": "ast",
       "id": "src_harness_rules_rollplayerside",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "rollplayerside()"
     },
     {
@@ -756,6 +758,30 @@
       "norm_label": "placeholderurl()"
     },
     {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L17",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_art_service_artservice_constructor",
+      "community": 130,
+      "community_name": "art.ts",
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".generateArt()",
+      "file_type": "code",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_art_service_artservice_generateart",
+      "community": 130,
+      "community_name": "art.ts",
+      "norm_label": ".generateart()"
+    },
+    {
       "label": "main()",
       "file_type": "code",
       "source_file": "src/harness/drift.ts",
@@ -790,18 +816,6 @@
       "community": 130,
       "community_name": "art.ts",
       "norm_label": "loadenv()"
-    },
-    {
-      "label": "artTrigger()",
-      "file_type": "code",
-      "source_file": "src/harness/graph.ts",
-      "source_location": "L108",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_graph_arttrigger",
-      "community": 130,
-      "community_name": "art.ts",
-      "norm_label": "arttrigger()"
     },
     {
       "label": "apiKey()",
@@ -886,66 +900,6 @@
       "community": 130,
       "community_name": "art.ts",
       "norm_label": "requireenv()"
-    },
-    {
-      "label": "rulesValidate()",
-      "file_type": "code",
-      "source_file": "src/harness/graph.ts",
-      "source_location": "L61",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_graph_rulesvalidate",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "rulesvalidate()"
-    },
-    {
-      "label": "rejectedEvent()",
-      "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L241",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_rules_rejectedevent",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "rejectedevent()"
-    },
-    {
-      "label": "resolveWithFallback()",
-      "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L33",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_rules_resolvewithfallback",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "resolvewithfallback()"
-    },
-    {
-      "label": "needsTargetNumber()",
-      "file_type": "code",
-      "source_file": "src/harness/state.ts",
-      "source_location": "L62",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_state_needstargetnumber",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "needstargetnumber()"
-    },
-    {
-      "label": "sanitizeIntent()",
-      "file_type": "code",
-      "source_file": "src/harness/validator.ts",
-      "source_location": "L45",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_validator_sanitizeintent",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "sanitizeintent()"
     },
     {
       "label": "generateAgentsMd()",
@@ -1287,6 +1241,102 @@
       "label": ".fromEnv()",
       "file_type": "code",
       "source_file": "src/harness/adapters.ts",
+      "source_location": "L39",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_adapters_logicadapter_fromenv",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": ".fromenv()"
+    },
+    {
+      "label": "artTrigger()",
+      "file_type": "code",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L111",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_graph_arttrigger",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "arttrigger()"
+    },
+    {
+      "label": "resolve()",
+      "file_type": "code",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L36",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_graph_resolve",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "resolve()"
+    },
+    {
+      "label": "rulesValidate()",
+      "file_type": "code",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L62",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_graph_rulesvalidate",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "rulesvalidate()"
+    },
+    {
+      "label": "rejectedEvent()",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L241",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_rules_rejectedevent",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "rejectedevent()"
+    },
+    {
+      "label": "resolveWithFallback()",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L33",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_rules_resolvewithfallback",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "resolvewithfallback()"
+    },
+    {
+      "label": "needsTargetNumber()",
+      "file_type": "code",
+      "source_file": "src/harness/state.ts",
+      "source_location": "L62",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_state_needstargetnumber",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "needstargetnumber()"
+    },
+    {
+      "label": "sanitizeIntent()",
+      "file_type": "code",
+      "source_file": "src/harness/validator.ts",
+      "source_location": "L45",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_validator_sanitizeintent",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "sanitizeintent()"
+    },
+    {
+      "label": ".fromEnv()",
+      "file_type": "code",
+      "source_file": "src/harness/adapters.ts",
       "source_location": "L87",
       "_callable": true,
       "_origin": "ast",
@@ -1299,7 +1349,7 @@
       "label": "narrate()",
       "file_type": "code",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L76",
+      "source_location": "L77",
       "_callable": true,
       "_origin": "ast",
       "id": "src_harness_graph_narrate",
@@ -1534,6 +1584,42 @@
       "community": 277,
       "community_name": "character.ts",
       "norm_label": "main()"
+    },
+    {
+      "label": "makeEvent()",
+      "file_type": "code",
+      "source_file": "src/harness/__tests__/validator.test.ts",
+      "source_location": "L12",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_tests_validator_test_makeevent",
+      "community": 277,
+      "community_name": "character.ts",
+      "norm_label": "makeevent()"
+    },
+    {
+      "label": "applyMutation()",
+      "file_type": "code",
+      "source_file": "src/harness/validator.ts",
+      "source_location": "L109",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_validator_applymutation",
+      "community": 277,
+      "community_name": "character.ts",
+      "norm_label": "applymutation()"
+    },
+    {
+      "label": "validateTransition()",
+      "file_type": "code",
+      "source_file": "src/harness/validator.ts",
+      "source_location": "L73",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_harness_validator_validatetransition",
+      "community": 277,
+      "community_name": "character.ts",
+      "norm_label": "validatetransition()"
     },
     {
       "label": "accessor_values()",
@@ -1776,42 +1862,6 @@
       "norm_label": "periodic_component()"
     },
     {
-      "label": "makeEvent()",
-      "file_type": "code",
-      "source_file": "src/harness/__tests__/validator.test.ts",
-      "source_location": "L12",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_tests_validator_test_makeevent",
-      "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "makeevent()"
-    },
-    {
-      "label": "applyMutation()",
-      "file_type": "code",
-      "source_file": "src/harness/validator.ts",
-      "source_location": "L109",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_validator_applymutation",
-      "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "applymutation()"
-    },
-    {
-      "label": "validateTransition()",
-      "file_type": "code",
-      "source_file": "src/harness/validator.ts",
-      "source_location": "L73",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "src_harness_validator_validatetransition",
-      "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "validatetransition()"
-    },
-    {
       "label": "main()",
       "file_type": "code",
       "source_file": ".agents/skills/higgsfield-game-generation/scripts/proc_weights.py",
@@ -2016,6 +2066,39 @@
       "norm_label": "_wrap_blur()"
     },
     {
+      "label": "rules.ts",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_harness_rules",
+      "community": 0,
+      "community_name": "rules.ts",
+      "norm_label": "rules.ts"
+    },
+    {
+      "label": "CriticalTierSchema",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L85",
+      "_origin": "ast",
+      "id": "src_harness_rules_criticaltierschema",
+      "community": 0,
+      "community_name": "rules.ts",
+      "norm_label": "criticaltierschema"
+    },
+    {
+      "label": "TIER_MODIFIERS",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L111",
+      "_origin": "ast",
+      "id": "src_harness_rules_tier_modifiers",
+      "community": 0,
+      "community_name": "rules.ts",
+      "norm_label": "tier_modifiers"
+    },
+    {
       "label": "rules.test.ts",
       "file_type": "code",
       "source_file": "src/harness/__tests__/rules.test.ts",
@@ -2023,19 +2106,8 @@
       "_origin": "ast",
       "id": "src_harness_tests_rules_test",
       "community": 0,
-      "community_name": "rules.test.ts",
+      "community_name": "rules.ts",
       "norm_label": "rules.test.ts"
-    },
-    {
-      "label": "LogicIntentSchema",
-      "file_type": "code",
-      "source_file": "src/harness/validator.ts",
-      "source_location": "L18",
-      "_origin": "ast",
-      "id": "src_harness_validator_logicintentschema",
-      "community": 0,
-      "community_name": "rules.test.ts",
-      "norm_label": "logicintentschema"
     },
     {
       "label": ".agents/skills/nestjs-best-practices/scripts/package.json",
@@ -6592,17 +6664,6 @@
       "norm_label": "injectable"
     },
     {
-      "label": "SAMPLE_CHARACTERS",
-      "file_type": "code",
-      "source_file": "src/harness/character.ts",
-      "source_location": "L76",
-      "_origin": "ast",
-      "id": "src_harness_character_sample_characters",
-      "community": 125,
-      "community_name": "game.service.ts",
-      "norm_label": "sample_characters"
-    },
-    {
       "label": "game-engine/SKILL.md",
       "file_type": "document",
       "source_file": ".agents/skills/game-engine/SKILL.md",
@@ -7527,6 +7588,17 @@
       "norm_label": "art.ts"
     },
     {
+      "label": "art-service.ts",
+      "file_type": "code",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_harness_art_service",
+      "community": 130,
+      "community_name": "art.ts",
+      "norm_label": "art-service.ts"
+    },
+    {
       "label": "drift.ts",
       "file_type": "code",
       "source_file": "src/harness/drift.ts",
@@ -7558,6 +7630,17 @@
       "community": 130,
       "community_name": "art.ts",
       "norm_label": "models.ts"
+    },
+    {
+      "label": "art-service.test.ts",
+      "file_type": "code",
+      "source_file": "src/harness/__tests__/art-service.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_harness_tests_art_service_test",
+      "community": 130,
+      "community_name": "art.ts",
+      "norm_label": "art-service.test.ts"
     },
     {
       "label": "1. Schema Definition (CRITICAL)",
@@ -8099,26 +8182,26 @@
       "norm_label": "rule title here"
     },
     {
-      "label": ".agents/skills/zod/references/compose-preprocess.md",
+      "label": ".agents/skills/zod/references/object-strict-vs-strip.md",
       "file_type": "document",
-      "source_file": ".agents/skills/zod/references/compose-preprocess.md",
+      "source_file": ".agents/skills/zod/references/object-strict-vs-strip.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "agents_skills_zod_references_compose_preprocess",
+      "id": "agents_skills_zod_references_object_strict_vs_strip",
       "community": 134,
       "community_name": ".agents/skills/zod/AGENTS.md",
-      "norm_label": ".agents/skills/zod/references/compose-preprocess.md"
+      "norm_label": ".agents/skills/zod/references/object-strict-vs-strip.md"
     },
     {
-      "label": "Use preprocess() for Data Normalization",
+      "label": "Choose strict() vs strip() for Unknown Keys",
       "file_type": "document",
-      "source_file": ".agents/skills/zod/references/compose-preprocess.md",
+      "source_file": ".agents/skills/zod/references/object-strict-vs-strip.md",
       "source_location": "L8",
       "_origin": "ast",
-      "id": "agents_skills_zod_references_compose_preprocess_use_preprocess_for_data_normalization",
+      "id": "agents_skills_zod_references_object_strict_vs_strip_choose_strict_vs_strip_for_unknown_keys",
       "community": 134,
       "community_name": ".agents/skills/zod/AGENTS.md",
-      "norm_label": "use preprocess() for data normalization"
+      "norm_label": "choose strict() vs strip() for unknown keys"
     },
     {
       "label": ".agents/skills/zod/references/perf-avoid-dynamic-creation.md",
@@ -8693,72 +8776,6 @@
       "norm_label": "stage 7 \u2014 spritesheet assembly"
     },
     {
-      "label": "graph.ts",
-      "file_type": "code",
-      "source_file": "src/harness/graph.ts",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "src_harness_graph",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "graph.ts"
-    },
-    {
-      "label": "State",
-      "file_type": "code",
-      "source_file": "src/harness/graph.ts",
-      "source_location": "L17",
-      "_origin": "ast",
-      "id": "src_harness_graph_state",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "state"
-    },
-    {
-      "label": "rules.ts",
-      "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "src_harness_rules",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "rules.ts"
-    },
-    {
-      "label": "CriticalTierSchema",
-      "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L85",
-      "_origin": "ast",
-      "id": "src_harness_rules_criticaltierschema",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "criticaltierschema"
-    },
-    {
-      "label": "ResolvedEventSchema",
-      "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L93",
-      "_origin": "ast",
-      "id": "src_harness_rules_resolvedeventschema",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "resolvedeventschema"
-    },
-    {
-      "label": "TIER_MODIFIERS",
-      "file_type": "code",
-      "source_file": "src/harness/rules.ts",
-      "source_location": "L111",
-      "_origin": "ast",
-      "id": "src_harness_rules_tier_modifiers",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "tier_modifiers"
-    },
-    {
       "label": "state.ts",
       "file_type": "code",
       "source_file": "src/harness/state.ts",
@@ -8766,7 +8783,7 @@
       "_origin": "ast",
       "id": "src_harness_state",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "state.ts"
     },
     {
@@ -8777,8 +8794,19 @@
       "_origin": "ast",
       "id": "src_harness_state_attributeschema",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "attributeschema"
+    },
+    {
+      "label": "HarnessStateSchema",
+      "file_type": "code",
+      "source_file": "src/harness/state.ts",
+      "source_location": "L91",
+      "_origin": "ast",
+      "id": "src_harness_state_harnessstateschema",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "harnessstateschema"
     },
     {
       "label": "LogicIntentRawSchema",
@@ -8788,7 +8816,7 @@
       "_origin": "ast",
       "id": "src_harness_state_logicintentrawschema",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "logicintentrawschema"
     },
     {
@@ -8799,7 +8827,7 @@
       "_origin": "ast",
       "id": "src_harness_state_nullablestring",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "nullablestring"
     },
     {
@@ -8810,7 +8838,7 @@
       "_origin": "ast",
       "id": "src_harness_state_nullablestringornumber",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "nullablestringornumber"
     },
     {
@@ -8821,7 +8849,7 @@
       "_origin": "ast",
       "id": "src_harness_state_opponent_tiers",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "opponent_tiers"
     },
     {
@@ -8832,7 +8860,7 @@
       "_origin": "ast",
       "id": "src_harness_state_opponenttierschema",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "opponenttierschema"
     },
     {
@@ -8843,41 +8871,85 @@
       "_origin": "ast",
       "id": "src_harness_state_rolltypeschema",
       "community": 138,
-      "community_name": "rules.ts",
+      "community_name": "state.ts",
       "norm_label": "rolltypeschema"
     },
     {
-      "label": "SAFE_DEFAULT_INTENT",
+      "label": "style-formula.ts",
       "file_type": "code",
-      "source_file": "src/harness/state.ts",
-      "source_location": "L73",
-      "_origin": "ast",
-      "id": "src_harness_state_safe_default_intent",
-      "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "safe_default_intent"
-    },
-    {
-      "label": "resolveWithFallback.test.ts",
-      "file_type": "code",
-      "source_file": "src/harness/__tests__/resolveWithFallback.test.ts",
+      "source_file": "src/harness/style-formula.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_harness_tests_resolvewithfallback_test",
+      "id": "src_harness_style_formula",
       "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "resolvewithfallback.test.ts"
+      "community_name": "state.ts",
+      "norm_label": "style-formula.ts"
     },
     {
-      "label": "MOCK_ADAPTER",
+      "label": "STYLE_FORMULA",
       "file_type": "code",
-      "source_file": "src/harness/__tests__/resolveWithFallback.test.ts",
-      "source_location": "L7",
+      "source_file": "src/harness/style-formula.ts",
+      "source_location": "L3",
       "_origin": "ast",
-      "id": "src_harness_tests_resolvewithfallback_test_mock_adapter",
+      "id": "src_harness_style_formula_style_formula",
       "community": 138,
-      "community_name": "rules.ts",
-      "norm_label": "mock_adapter"
+      "community_name": "state.ts",
+      "norm_label": "style_formula"
+    },
+    {
+      "label": "STYLE_TOKEN",
+      "file_type": "code",
+      "source_file": "src/harness/style-formula.ts",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_harness_style_formula_style_token",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "style_token"
+    },
+    {
+      "label": "smoke.test.ts",
+      "file_type": "code",
+      "source_file": "src/harness/__tests__/smoke.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_harness_tests_smoke_test",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "smoke.test.ts"
+    },
+    {
+      "label": "VALID_INTENT",
+      "file_type": "code",
+      "source_file": "src/harness/__tests__/smoke.test.ts",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "src_harness_tests_smoke_test_valid_intent",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "valid_intent"
+    },
+    {
+      "label": "validator.ts",
+      "file_type": "code",
+      "source_file": "src/harness/validator.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_harness_validator",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "validator.ts"
+    },
+    {
+      "label": "LogicIntentSchema",
+      "file_type": "code",
+      "source_file": "src/harness/validator.ts",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_harness_validator_logicintentschema",
+      "community": 138,
+      "community_name": "state.ts",
+      "norm_label": "logicintentschema"
     },
     {
       "label": "Cross Product (3D)",
@@ -10310,17 +10382,6 @@
       "norm_label": "tps (third-person shooter)"
     },
     {
-      "label": "validations.md",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-ui-design/references/validations.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_game_ui_design_references_validations",
-      "community": 152,
-      "community_name": "Game Ui Design - Validations",
-      "norm_label": "validations.md"
-    },
-    {
       "label": "**Applies To**",
       "file_type": "document",
       "source_file": ".agents/skills/game-ui-design/references/validations.md",
@@ -10328,7 +10389,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_applies_to_158",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "**applies to**"
     },
     {
@@ -10339,19 +10400,8 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_fix_action_156",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "**fix action**"
-    },
-    {
-      "label": "Game Ui Design - Validations",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-ui-design/references/validations.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_game_ui_design_references_validations_game_ui_design_validations",
-      "community": 152,
-      "community_name": "Game Ui Design - Validations",
-      "norm_label": "game ui design - validations"
     },
     {
       "label": "HUD Text Without Shadow/Outline",
@@ -10361,7 +10411,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_hud_text_without_shadow_outline",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "hud text without shadow/outline"
     },
     {
@@ -10372,7 +10422,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_id_146",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "**id**"
     },
     {
@@ -10383,7 +10433,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_message_154",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "**message**"
     },
     {
@@ -10394,7 +10444,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_pattern_152",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "**pattern**"
     },
     {
@@ -10405,7 +10455,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_severity_148",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "**severity**"
     },
     {
@@ -10416,7 +10466,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_type_150",
       "community": 152,
-      "community_name": "Game Ui Design - Validations",
+      "community_name": "HUD Text Without Shadow/Outline",
       "norm_label": "**type**"
     },
     {
@@ -11102,28 +11152,6 @@
       "norm_label": "normalizing direction"
     },
     {
-      "label": "Practical Game Development Applications",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-engine/references/algorithms.md",
-      "source_location": "L337",
-      "_origin": "ast",
-      "id": "agents_skills_game_engine_references_algorithms_practical_game_development_applications_337",
-      "community": 159,
-      "community_name": "Mathematical / Algorithmic Concepts",
-      "norm_label": "practical game development applications"
-    },
-    {
-      "label": "Pseudocode -- Complete Movement Update",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-engine/references/algorithms.md",
-      "source_location": "L315",
-      "_origin": "ast",
-      "id": "agents_skills_game_engine_references_algorithms_pseudocode_complete_movement_update",
-      "community": 159,
-      "community_name": "Mathematical / Algorithmic Concepts",
-      "norm_label": "pseudocode -- complete movement update"
-    },
-    {
       "label": "Updating Position with Velocity",
       "file_type": "document",
       "source_file": ".agents/skills/game-engine/references/algorithms.md",
@@ -11133,28 +11161,6 @@
       "community": 159,
       "community_name": "Mathematical / Algorithmic Concepts",
       "norm_label": "updating position with velocity"
-    },
-    {
-      "label": "Velocity and Speed",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-engine/references/algorithms.md",
-      "source_location": "L241",
-      "_origin": "ast",
-      "id": "agents_skills_game_engine_references_algorithms_velocity_and_speed",
-      "community": 159,
-      "community_name": "Mathematical / Algorithmic Concepts",
-      "norm_label": "velocity and speed"
-    },
-    {
-      "label": "What It Is",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-engine/references/algorithms.md",
-      "source_location": "L245",
-      "_origin": "ast",
-      "id": "agents_skills_game_engine_references_algorithms_what_it_is_245",
-      "community": 159,
-      "community_name": "Mathematical / Algorithmic Concepts",
-      "norm_label": "what it is"
     },
     {
       "label": "tsconfig.backend.json",
@@ -16074,6 +16080,17 @@
       "norm_label": "unity ui without raycast consideration"
     },
     {
+      "label": "validations.md",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-ui-design/references/validations.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_game_ui_design_references_validations",
+      "community": 209,
+      "community_name": "Game Ui Design - Validations",
+      "norm_label": "validations.md"
+    },
+    {
       "label": "**Applies To**",
       "file_type": "document",
       "source_file": ".agents/skills/game-ui-design/references/validations.md",
@@ -16081,7 +16098,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_applies_to_499",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "**applies to**"
     },
     {
@@ -16092,8 +16109,19 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_fix_action_497",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "**fix action**"
+    },
+    {
+      "label": "Game Ui Design - Validations",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-ui-design/references/validations.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_game_ui_design_references_validations_game_ui_design_validations",
+      "community": 209,
+      "community_name": "Game Ui Design - Validations",
+      "norm_label": "game ui design - validations"
     },
     {
       "label": "Godot UI Signal Emission Without Connection",
@@ -16103,7 +16131,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_godot_ui_signal_emission_without_connection",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "godot ui signal emission without connection"
     },
     {
@@ -16114,7 +16142,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_id_487",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "**id**"
     },
     {
@@ -16125,7 +16153,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_message_495",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "**message**"
     },
     {
@@ -16136,7 +16164,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_pattern_493",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "**pattern**"
     },
     {
@@ -16147,7 +16175,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_severity_489",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "**severity**"
     },
     {
@@ -16158,7 +16186,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_ui_design_references_validations_type_491",
       "community": 209,
-      "community_name": "Godot UI Signal Emission Without Connection",
+      "community_name": "Game Ui Design - Validations",
       "norm_label": "**type**"
     },
     {
@@ -16668,28 +16696,6 @@
       "norm_label": "three.js"
     },
     {
-      "label": "algorithms.md",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-engine/references/algorithms.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_game_engine_references_algorithms",
-      "community": 216,
-      "community_name": "Game Development Algorithms",
-      "norm_label": "algorithms.md"
-    },
-    {
-      "label": "Game Development Algorithms",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-engine/references/algorithms.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_game_engine_references_algorithms_game_development_algorithms",
-      "community": 216,
-      "community_name": "Game Development Algorithms",
-      "norm_label": "game development algorithms"
-    },
-    {
       "label": "Physics Engine Fundamentals",
       "file_type": "document",
       "source_file": ".agents/skills/game-engine/references/algorithms.md",
@@ -16697,7 +16703,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_engine_references_algorithms_physics_engine_fundamentals",
       "community": 216,
-      "community_name": "Game Development Algorithms",
+      "community_name": "Physics Engine Fundamentals",
       "norm_label": "physics engine fundamentals"
     },
     {
@@ -16708,7 +16714,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_engine_references_algorithms_practical_game_development_applications_539",
       "community": 216,
-      "community_name": "Game Development Algorithms",
+      "community_name": "Physics Engine Fundamentals",
       "norm_label": "practical game development applications"
     },
     {
@@ -16719,19 +16725,8 @@
       "_origin": "ast",
       "id": "agents_skills_game_engine_references_algorithms_pseudocode_complete_physics_step",
       "community": 216,
-      "community_name": "Game Development Algorithms",
+      "community_name": "Physics Engine Fundamentals",
       "norm_label": "pseudocode -- complete physics step"
-    },
-    {
-      "label": "Quick Reference Table",
-      "file_type": "document",
-      "source_file": ".agents/skills/game-engine/references/algorithms.md",
-      "source_location": "L828",
-      "_origin": "ast",
-      "id": "agents_skills_game_engine_references_algorithms_quick_reference_table",
-      "community": 216,
-      "community_name": "Game Development Algorithms",
-      "norm_label": "quick reference table"
     },
     {
       "label": "What It Is",
@@ -16741,7 +16736,7 @@
       "_origin": "ast",
       "id": "agents_skills_game_engine_references_algorithms_what_it_is_356",
       "community": 216,
-      "community_name": "Game Development Algorithms",
+      "community_name": "Physics Engine Fundamentals",
       "norm_label": "what it is"
     },
     {
@@ -17669,70 +17664,81 @@
       "norm_label": "research: openrouter free-tier model candidates for logic_model / creative_model"
     },
     {
-      "label": "HarnessStateSchema",
+      "label": "graph.ts",
+      "file_type": "code",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_harness_graph",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "graph.ts"
+    },
+    {
+      "label": "artService",
+      "file_type": "code",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L109",
+      "_origin": "ast",
+      "id": "src_harness_graph_artservice",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "artservice"
+    },
+    {
+      "label": "State",
+      "file_type": "code",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_harness_graph_state",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "state"
+    },
+    {
+      "label": "ResolvedEventSchema",
+      "file_type": "code",
+      "source_file": "src/harness/rules.ts",
+      "source_location": "L93",
+      "_origin": "ast",
+      "id": "src_harness_rules_resolvedeventschema",
+      "community": 229,
+      "community_name": "graph.ts",
+      "norm_label": "resolvedeventschema"
+    },
+    {
+      "label": "SAFE_DEFAULT_INTENT",
       "file_type": "code",
       "source_file": "src/harness/state.ts",
-      "source_location": "L91",
+      "source_location": "L73",
       "_origin": "ast",
-      "id": "src_harness_state_harnessstateschema",
+      "id": "src_harness_state_safe_default_intent",
       "community": 229,
-      "community_name": "smoke.test.ts",
-      "norm_label": "harnessstateschema"
+      "community_name": "graph.ts",
+      "norm_label": "safe_default_intent"
     },
     {
-      "label": "style-formula.ts",
+      "label": "resolveWithFallback.test.ts",
       "file_type": "code",
-      "source_file": "src/harness/style-formula.ts",
+      "source_file": "src/harness/__tests__/resolveWithFallback.test.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_harness_style_formula",
+      "id": "src_harness_tests_resolvewithfallback_test",
       "community": 229,
-      "community_name": "smoke.test.ts",
-      "norm_label": "style-formula.ts"
+      "community_name": "graph.ts",
+      "norm_label": "resolvewithfallback.test.ts"
     },
     {
-      "label": "STYLE_FORMULA",
+      "label": "MOCK_ADAPTER",
       "file_type": "code",
-      "source_file": "src/harness/style-formula.ts",
-      "source_location": "L3",
+      "source_file": "src/harness/__tests__/resolveWithFallback.test.ts",
+      "source_location": "L7",
       "_origin": "ast",
-      "id": "src_harness_style_formula_style_formula",
+      "id": "src_harness_tests_resolvewithfallback_test_mock_adapter",
       "community": 229,
-      "community_name": "smoke.test.ts",
-      "norm_label": "style_formula"
-    },
-    {
-      "label": "STYLE_TOKEN",
-      "file_type": "code",
-      "source_file": "src/harness/style-formula.ts",
-      "source_location": "L17",
-      "_origin": "ast",
-      "id": "src_harness_style_formula_style_token",
-      "community": 229,
-      "community_name": "smoke.test.ts",
-      "norm_label": "style_token"
-    },
-    {
-      "label": "smoke.test.ts",
-      "file_type": "code",
-      "source_file": "src/harness/__tests__/smoke.test.ts",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "src_harness_tests_smoke_test",
-      "community": 229,
-      "community_name": "smoke.test.ts",
-      "norm_label": "smoke.test.ts"
-    },
-    {
-      "label": "VALID_INTENT",
-      "file_type": "code",
-      "source_file": "src/harness/__tests__/smoke.test.ts",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "src_harness_tests_smoke_test_valid_intent",
-      "community": 229,
-      "community_name": "smoke.test.ts",
-      "norm_label": "valid_intent"
+      "community_name": "graph.ts",
+      "norm_label": "mock_adapter"
     },
     {
       "label": "narration.ts",
@@ -20650,6 +20656,17 @@
       "norm_label": "characterstatusschema"
     },
     {
+      "label": "SAMPLE_CHARACTERS",
+      "file_type": "code",
+      "source_file": "src/harness/character.ts",
+      "source_location": "L76",
+      "_origin": "ast",
+      "id": "src_harness_character_sample_characters",
+      "community": 277,
+      "community_name": "character.ts",
+      "norm_label": "sample_characters"
+    },
+    {
       "label": "SkillSchema",
       "file_type": "code",
       "source_file": "src/harness/character.ts",
@@ -20664,7 +20681,7 @@
       "label": "harnessGraph",
       "file_type": "code",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L116",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "src_harness_graph_harnessgraph",
       "community": 277,
@@ -20681,6 +20698,17 @@
       "community": 277,
       "community_name": "character.ts",
       "norm_label": "run.ts"
+    },
+    {
+      "label": "validator.test.ts",
+      "file_type": "code",
+      "source_file": "src/harness/__tests__/validator.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_harness_tests_validator_test",
+      "community": 277,
+      "community_name": "character.ts",
+      "norm_label": "validator.test.ts"
     },
     {
       "label": "Adding a Physics Body to the Hero",
@@ -22619,26 +22647,81 @@
       "norm_label": "use pipe() for multi-stage validation"
     },
     {
-      "label": "validator.test.ts",
-      "file_type": "code",
-      "source_file": "src/harness/__tests__/validator.test.ts",
+      "label": "algorithms.md",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-engine/references/algorithms.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_harness_tests_validator_test",
+      "id": "agents_skills_game_engine_references_algorithms",
       "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "validator.test.ts"
+      "community_name": "Game Development Algorithms",
+      "norm_label": "algorithms.md"
     },
     {
-      "label": "validator.ts",
-      "file_type": "code",
-      "source_file": "src/harness/validator.ts",
+      "label": "Game Development Algorithms",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-engine/references/algorithms.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_harness_validator",
+      "id": "agents_skills_game_engine_references_algorithms_game_development_algorithms",
       "community": 344,
-      "community_name": "validator.ts",
-      "norm_label": "validator.ts"
+      "community_name": "Game Development Algorithms",
+      "norm_label": "game development algorithms"
+    },
+    {
+      "label": "Practical Game Development Applications",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-engine/references/algorithms.md",
+      "source_location": "L337",
+      "_origin": "ast",
+      "id": "agents_skills_game_engine_references_algorithms_practical_game_development_applications_337",
+      "community": 344,
+      "community_name": "Game Development Algorithms",
+      "norm_label": "practical game development applications"
+    },
+    {
+      "label": "Pseudocode -- Complete Movement Update",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-engine/references/algorithms.md",
+      "source_location": "L315",
+      "_origin": "ast",
+      "id": "agents_skills_game_engine_references_algorithms_pseudocode_complete_movement_update",
+      "community": 344,
+      "community_name": "Game Development Algorithms",
+      "norm_label": "pseudocode -- complete movement update"
+    },
+    {
+      "label": "Quick Reference Table",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-engine/references/algorithms.md",
+      "source_location": "L828",
+      "_origin": "ast",
+      "id": "agents_skills_game_engine_references_algorithms_quick_reference_table",
+      "community": 344,
+      "community_name": "Game Development Algorithms",
+      "norm_label": "quick reference table"
+    },
+    {
+      "label": "Velocity and Speed",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-engine/references/algorithms.md",
+      "source_location": "L241",
+      "_origin": "ast",
+      "id": "agents_skills_game_engine_references_algorithms_velocity_and_speed",
+      "community": 344,
+      "community_name": "Game Development Algorithms",
+      "norm_label": "velocity and speed"
+    },
+    {
+      "label": "What It Is",
+      "file_type": "document",
+      "source_file": ".agents/skills/game-engine/references/algorithms.md",
+      "source_location": "L245",
+      "_origin": "ast",
+      "id": "agents_skills_game_engine_references_algorithms_what_it_is_245",
+      "community": 344,
+      "community_name": "Game Development Algorithms",
+      "norm_label": "what it is"
     },
     {
       "label": ".agents/skills/zod/references/error-avoid-throwing-in-refine.md",
@@ -24874,26 +24957,26 @@
       "norm_label": "use z.infer instead of manual types"
     },
     {
-      "label": ".agents/skills/zod/references/object-strict-vs-strip.md",
+      "label": ".agents/skills/zod/references/compose-preprocess.md",
       "file_type": "document",
-      "source_file": ".agents/skills/zod/references/object-strict-vs-strip.md",
+      "source_file": ".agents/skills/zod/references/compose-preprocess.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "agents_skills_zod_references_object_strict_vs_strip",
+      "id": "agents_skills_zod_references_compose_preprocess",
       "community": 445,
-      "community_name": ".agents/skills/zod/references/object-strict-vs-strip.md",
-      "norm_label": ".agents/skills/zod/references/object-strict-vs-strip.md"
+      "community_name": ".agents/skills/zod/references/compose-preprocess.md",
+      "norm_label": ".agents/skills/zod/references/compose-preprocess.md"
     },
     {
-      "label": "Choose strict() vs strip() for Unknown Keys",
+      "label": "Use preprocess() for Data Normalization",
       "file_type": "document",
-      "source_file": ".agents/skills/zod/references/object-strict-vs-strip.md",
+      "source_file": ".agents/skills/zod/references/compose-preprocess.md",
       "source_location": "L8",
       "_origin": "ast",
-      "id": "agents_skills_zod_references_object_strict_vs_strip_choose_strict_vs_strip_for_unknown_keys",
+      "id": "agents_skills_zod_references_compose_preprocess_use_preprocess_for_data_normalization",
       "community": 445,
-      "community_name": ".agents/skills/zod/references/object-strict-vs-strip.md",
-      "norm_label": "choose strict() vs strip() for unknown keys"
+      "community_name": ".agents/skills/zod/references/compose-preprocess.md",
+      "norm_label": "use preprocess() for data normalization"
     },
     {
       "label": ".agents/skills/nestjs-best-practices/scripts/build.sh",
@@ -31951,19 +32034,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L111",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_harness_graph_arttrigger",
-      "target": "src_harness_art_generateart",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/harness/graph.ts",
-      "source_location": "L100",
+      "source_location": "L101",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph_narrate",
@@ -31976,7 +32047,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/harness/graph.ts",
-      "source_location": "L78",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph_narrate",
@@ -31988,7 +32059,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/harness/graph.ts",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph_resolve",
@@ -31999,7 +32070,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph_resolve",
@@ -32011,7 +32082,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph_resolve",
@@ -32023,7 +32094,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L63",
+      "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph_rulesvalidate",
@@ -32035,7 +32106,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L66",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph_rulesvalidate",
@@ -32460,6 +32531,18 @@
       "_origin": "ast",
       "source": "src_backend_harness_harness_graph_service_harnessgraphservice_playturn",
       "target": "src_harness_graph_harnessgraphstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_art_service_artservice_generateart",
+      "target": "src_harness_art_artresult",
       "confidence_score": 1.0
     },
     {
@@ -33138,6 +33221,18 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_art_service",
+      "target": "src_harness_art_artresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/harness/drift.ts",
       "source_location": "L1",
       "weight": 1.0,
@@ -33295,11 +33390,11 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph",
-      "target": "src_harness_art_generateart",
+      "target": "src_harness_art_service_artservice",
       "confidence_score": 1.0
     },
     {
@@ -33636,6 +33731,18 @@
       "_origin": "ast",
       "source": "src_harness_tests_adapters_test",
       "target": "src_harness_adapters_logicadapter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/__tests__/art-service.test.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_tests_art_service_test",
+      "target": "src_harness_art_service_artservice",
       "confidence_score": 1.0
     },
     {
@@ -34350,6 +34457,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_art_service",
+      "target": "src_harness_art",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/harness/drift.ts",
       "source_location": "L1",
       "weight": 1.0,
@@ -34440,6 +34559,18 @@
       "_origin": "ast",
       "source": "src_harness_graph",
       "target": "src_harness_art",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_graph",
+      "target": "src_harness_art_service",
       "confidence_score": 1.0
     },
     {
@@ -34584,6 +34715,18 @@
       "_origin": "ast",
       "source": "src_harness_tests_adapters_test",
       "target": "src_harness_adapters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/__tests__/art-service.test.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_tests_art_service_test",
+      "target": "src_harness_art_service",
       "confidence_score": 1.0
     },
     {
@@ -55940,6 +56083,28 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_art_service",
+      "target": "src_harness_art_service_artservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_art_service",
+      "target": "src_harness_art_service_generateartfn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/harness/character.ts",
       "source_location": "L16",
       "weight": 1.0,
@@ -56106,7 +56271,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L116",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_graph",
+      "target": "src_harness_graph_artservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L119",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph",
@@ -56117,7 +56293,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L128",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph",
@@ -56128,7 +56304,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_harness_graph",
@@ -57203,6 +57379,28 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_art_service_artservice",
+      "target": "src_harness_art_service_artservice_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/harness/art-service.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_harness_art_service_artservice",
+      "target": "src_harness_art_service_artservice_generateart",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/higgsfield-game-generation/scripts/glb_inspect.py",
@@ -58218,7 +58416,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L117",
+      "source_location": "L120",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
@@ -58230,7 +58428,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L118",
+      "source_location": "L121",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
@@ -58242,7 +58440,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L119",
+      "source_location": "L122",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
@@ -58254,13 +58452,25 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "src/harness/graph.ts",
-      "source_location": "L120",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
       "source": "src_harness_graph",
       "target": "src_harness_graph_arttrigger",
       "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "src/harness/graph.ts",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 0.8,
+      "source": "src_harness_graph",
+      "target": "src_harness_art_generateart"
     },
     {
       "relation": "calls",
@@ -61287,5 +61497,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "acfe5e8c842684910ed3b3f2598b086e6271247d"
+  "built_at_commit": "0b33360fcaa0d8b2608722672d165e63018ea8a2"
 }
