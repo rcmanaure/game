@@ -1,7 +1,7 @@
 # Graph Report - game  (2026-08-14)
 
 ## Corpus Check
-- 290 files · ~256,713 words
+- 290 files · ~256,706 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -297,7 +297,7 @@
 - Initialise Phaser
 - Moving Forward
 - Start Here
-- Step 5: Game Over
+- Step 9: Mouse Controls
 - Bounding Spheres
 - Vector Mathematics for Game Development
 - Game UI Design
@@ -863,7 +863,7 @@ Nodes (9): File Structure, For Claude Code / AI Agents, For Developers, Key Prin
 
 ### Community 157 - "Paddle Game Template (2D Breakout)"
 Cohesion: 0.22
-Nodes (8): Adding the mousemove Event Listener, Complete Event Listener Setup (Keyboard + Mouse), Complete Final Game Code, Paddle Game Template (2D Breakout), Quick Reference: All Functions, Quick Reference: All Game Variables, Step 9: Mouse Controls, The mouseMoveHandler Function
+Nodes (8): Complete Code for Step 5, Complete Final Game Code, Implementing Game Over and Paddle Collision, Paddle Game Template (2D Breakout), Quick Reference: All Functions, Quick Reference: All Game Variables, Step 5: Game Over, Storing the Interval Reference
 
 ### Community 158 - "Step 2: Move the Ball"
 Cohesion: 0.22
@@ -1357,9 +1357,9 @@ Nodes (4): Full Game Source Reference, Key Concepts Summary, Moving Forward, Sug
 Cohesion: 0.50
 Nodes (4): Level Data Format, Project Structure, Start Here, What You Will Build
 
-### Community 282 - "Step 5: Game Over"
+### Community 282 - "Step 9: Mouse Controls"
 Cohesion: 0.50
-Nodes (4): Complete Code for Step 5, Implementing Game Over and Paddle Collision, Step 5: Game Over, Storing the Interval Reference
+Nodes (4): Adding the mousemove Event Listener, Complete Event Listener Setup (Keyboard + Mouse), Step 9: Mouse Controls, The mouseMoveHandler Function
 
 ### Community 283 - "Bounding Spheres"
 Cohesion: 0.50

@@ -13,6 +13,7 @@ import { applyMutation, sanitizeIntent } from "./validator.js";
 import { LogicAdapter, CreativeAdapter } from "./adapters.js";
 import { narrateWithFallback } from "./narration.js";
 import { generateArt } from "./art.js";
+import { ArtService } from "./art-service.js";
 
 const State = new StateSchema({
   playerAction: z.string(),
@@ -105,10 +106,12 @@ const narrate: GraphNode<typeof State> = async (state) => {
   return { narration };
 };
 
+const artService = new ArtService(generateArt);
+
 const artTrigger: GraphNode<typeof State> = async (state) => {
   const event = state.gameEvent!;
   const refs = state.lastReferenceUrl ? [state.lastReferenceUrl] : undefined;
-  const result = await generateArt(event.archetype, refs);
+  const result = await artService.generateArt(event.archetype, refs);
   if ("error" in result) return { artError: result.error };
   return { artUrl: result.url };
 };
