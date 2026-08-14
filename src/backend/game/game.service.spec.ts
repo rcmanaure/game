@@ -30,30 +30,35 @@ describe("GameService", () => {
     service = module.get<GameService>(GameService);
   });
 
-  it("should load character, call harness, persist result", async () => {
+  it("should load character, call harness, apply mutations, persist result", async () => {
     const character = SAMPLE_CHARACTERS["mira-ashgrave"];
-    const playerAction = "attempt a stealthy approach";
+    const playerAction = "attempt a risky dodge";
     const gameEvent = {
-      rollType: "check" as const,
+      rollType: "opposedCheck" as const,
       attribute: "dexterity" as const,
-      skillOrDiscipline: "stealth",
+      skillOrDiscipline: null,
       modifier: 3,
-      targetNumber: 15,
-      roll: 12,
+      targetNumber: null,
+      roll: 8,
       cravingDie: null,
-      opponentTier: null,
-      opponentRoll: null,
+      opponentTier: "moderate" as const,
+      opponentRoll: 14,
       success: false,
       criticalTier: "none" as const,
-      statDeltas: {},
-      archetype: "stealth-attempt",
-      summary: "a careful movement through shadows",
+      statDeltas: { hp: -5 },
+      archetype: "dodge-attempt",
+      summary: "attempt to evade incoming attack",
+    };
+
+    const mutatedCharacter = {
+      ...character,
+      hp: character.hp - 5,
     };
 
     (charRepo.findById as jest.Mock).mockResolvedValue(character);
     (graphService.playTurn as jest.Mock).mockResolvedValue({
       gameEvent,
-      narration: "You move carefully...",
+      narration: "You take a hit...",
       artUrl: "https://example.com/image.jpg",
     });
 
@@ -61,14 +66,16 @@ describe("GameService", () => {
 
     expect(charRepo.findById).toHaveBeenCalledWith(character.id);
     expect(graphService.playTurn).toHaveBeenCalledWith(character, playerAction);
+    // Verify character was mutated before save
     expect(charRepo.save).toHaveBeenCalledWith(
       expect.objectContaining({
         id: character.id,
+        hp: mutatedCharacter.hp,
       })
     );
     expect(result).toEqual({
       gameEvent,
-      narration: "You move carefully...",
+      narration: "You take a hit...",
       artUrl: "https://example.com/image.jpg",
     });
   });
