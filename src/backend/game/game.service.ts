@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CharacterRepository } from "../database/character.repository";
 import { HarnessGraphService } from "../harness/harness-graph.service";
-import { applyMutation } from "../../harness/validator";
 import { type HarnessGraphState } from "../../harness/graph";
 
 @Injectable()
@@ -12,25 +11,23 @@ export class GameService {
   ) {}
 
   async playTurn(characterId: string, playerAction: string): Promise<{
+    character: HarnessGraphState["character"];
     gameEvent: HarnessGraphState["gameEvent"];
     narration: HarnessGraphState["narration"];
     artUrl: HarnessGraphState["artUrl"];
     artError?: HarnessGraphState["artError"];
   }> {
-    let character = await this.charRepo.findById(characterId);
+    const character = await this.charRepo.findById(characterId);
     if (!character) {
       throw new NotFoundException(`Character ${characterId} not found`);
     }
 
+    // rulesValidate (inside the graph) already computed the mutated
+    // character while gating the state transition — persist what it
+    // returned rather than re-deriving the same mutation here.
     const result = await this.graph.playTurn(character, playerAction);
 
-    // Apply gameEvent mutations (hp/status changes) to character before persist
-    if (result.gameEvent) {
-      const mutated = applyMutation(character, result.gameEvent);
-      character = mutated.character;
-    }
-
-    await this.charRepo.save(character);
+    await this.charRepo.save(result.character);
 
     return result;
   }

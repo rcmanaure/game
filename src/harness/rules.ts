@@ -90,6 +90,16 @@ export const CriticalTierSchema = z.enum([
 ]);
 export type CriticalTier = z.infer<typeof CriticalTierSchema>;
 
+// Closed on purpose (Decision #25 flagged the original open Record<string,
+// number> as having "no structure behind it at all") — applyMutation
+// (validator.ts) handles every key here exhaustively, so a new stat can't
+// compile without a handler for it.
+export const StatDeltasSchema = z.object({
+  hp: z.number().optional(),
+  craving: z.number().optional(),
+});
+export type StatDeltas = z.infer<typeof StatDeltasSchema>;
+
 export const ResolvedEventSchema = z.object({
   rollType: RollTypeSchema,
   attribute: AttributeSchema,
@@ -102,9 +112,10 @@ export const ResolvedEventSchema = z.object({
   opponentRoll: z.number().min(1).max(20).nullable(), // null for check/attack
   success: z.boolean(),
   criticalTier: CriticalTierSchema,
-  statDeltas: z.record(z.string(), z.number()),
+  statDeltas: StatDeltasSchema,
   archetype: z.string(),
-  summary: z.string(),
+  summary: z.string(), // factual description of the attempt — never overwritten by a rejection
+  rejectionReason: z.string().nullable().default(null), // set only by rejectedEvent()
 });
 export type ResolvedEvent = z.infer<typeof ResolvedEventSchema>;
 
@@ -165,6 +176,7 @@ export function resolveCheck(
     cravingDie,
     archetype: intent.archetype,
     summary: intent.summary,
+    rejectionReason: null,
   };
 
   if (intent.rollType === "opposedCheck") {
@@ -180,7 +192,7 @@ export function resolveCheck(
     const success = playerTotal > opponentTotal;
     const criticalTier = computeCriticalTier(usedRoll, cravingDie, success);
 
-    const statDeltas: Record<string, number> = {};
+    const statDeltas: StatDeltas = {};
     if (intent.cravingElevated) statDeltas.craving = CRAVING_COST;
     if (intent.eventType === "combat" && !success) {
       // A failed combat opposedCheck (e.g. a defense/dodge contest) means
@@ -207,17 +219,12 @@ export function resolveCheck(
   const success = usedRoll + modifier >= targetNumber;
   const criticalTier = computeCriticalTier(usedRoll, cravingDie, success);
 
-  const statDeltas: Record<string, number> = {};
+  const statDeltas: StatDeltas = {};
   if (intent.cravingElevated) statDeltas.craving = CRAVING_COST;
-  if (intent.rollType === "attack" && success) {
-    // Placeholder damage band until a real weapon/damage-dice system
-    // exists — bounded, not LLM-supplied, per Decision #7.
-    statDeltas.targetHp = -(
-      criticalTier === "critical" || criticalTier === "cravingCritical"
-        ? 8
-        : 4
-    );
-  }
+  // A successful "attack" has no statDeltas target: Decision #25 models
+  // opponents as a closed difficulty tier, not an entity with hp, so there
+  // is nothing server-side to apply damage to yet — attacks resolve
+  // narratively until a real opponent/damage system exists.
 
   return {
     ...base,
@@ -236,7 +243,9 @@ export function resolveCheck(
  * rules-illegal -> Rejected by rules validator, safe no-op event"). The
  * roll already happened (kept for transparency/debugging), but the
  * mutation itself never applies — reflected here as success:false with no
- * statDeltas.
+ * statDeltas. `summary` keeps describing what was ATTEMPTED (narrate's
+ * prompt reads it that way); the reason the attempt didn't land goes in
+ * rejectionReason instead, not stamped over summary.
  */
 export function rejectedEvent(
   reason: string,
@@ -247,7 +256,7 @@ export function rejectedEvent(
     success: false,
     criticalTier: "none",
     statDeltas: {},
-    summary: reason,
+    rejectionReason: reason,
   };
 }
 

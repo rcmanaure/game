@@ -5,32 +5,16 @@ import { GameService } from "./game.service";
 import type { CharacterRepository } from "../database/character.repository";
 import type { HarnessGraphService } from "../harness/harness-graph.service";
 import { SAMPLE_CHARACTERS, type Character } from "../../harness/character";
-import type { ResolvedEvent } from "../../harness/rules";
 
 // Providers here are constructed directly rather than through a DI container:
 // every one of them has a plain constructor, so the container buys nothing a
 // `new` doesn't, and it keeps this suite on the same node:test runner the
 // harness tests already use.
-
-function makeEvent(overrides: Partial<ResolvedEvent> = {}): ResolvedEvent {
-  return {
-    rollType: "opposedCheck",
-    attribute: "dexterity",
-    skillOrDiscipline: null,
-    modifier: 3,
-    targetNumber: null,
-    roll: 8,
-    cravingDie: null,
-    opponentTier: "moderate",
-    opponentRoll: 14,
-    success: false,
-    criticalTier: "none",
-    statDeltas: { hp: -5 },
-    archetype: "dodge-attempt",
-    summary: "attempt to evade an incoming attack",
-    ...overrides,
-  };
-}
+//
+// The graph (not GameService) owns the character mutation — rulesValidate
+// already computes it while gating the state transition, so these mocks
+// return the mutated character directly, the same contract playTurn() now
+// has against the real HarnessGraphService.
 
 function makeService(opts: {
   found: Character | null;
@@ -51,7 +35,8 @@ function makeService(opts: {
       graphCalls.push([character, playerAction]);
       return (
         opts.graphResult ?? {
-          gameEvent: makeEvent(),
+          character,
+          gameEvent: null,
           narration: "You take a hit.",
           artUrl: "https://example.com/art.jpg",
         }
@@ -62,47 +47,39 @@ function makeService(opts: {
   return { service: new GameService(charRepo, graph), saved, graphCalls };
 }
 
-test("playTurn: loads the character, hands it to the graph, persists the result", async () => {
+test("playTurn: loads the character, hands it to the graph, persists what the graph returns", async () => {
   const mira = SAMPLE_CHARACTERS["mira-ashgrave"]; // 12/12 hp
-  const { service, saved, graphCalls } = makeService({ found: mira });
+  const mutated = { ...mira, hp: 7 };
+  const { service, saved, graphCalls } = makeService({
+    found: mira,
+    graphResult: { character: mutated, gameEvent: null, narration: "You take a hit.", artUrl: null },
+  });
 
   const result = await service.playTurn(mira.id, "dodge the blow");
 
   assert.deepEqual(graphCalls, [[mira, "dodge the blow"]]);
   assert.equal(saved.length, 1);
-  assert.equal(saved[0].id, mira.id);
+  assert.equal(saved[0], mutated); // persists exactly what the graph returned, no re-derivation
   assert.equal(result.narration, "You take a hit.");
 });
 
-test("playTurn: the persisted character carries the event's hp delta", async () => {
-  const mira = SAMPLE_CHARACTERS["mira-ashgrave"]; // 12/12 hp
-  const { service, saved } = makeService({ found: mira });
-
-  await service.playTurn(mira.id, "dodge the blow");
-
-  assert.equal(saved[0].hp, mira.hp - 5);
-  assert.equal(saved[0].status, "active");
-});
-
-test("playTurn: an unknown character id raises NotFoundException and never persists", async () => {
-  const { service, saved } = makeService({ found: null });
+test("playTurn: an unknown character id raises NotFoundException and never calls the graph or persists", async () => {
+  const { service, saved, graphCalls } = makeService({ found: null });
 
   await assert.rejects(
     () => service.playTurn("nobody", "look around"),
     (err: unknown) => err instanceof NotFoundException,
   );
   assert.equal(saved.length, 0);
+  assert.equal(graphCalls.length, 0);
 });
 
-test("playTurn: a turn with no game event still persists the loaded character", async () => {
+test("playTurn: a turn with no game event still persists the character the graph returned", async () => {
   const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
-  const { service, saved } = makeService({
-    found: mira,
-    graphResult: { gameEvent: null, narration: null, artUrl: null },
-  });
+  const { service, saved } = makeService({ found: mira });
 
   await service.playTurn(mira.id, "wait");
 
   assert.equal(saved.length, 1);
-  assert.equal(saved[0].hp, mira.hp);
+  assert.equal(saved[0], mira);
 });

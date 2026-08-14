@@ -98,43 +98,64 @@ export function validateTransition(
   return { legal: true, resultingHp, resultingStatus };
 }
 
+const CRAVING_MIN = 0;
+const CRAVING_MAX = 5; // character.ts's own `craving` comment: 0-5, VTM V5's Hunger
+
+// State-transition bound, same discipline as validateTransition's hp gate:
+// never trust an LLM-claimed craving delta to land un-clamped.
+function clampCraving(value: number): number {
+  return Math.max(CRAVING_MIN, Math.min(CRAVING_MAX, value));
+}
+
 /**
- * Applies a resolved event's hp delta (if any) to `character`, returning a
- * NEW character object — never mutates the input. Illegal transitions
- * (e.g. targeting an already-dead character) return the ORIGINAL character
- * unchanged plus a reason, matching the plan's Error & Rescue Registry
- * row: "Schema-valid but rules-illegal -> Rejected by rules validator,
- * safe no-op event."
+ * Applies a resolved event's stat deltas (hp, craving — StatDeltas is
+ * closed, so both are handled here explicitly) to `character`, returning a
+ * NEW character object — never mutates the input. A true no-op (no delta of
+ * either kind) returns the SAME character reference, not a copy. Illegal
+ * transitions (e.g. targeting an already-dead character) return the
+ * ORIGINAL character unchanged plus a reason, matching the plan's Error &
+ * Rescue Registry row: "Schema-valid but rules-illegal -> Rejected by rules
+ * validator, safe no-op event."
  */
 export function applyMutation(
   character: Character,
   event: ResolvedEvent,
 ): { character: Character; rejected: false } | { character: Character; rejected: true; reason: string } {
+  // A dead character accepts no further mutation of any kind (Decision #5)
+  // — a Craving-only delta is equally illegal, not just hp damage.
+  if (character.status === "dead") {
+    return {
+      character,
+      rejected: true,
+      reason: `${character.name} has met Final Death — no further mutation is legal`,
+    };
+  }
+
   const hpDelta = event.statDeltas.hp ?? 0;
-  if (hpDelta === 0) {
-    // No hp change proposed — still must reject if the character is
-    // already dead (e.g. a Craving cost or a social check targeting a
-    // dead character is equally illegal, not just damage).
-    if (character.status === "dead") {
-      return {
-        character,
-        rejected: true,
-        reason: `${character.name} has met Final Death — no further mutation is legal`,
-      };
-    }
+  const cravingDelta = event.statDeltas.craving ?? 0;
+
+  if (hpDelta === 0 && cravingDelta === 0) {
     return { character, rejected: false };
   }
 
-  const result = validateTransition(character, hpDelta);
-  if (!result.legal) {
-    return { character, rejected: true, reason: result.reason };
+  let resultingHp = character.hp;
+  let resultingStatus: CharacterStatus = character.status;
+
+  if (hpDelta !== 0) {
+    const result = validateTransition(character, hpDelta);
+    if (!result.legal) {
+      return { character, rejected: true, reason: result.reason };
+    }
+    resultingHp = result.resultingHp;
+    resultingStatus = result.resultingStatus;
   }
 
   return {
     character: {
       ...character,
-      hp: result.resultingHp,
-      status: result.resultingStatus,
+      hp: resultingHp,
+      status: resultingStatus,
+      craving: clampCraving(character.craving + cravingDelta),
     },
     rejected: false,
   };

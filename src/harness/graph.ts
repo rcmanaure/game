@@ -78,25 +78,32 @@ const narrate: GraphNode<typeof State> = async (state) => {
   const event = state.gameEvent!;
   const adapter = CreativeAdapter.fromEnv();
 
-  const outcome = event.success
-    ? event.criticalTier === "critical" || event.criticalTier === "cravingCritical"
-      ? "a resounding, decisive success"
-      : "a success"
-    : event.criticalTier === "cravingFailure"
-      ? "a failure where the Craving/Beast intrudes with a complication"
-      : "a failure";
-  const cravingNote =
-    event.criticalTier === "cravingCritical"
-      ? " The character's vampiric hunger shows through even in victory — narrate a small unsettling detail alongside the success."
+  // A rules-rejected turn (e.g. targeting an already-dead character) never
+  // happened mechanically — narrating it as an ordinary failure would tell
+  // the creative model an attempt occurred that the engine actually refused.
+  let prompt: string;
+  if (event.rejectionReason) {
+    prompt = `You are the AI Dungeon Master for a dark-fantasy coterie-sim. Narrate in 1-2 sentences, second person, moody gothic-fantasy tone, in the same language as the player's action, that this action could not happen at all — do not invent a success or a failed attempt. Player action: "${state.playerAction}". Why it could not happen: ${event.rejectionReason}.`;
+  } else {
+    const outcome = event.success
+      ? event.criticalTier === "critical" || event.criticalTier === "cravingCritical"
+        ? "a resounding, decisive success"
+        : "a success"
       : event.criticalTier === "cravingFailure"
-        ? " The character's hunger causes a bestial complication — narrate it as part of the failure."
-        : "";
-
-  const rollDetail =
-    event.rollType === "opposedCheck"
-      ? `your roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs the opponent's roll ${event.opponentRoll} (${event.opponentTier} difficulty)`
-      : `roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs target ${event.targetNumber}`;
-  const prompt = `You are the AI Dungeon Master for a dark-fantasy coterie-sim. Narrate this beat in 2-4 sentences, second person, moody gothic-fantasy tone, in the same language as the player's action. Player action: "${state.playerAction}". What was attempted: ${event.summary}. Mechanical outcome: ${outcome} (${rollDetail}).${cravingNote} Never contradict the outcome — if it failed, do not narrate success, and vice versa.`;
+        ? "a failure where the Craving/Beast intrudes with a complication"
+        : "a failure";
+    const cravingNote =
+      event.criticalTier === "cravingCritical"
+        ? " The character's vampiric hunger shows through even in victory — narrate a small unsettling detail alongside the success."
+        : event.criticalTier === "cravingFailure"
+          ? " The character's hunger causes a bestial complication — narrate it as part of the failure."
+          : "";
+    const rollDetail =
+      event.rollType === "opposedCheck"
+        ? `your roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs the opponent's roll ${event.opponentRoll} (${event.opponentTier} difficulty)`
+        : `roll ${event.roll}${event.cravingDie ? ` / Craving die ${event.cravingDie}` : ""} + modifier ${event.modifier} vs target ${event.targetNumber}`;
+    prompt = `You are the AI Dungeon Master for a dark-fantasy coterie-sim. Narrate this beat in 2-4 sentences, second person, moody gothic-fantasy tone, in the same language as the player's action. Player action: "${state.playerAction}". What was attempted: ${event.summary}. Mechanical outcome: ${outcome} (${rollDetail}).${cravingNote} Never contradict the outcome — if it failed, do not narrate success, and vice versa.`;
+  }
 
   const narration = await narrateWithFallback({
     event,

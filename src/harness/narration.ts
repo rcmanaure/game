@@ -50,6 +50,9 @@ function outcomeLabel(event: ResolvedEvent): string {
 // narrate prompt asks for that) or vary in style — a fixed English template
 // keyed off the mechanical outcome. Guaranteed non-empty is the whole point.
 export function deterministicNarration(event: ResolvedEvent): string {
+  if (event.rejectionReason) {
+    return `The attempt cannot happen. (${event.rejectionReason})`;
+  }
   return `${outcomeLabel(event)} (${event.summary})`;
 }
 

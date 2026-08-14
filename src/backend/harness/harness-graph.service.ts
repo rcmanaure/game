@@ -8,6 +8,7 @@ export class HarnessGraphService {
     character: Character,
     playerAction: string,
   ): Promise<{
+    character: HarnessGraphState["character"];
     gameEvent: HarnessGraphState["gameEvent"];
     narration: HarnessGraphState["narration"];
     artUrl: HarnessGraphState["artUrl"];
@@ -25,7 +26,11 @@ export class HarnessGraphService {
 
     const output = await harnessGraph.invoke(input);
 
+    // rulesValidate already computed the mutated character while gating the
+    // state transition — return it rather than making the caller re-derive
+    // the same mutation from gameEvent (run.ts already consumes it this way).
     return {
+      character: output.character,
       gameEvent: output.gameEvent,
       narration: output.narration,
       artUrl: output.artUrl,

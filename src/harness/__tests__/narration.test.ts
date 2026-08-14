@@ -23,9 +23,18 @@ function makeEvent(overrides: Partial<ResolvedEvent> = {}): ResolvedEvent {
     statDeltas: {},
     archetype: "test-scene",
     summary: "the wretch lunges and is repelled",
+    rejectionReason: null,
     ...overrides,
   };
 }
+
+test("deterministicNarration: a rejected event names the reason, not the attempted outcome", () => {
+  const narration = deterministicNarration(
+    makeEvent({ rejectionReason: "Mira Ashgrave has met Final Death — no further mutation is legal" }),
+  );
+  assert.match(narration, /cannot happen/);
+  assert.match(narration, /Final Death/);
+});
 
 test("isRefusal: finish_reason content_filter is always a refusal", () => {
   assert.equal(
