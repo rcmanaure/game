@@ -18,6 +18,14 @@ export interface PromptAdapter {
   getRetryPolicy(): RetryPolicy;
 }
 
+// The narrate node needs a second model for its refusal-retry chain
+// (Decision #2's alt-provider fallback) — a capability the resolve node's
+// LogicAdapter has no use for, so it stays a separate interface rather than
+// widening PromptAdapter with a method only one implementor means.
+export interface NarrationAdapter extends PromptAdapter {
+  getAltModel(): ChatOpenRouter;
+}
+
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -65,7 +73,7 @@ export class LogicAdapter implements PromptAdapter {
   }
 }
 
-export class CreativeAdapter implements PromptAdapter {
+export class CreativeAdapter implements NarrationAdapter {
   private config: ModelConfig;
   private altAdapter: LogicAdapter;
 

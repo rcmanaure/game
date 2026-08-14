@@ -1,9 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { type Character } from "../../harness/character";
-import { harnessGraph, type HarnessGraphState } from "../../harness/graph";
+import { createHarnessGraphFromEnv, type HarnessGraph, type HarnessGraphState } from "../../harness/graph";
 
 @Injectable()
 export class HarnessGraphService {
+  // A plain default, no parameter decorator: HarnessGraph is an interface,
+  // not a registered provider token, so Nest's own constructor-injection
+  // reflection would fail on it. game.module.ts registers this class behind
+  // a factory provider instead (`new HarnessGraphService()`), which never
+  // asks Nest to reflect this constructor — the plain JS default just fires.
+  // Tests build one with stub collaborators via createHarnessGraph
+  // (`new HarnessGraphService(stubGraph)`), exercising this class's actual
+  // wiring with no live API calls.
+  constructor(private readonly graph: HarnessGraph = createHarnessGraphFromEnv()) {}
+
   async playTurn(
     character: Character,
     playerAction: string,
@@ -24,7 +34,7 @@ export class HarnessGraphService {
       lastReferenceUrl: null,
     };
 
-    const output = await harnessGraph.invoke(input);
+    const output = await this.graph.invoke(input);
 
     // rulesValidate already computed the mutated character while gating the
     // state transition — return it rather than making the caller re-derive

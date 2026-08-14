@@ -1,6 +1,6 @@
 import { randomInt } from "node:crypto";
 import { z } from "zod";
-import { type Character, modifierFor } from "./character.js";
+import { ATTRIBUTES, type Character, modifierFor } from "./character.js";
 import type { LogicIntent } from "./validator.js";
 import {
   RollTypeSchema,
@@ -20,6 +20,13 @@ import type { PromptAdapter } from "./adapters.js";
 // something an LLM can hallucinate or bias.
 export function rollD20(): number {
   return randomInt(1, 21); // crypto.randomInt is upper-exclusive
+}
+
+// The resolve node's prompt — a pure function of what it actually needs
+// (the character and the player's action), so its wording is assertable
+// without constructing a graph State or an adapter.
+export function buildResolvePrompt(character: Character, playerAction: string): string {
+  return `You are the logic/resolver model for a dark-fantasy coterie-sim TTRPG. The character "${character.name}" took this action: "${playerAction}". Decide: what kind of check this is (a plain check, an opposed check against another creature/NPC, or an attack), which attribute (one of ${ATTRIBUTES.join(", ")}) and skill (or null) governs it, and whether the character is pushing their Craving to gain an edge (cravingElevated). You do NOT decide success or roll any dice — that happens server-side. For "check"/"attack", set targetNumber (5=very easy, 10=easy, 15=medium, 20=hard, 25=very hard, 30=nearly impossible) and leave opponentTier null. For "opposedCheck" (a contest against an opposing creature/NPC), set opponentTier to one of ${OPPONENT_TIERS.join(", ")} instead, and leave targetNumber null — there is no target number in a contest, only two sides' rolls. Use JSON null (never the string "None") for any field you're leaving empty. Also emit an eventType, an archetype tag (short kebab-case, keys art generation, describes the SCENE not the opponent's difficulty), and a one-sentence factual summary of the attempt (not the outcome).`;
 }
 
 // Retry-once-then-safe-default logic (Decision #19). Invokes LLM once, retries

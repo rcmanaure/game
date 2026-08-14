@@ -7,7 +7,15 @@ import { HarnessGraphService } from "../harness/harness-graph.service";
 
 @Module({
   imports: [TypeOrmModule.forFeature([CharacterEntity])],
-  providers: [GameService, CharacterRepository, HarnessGraphService],
+  providers: [
+    GameService,
+    CharacterRepository,
+    // Factory provider: HarnessGraphService's constructor takes an
+    // interface (HarnessGraph), which Nest can't resolve by reflection.
+    // Calling `new` here bypasses that reflection and lets the class's own
+    // default parameter build the live env-backed graph.
+    { provide: HarnessGraphService, useFactory: () => new HarnessGraphService() },
+  ],
   exports: [GameService],
 })
 export class GameModule {}

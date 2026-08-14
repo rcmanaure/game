@@ -5,7 +5,7 @@ import {
   modifierFor,
   SAMPLE_CHARACTERS,
 } from "../character.js";
-import { rollD20, resolveCheck, computeCriticalTier, rejectedEvent } from "../rules.js";
+import { rollD20, resolveCheck, computeCriticalTier, rejectedEvent, buildResolvePrompt } from "../rules.js";
 import { LogicIntentSchema } from "../validator.js";
 
 test("clampAttributeModifier bounds to -5..+10", () => {
@@ -66,6 +66,14 @@ test("computeCriticalTier: success on a Craving die of 1 is not a cravingFailure
   // The Craving die showing 1 only matters on a FAILED check (mirrors VTM's
   // Bestial Failure precondition), not a successful one.
   assert.equal(computeCriticalTier(15, 1, true), "none");
+});
+
+test("buildResolvePrompt: names the character and the action, without an adapter or a graph State", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
+  const prompt = buildResolvePrompt(mira, "search the crypt for exits");
+  assert.match(prompt, /Mira Ashgrave/);
+  assert.match(prompt, /search the crypt for exits/);
+  assert.match(prompt, /opposedCheck/);
 });
 
 test("resolveCheck: modifier is the real character-sheet value, never LLM-supplied", () => {
