@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { SAMPLE_CHARACTERS, type Character } from "../character.js";
 import { validateTransition, applyMutation } from "../validator.js";
-import type { ResolvedEvent } from "../state.js";
+import type { ResolvedEvent } from "../rules.js";
 
 // T1 verify criterion: "unit test rejects an out-of-bounds/illegal mutation;
 // accepts a legal one." Battle-logic (rolls, modifiers) is rules.test.ts's

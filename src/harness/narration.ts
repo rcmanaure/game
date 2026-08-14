@@ -1,4 +1,4 @@
-import type { ResolvedEvent } from "./state.js";
+import type { ResolvedEvent } from "./rules.js";
 
 // T2: content-refusal handling (CEO Review Hardening — "never a silent
 // no-op, that breaks the game roughly every third violent beat"). Chain:

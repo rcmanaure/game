@@ -6,7 +6,7 @@ import {
   SAMPLE_CHARACTERS,
 } from "../character.js";
 import { rollD20, resolveCheck, computeCriticalTier } from "../rules.js";
-import { LogicIntentSchema } from "../state.js";
+import { LogicIntentSchema } from "../validator.js";
 
 test("clampAttributeModifier bounds to -5..+10", () => {
   assert.equal(clampAttributeModifier(99), 10);

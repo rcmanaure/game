@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { isRefusal, deterministicNarration, narrateWithFallback } from "../narration.js";
-import type { ResolvedEvent } from "../state.js";
+import type { ResolvedEvent } from "../rules.js";
 
 // T2 verify criterion: "forced-refusal test case resolves to a non-empty
 // narration, never a silent no-op." Covers detection (isRefusal) and the

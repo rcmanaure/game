@@ -1,5 +1,58 @@
+import { z } from "zod";
 import type { Character, CharacterStatus } from "./character.js";
-import type { ResolvedEvent } from "./state.js";
+import {
+  RollTypeSchema,
+  AttributeSchema,
+  OpponentTierSchema,
+  type LogicIntentRaw,
+} from "./state.js";
+import type { ResolvedEvent } from "./rules.js";
+
+// --- STRICT INTENT SCHEMA ---
+// Internal validation schema for LogicIntent. The resolve node's LLM emits
+// LogicIntentRaw (which accepts string/"None" for nullable fields). After
+// sanitizeIntent() coerces those, the result is validated against this
+// strict schema. This is where we live — the internal canonical form that
+// callers depend on (Decision #7: schema-valid is not the same as
+// semantically valid, but this schema IS the validation layer for intent).
+export const LogicIntentSchema = z.object({
+  eventType: z.enum(["combat", "social", "exploration", "other"]),
+  archetype: z.string().min(1), // Decision #6 taxonomy key, feeds art-trigger ONLY — never a difficulty signal
+  summary: z.string().min(1), // factual beat description, feeds narrate node
+  rollType: RollTypeSchema,
+  attribute: AttributeSchema,
+  skill: z.string().nullable(),
+  // Required for "check"/"attack" (a DC), meaningless for "opposedCheck"
+  // (no DC in a contest — D&D SRD 5.1 p.77). Nullable because zod's flat
+  // object schema can't express a rollType-conditional requirement without
+  // a discriminated union; resolve() enforces the real constraint below.
+  targetNumber: z.number().min(1).max(40).nullable(),
+  // Required for "opposedCheck" only — a closed tier the LLM picks, so it
+  // can never self-select an arbitrary opponent difficulty the way keying
+  // off free-text `archetype` would have allowed.
+  opponentTier: OpponentTierSchema.nullable(),
+  cravingElevated: z.boolean(),
+});
+export type LogicIntent = z.infer<typeof LogicIntentSchema>;
+
+// Free-tier models trained heavily on Python sometimes emit the literal
+// string "None" (or "null"/"N/A") instead of JSON `null` for a field
+// they're leaving empty — a systematic formatting habit, not a random
+// flake, so a retry doesn't fix it (observed live: 3/3 identical failures
+// on the same prompt). Coerce those strings to real null, then validate
+// strictly. Throws (caught by resolve()'s existing try/catch, same
+// retry-once-then-safe-default path) if anything else is still wrong.
+export function sanitizeIntent(raw: LogicIntentRaw): LogicIntent {
+  const PYTHON_NULLISH = /^(none|null|n\/a)$/i;
+  const coerce = (v: unknown) =>
+    typeof v === "string" && PYTHON_NULLISH.test(v) ? null : v;
+  return LogicIntentSchema.parse({
+    ...raw,
+    skill: coerce(raw.skill),
+    targetNumber: coerce(raw.targetNumber),
+    opponentTier: coerce(raw.opponentTier),
+  });
+}
 
 // T1: the server-side rules validator (Decision #7 — "schema-valid is not
 // the same as rules-legal"). resolveCheck() (rules.ts) already bounds

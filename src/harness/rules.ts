@@ -1,6 +1,14 @@
 import { randomInt } from "node:crypto";
+import { z } from "zod";
 import { type Character, modifierFor } from "./character.js";
-import type { CriticalTier, LogicIntent, ResolvedEvent } from "./state.js";
+import type { LogicIntent } from "./validator.js";
+import {
+  RollTypeSchema,
+  AttributeSchema,
+  OpponentTierSchema,
+  OPPONENT_TIERS,
+  type OpponentTier,
+} from "./state.js";
 
 // Server-authoritative d20 — the logic model NEVER supplies a roll value.
 // This is the whole point of Decision #7: dice results must not be
@@ -21,20 +29,37 @@ function clampTargetNumber(dc: number): number {
 // Hunger). Fixed magnitude, not LLM-invented — Decision #7's bound.
 const CRAVING_COST = 1;
 
-// Opponent difficulty for opposedCheck — a CLOSED enum the LLM picks from
-// (like `attribute`), never the free-text `archetype` string. Keying off
-// archetype would let the model self-select its own opponent's difficulty
-// (an outside-voice-caught violation of Decision #7's "never trust an
-// LLM-claimed value" principle — archetype is a narrative/art-gen tag for
-// the scene, not a closed difficulty signal).
-export const OPPONENT_TIERS = [
-  "trivial",
-  "minor",
-  "moderate",
-  "dangerous",
-  "deadly",
-] as const;
-export type OpponentTier = (typeof OPPONENT_TIERS)[number];
+// --- RESOLVED EVENT (server-authoritative) ---
+// Every field below the eventType/archetype/summary is either looked up
+// from the character sheet or computed by resolveCheck() — nothing here
+// comes from the LLM directly, even though the shape mirrors LogicIntent.
+// This is what actually reaches the narrate node (Decision #7: only
+// server-computed values, never LLM-claimed results).
+export const CriticalTierSchema = z.enum([
+  "none",
+  "critical",
+  "cravingCritical",
+  "cravingFailure",
+]);
+export type CriticalTier = z.infer<typeof CriticalTierSchema>;
+
+export const ResolvedEventSchema = z.object({
+  rollType: RollTypeSchema,
+  attribute: AttributeSchema,
+  skillOrDiscipline: z.string().nullable(),
+  modifier: z.number(),
+  targetNumber: z.number().nullable(), // null for opposedCheck
+  roll: z.number().min(1).max(20),
+  cravingDie: z.number().min(1).max(20).nullable(),
+  opponentTier: OpponentTierSchema.nullable(), // null for check/attack
+  opponentRoll: z.number().min(1).max(20).nullable(), // null for check/attack
+  success: z.boolean(),
+  criticalTier: CriticalTierSchema,
+  statDeltas: z.record(z.string(), z.number()),
+  archetype: z.string(),
+  summary: z.string(),
+});
+export type ResolvedEvent = z.infer<typeof ResolvedEventSchema>;
 
 const TIER_MODIFIERS: Record<OpponentTier, number> = {
   trivial: 0,

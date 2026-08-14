@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { LogicIntentSchema, HarnessStateSchema, sanitizeIntent } from "../state.js";
+import { LogicIntentSchema, sanitizeIntent } from "../validator.js";
+import { HarnessStateSchema } from "../state.js";
 import { STYLE_FORMULA, STYLE_TOKEN } from "../style-formula.js";
 import { SAMPLE_CHARACTERS } from "../character.js";
 
