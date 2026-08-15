@@ -1,12 +1,74 @@
 import { randomInt } from "node:crypto";
-import { type Character, modifierFor } from "./character.js";
-import type { CriticalTier, LogicIntent, ResolvedEvent } from "./state.js";
+import { z } from "zod";
+import { ATTRIBUTES, type Character, modifierFor } from "./character.js";
+import type { LogicIntent } from "./validator.js";
+import {
+  RollTypeSchema,
+  AttributeSchema,
+  OpponentTierSchema,
+  OPPONENT_TIERS,
+  type OpponentTier,
+  LogicIntentRawSchema,
+  needsTargetNumber,
+  SAFE_DEFAULT_INTENT,
+} from "./state.js";
+import { sanitizeIntent } from "./validator.js";
+import type { PromptAdapter } from "./adapters.js";
 
 // Server-authoritative d20 — the logic model NEVER supplies a roll value.
 // This is the whole point of Decision #7: dice results must not be
 // something an LLM can hallucinate or bias.
 export function rollD20(): number {
   return randomInt(1, 21); // crypto.randomInt is upper-exclusive
+}
+
+// The resolve node's prompt — a pure function of what it actually needs
+// (the character and the player's action), so its wording is assertable
+// without constructing a graph State or an adapter.
+export function buildResolvePrompt(character: Character, playerAction: string): string {
+  return `You are the logic/resolver model for a dark-fantasy coterie-sim TTRPG. The character "${character.name}" took this action: "${playerAction}". Decide: what kind of check this is (a plain check, an opposed check against another creature/NPC, or an attack), which attribute (one of ${ATTRIBUTES.join(", ")}) and skill (or null) governs it, and whether the character is pushing their Craving to gain an edge (cravingElevated). You do NOT decide success or roll any dice — that happens server-side. For "check"/"attack", set targetNumber (5=very easy, 10=easy, 15=medium, 20=hard, 25=very hard, 30=nearly impossible) and leave opponentTier null. For "opposedCheck" (a contest against an opposing creature/NPC), set opponentTier to one of ${OPPONENT_TIERS.join(", ")} instead, and leave targetNumber null — there is no target number in a contest, only two sides' rolls. Use JSON null (never the string "None") for any field you're leaving empty. Also emit an eventType, an archetype tag (short kebab-case, keys art generation, describes the SCENE not the opponent's difficulty), and a one-sentence factual summary of the attempt (not the outcome).`;
+}
+
+// Retry-once-then-safe-default logic (Decision #19). Invokes LLM once, retries
+// on parse failure, falls back to SAFE_DEFAULT_INTENT on second failure. Also
+// detects semantic incompleteness (e.g., missing targetNumber on a check) and
+// treats it as a fallback (no retry spent, the model already proved it can emit
+// valid JSON — a malformed *value* isn't something a retry reliably fixes).
+// T14's conditional edges can branch on wasFallback to decide whether to
+// escalate or log a metric. Extracted for testability: resolve node logic
+// stays clean, retry strategy is independently testable.
+export async function resolveWithFallback(
+  adapter: PromptAdapter,
+  prompt: string,
+): Promise<{ intent: LogicIntent; wasFallback: boolean }> {
+  const model = adapter.getModel().withStructuredOutput(LogicIntentRawSchema);
+
+  let intent: LogicIntent;
+  let wasFallback = false;
+
+  try {
+    intent = sanitizeIntent(await model.invoke(prompt));
+  } catch (firstErr) {
+    try {
+      const retryPrompt = `${prompt}\n\nYour previous response was not valid: ${(firstErr as Error).message}. Try again, strictly matching the schema.`;
+      intent = sanitizeIntent(await model.invoke(retryPrompt));
+      wasFallback = true;
+    } catch {
+      intent = SAFE_DEFAULT_INTENT;
+      wasFallback = true;
+    }
+  }
+
+  // Schema-valid but semantically incomplete (e.g. a "check" with no
+  // targetNumber) doesn't get a retry — the model already proved it can
+  // emit valid JSON, so a malformed *value* isn't something a retry
+  // reliably fixes. Straight to safe-default instead.
+  if (needsTargetNumber(intent) && intent.targetNumber == null) {
+    intent = SAFE_DEFAULT_INTENT;
+    wasFallback = true;
+  }
+
+  return { intent, wasFallback };
 }
 
 const DC_MIN = 5;
@@ -21,20 +83,48 @@ function clampTargetNumber(dc: number): number {
 // Hunger). Fixed magnitude, not LLM-invented — Decision #7's bound.
 const CRAVING_COST = 1;
 
-// Opponent difficulty for opposedCheck — a CLOSED enum the LLM picks from
-// (like `attribute`), never the free-text `archetype` string. Keying off
-// archetype would let the model self-select its own opponent's difficulty
-// (an outside-voice-caught violation of Decision #7's "never trust an
-// LLM-claimed value" principle — archetype is a narrative/art-gen tag for
-// the scene, not a closed difficulty signal).
-export const OPPONENT_TIERS = [
-  "trivial",
-  "minor",
-  "moderate",
-  "dangerous",
-  "deadly",
-] as const;
-export type OpponentTier = (typeof OPPONENT_TIERS)[number];
+// --- RESOLVED EVENT (server-authoritative) ---
+// Every field below the eventType/archetype/summary is either looked up
+// from the character sheet or computed by resolveCheck() — nothing here
+// comes from the LLM directly, even though the shape mirrors LogicIntent.
+// This is what actually reaches the narrate node (Decision #7: only
+// server-computed values, never LLM-claimed results).
+export const CriticalTierSchema = z.enum([
+  "none",
+  "critical",
+  "cravingCritical",
+  "cravingFailure",
+]);
+export type CriticalTier = z.infer<typeof CriticalTierSchema>;
+
+// Closed on purpose (Decision #25 flagged the original open Record<string,
+// number> as having "no structure behind it at all") — applyMutation
+// (validator.ts) handles every key here exhaustively, so a new stat can't
+// compile without a handler for it.
+export const StatDeltasSchema = z.object({
+  hp: z.number().optional(),
+  craving: z.number().optional(),
+});
+export type StatDeltas = z.infer<typeof StatDeltasSchema>;
+
+export const ResolvedEventSchema = z.object({
+  rollType: RollTypeSchema,
+  attribute: AttributeSchema,
+  skillOrDiscipline: z.string().nullable(),
+  modifier: z.number(),
+  targetNumber: z.number().nullable(), // null for opposedCheck
+  roll: z.number().min(1).max(20),
+  cravingDie: z.number().min(1).max(20).nullable(),
+  opponentTier: OpponentTierSchema.nullable(), // null for check/attack
+  opponentRoll: z.number().min(1).max(20).nullable(), // null for check/attack
+  success: z.boolean(),
+  criticalTier: CriticalTierSchema,
+  statDeltas: StatDeltasSchema,
+  archetype: z.string(),
+  summary: z.string(), // factual description of the attempt — never overwritten by a rejection
+  rejectionReason: z.string().nullable().default(null), // set only by rejectedEvent()
+});
+export type ResolvedEvent = z.infer<typeof ResolvedEventSchema>;
 
 const TIER_MODIFIERS: Record<OpponentTier, number> = {
   trivial: 0,
@@ -93,6 +183,7 @@ export function resolveCheck(
     cravingDie,
     archetype: intent.archetype,
     summary: intent.summary,
+    rejectionReason: null,
   };
 
   if (intent.rollType === "opposedCheck") {
@@ -108,7 +199,7 @@ export function resolveCheck(
     const success = playerTotal > opponentTotal;
     const criticalTier = computeCriticalTier(usedRoll, cravingDie, success);
 
-    const statDeltas: Record<string, number> = {};
+    const statDeltas: StatDeltas = {};
     if (intent.cravingElevated) statDeltas.craving = CRAVING_COST;
     if (intent.eventType === "combat" && !success) {
       // A failed combat opposedCheck (e.g. a defense/dodge contest) means
@@ -135,17 +226,12 @@ export function resolveCheck(
   const success = usedRoll + modifier >= targetNumber;
   const criticalTier = computeCriticalTier(usedRoll, cravingDie, success);
 
-  const statDeltas: Record<string, number> = {};
+  const statDeltas: StatDeltas = {};
   if (intent.cravingElevated) statDeltas.craving = CRAVING_COST;
-  if (intent.rollType === "attack" && success) {
-    // Placeholder damage band until a real weapon/damage-dice system
-    // exists — bounded, not LLM-supplied, per Decision #7.
-    statDeltas.targetHp = -(
-      criticalTier === "critical" || criticalTier === "cravingCritical"
-        ? 8
-        : 4
-    );
-  }
+  // A successful "attack" has no statDeltas target: Decision #25 models
+  // opponents as a closed difficulty tier, not an entity with hp, so there
+  // is nothing server-side to apply damage to yet — attacks resolve
+  // narratively until a real opponent/damage system exists.
 
   return {
     ...base,
@@ -164,7 +250,9 @@ export function resolveCheck(
  * rules-illegal -> Rejected by rules validator, safe no-op event"). The
  * roll already happened (kept for transparency/debugging), but the
  * mutation itself never applies — reflected here as success:false with no
- * statDeltas.
+ * statDeltas. `summary` keeps describing what was ATTEMPTED (narrate's
+ * prompt reads it that way); the reason the attempt didn't land goes in
+ * rejectionReason instead, not stamped over summary.
  */
 export function rejectedEvent(
   reason: string,
@@ -175,7 +263,7 @@ export function rejectedEvent(
     success: false,
     criticalTier: "none",
     statDeltas: {},
-    summary: reason,
+    rejectionReason: reason,
   };
 }
 

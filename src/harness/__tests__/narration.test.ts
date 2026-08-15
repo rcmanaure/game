@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isRefusal, deterministicNarration, narrateWithFallback } from "../narration.js";
-import type { ResolvedEvent } from "../state.js";
+import { isRefusal, deterministicNarration, narrateWithFallback, buildNarratePrompt } from "../narration.js";
+import type { ResolvedEvent } from "../rules.js";
 
 // T2 verify criterion: "forced-refusal test case resolves to a non-empty
 // narration, never a silent no-op." Covers detection (isRefusal) and the
@@ -23,9 +23,34 @@ function makeEvent(overrides: Partial<ResolvedEvent> = {}): ResolvedEvent {
     statDeltas: {},
     archetype: "test-scene",
     summary: "the wretch lunges and is repelled",
+    rejectionReason: null,
     ...overrides,
   };
 }
+
+test("buildNarratePrompt: an ordinary event asks for a beat matching the mechanical outcome", () => {
+  const prompt = buildNarratePrompt("swing at the wretch", makeEvent({ success: true, criticalTier: "critical" }));
+  assert.match(prompt, /swing at the wretch/);
+  assert.match(prompt, /resounding, decisive success/);
+});
+
+test("buildNarratePrompt: a rejected event asks for 'could not happen', not an outcome", () => {
+  const prompt = buildNarratePrompt(
+    "drink from the stranger's throat",
+    makeEvent({ rejectionReason: "Mira Ashgrave has met Final Death — no further mutation is legal" }),
+  );
+  assert.match(prompt, /could not happen/);
+  assert.match(prompt, /Final Death/);
+  assert.doesNotMatch(prompt, /Mechanical outcome/);
+});
+
+test("deterministicNarration: a rejected event names the reason, not the attempted outcome", () => {
+  const narration = deterministicNarration(
+    makeEvent({ rejectionReason: "Mira Ashgrave has met Final Death — no further mutation is legal" }),
+  );
+  assert.match(narration, /cannot happen/);
+  assert.match(narration, /Final Death/);
+});
 
 test("isRefusal: finish_reason content_filter is always a refusal", () => {
   assert.equal(

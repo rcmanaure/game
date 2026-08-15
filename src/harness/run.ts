@@ -1,8 +1,10 @@
 import { loadEnv } from "./env.js";
 loadEnv();
 
-import { harnessGraph } from "./graph.js";
+import { createHarnessGraphFromEnv } from "./graph.js";
 import { SAMPLE_CHARACTERS } from "./character.js";
+
+const harnessGraph = createHarnessGraphFromEnv();
 
 // T22: fire a handful of turns end-to-end (resolve -> rulesValidate ->
 // narrate -> art-trigger, no auth/DB/UI) and print the result for

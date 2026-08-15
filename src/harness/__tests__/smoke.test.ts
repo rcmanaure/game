@@ -1,8 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { LogicIntentSchema, HarnessStateSchema, sanitizeIntent } from "../state.js";
+import { LogicIntentSchema, sanitizeIntent } from "../validator.js";
 import { STYLE_FORMULA, STYLE_TOKEN } from "../style-formula.js";
-import { SAMPLE_CHARACTERS } from "../character.js";
 
 // Assert-based smoke tests only — no live API calls (those cost money and
 // need OPENROUTER_API_KEY; narration/art quality is eyeballed manually via
@@ -87,16 +86,6 @@ test("LogicIntentSchema rejects a missing archetype", () => {
   assert.throws(() =>
     LogicIntentSchema.parse({ ...VALID_INTENT, archetype: undefined }),
   );
-});
-
-test("HarnessStateSchema defaults gameEvent/narration/art fields to null", () => {
-  const state = HarnessStateSchema.parse({
-    playerAction: "look around",
-    character: SAMPLE_CHARACTERS["mira-ashgrave"],
-  });
-  assert.equal(state.gameEvent, null);
-  assert.equal(state.narration, null);
-  assert.equal(state.artUrl, null);
 });
 
 test("STYLE_FORMULA and STYLE_TOKEN are non-empty and distinct", () => {

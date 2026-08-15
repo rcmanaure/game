@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist/backend",
-    "rootDir": "src/backend"
+    "rootDir": "src"
   },
-  "include": ["src/backend/**/*.ts"]
+  "include": ["src/backend/**/*.ts", "src/harness/**/*.ts"],
+  "exclude": ["**/*.test.ts"]
 }

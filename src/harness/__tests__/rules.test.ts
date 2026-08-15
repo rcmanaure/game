@@ -5,8 +5,8 @@ import {
   modifierFor,
   SAMPLE_CHARACTERS,
 } from "../character.js";
-import { rollD20, resolveCheck, computeCriticalTier } from "../rules.js";
-import { LogicIntentSchema } from "../state.js";
+import { rollD20, resolveCheck, computeCriticalTier, rejectedEvent, buildResolvePrompt } from "../rules.js";
+import { LogicIntentSchema } from "../validator.js";
 
 test("clampAttributeModifier bounds to -5..+10", () => {
   assert.equal(clampAttributeModifier(99), 10);
@@ -68,6 +68,14 @@ test("computeCriticalTier: success on a Craving die of 1 is not a cravingFailure
   assert.equal(computeCriticalTier(15, 1, true), "none");
 });
 
+test("buildResolvePrompt: names the character and the action, without an adapter or a graph State", () => {
+  const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
+  const prompt = buildResolvePrompt(mira, "search the crypt for exits");
+  assert.match(prompt, /Mira Ashgrave/);
+  assert.match(prompt, /search the crypt for exits/);
+  assert.match(prompt, /opposedCheck/);
+});
+
 test("resolveCheck: modifier is the real character-sheet value, never LLM-supplied", () => {
   const mira = SAMPLE_CHARACTERS["mira-ashgrave"];
   const intent = LogicIntentSchema.parse({
@@ -125,7 +133,7 @@ test("resolveCheck: cravingElevated rolls a second die and costs 1 Craving", () 
   assert.equal(event.statDeltas.craving, 1);
 });
 
-test("resolveCheck: successful attack applies bounded negative HP delta", () => {
+test("resolveCheck: successful attack has no statDeltas — no opponent entity exists to damage (Decision #25)", () => {
   const toren = SAMPLE_CHARACTERS["toren-vale"];
   // Force a guaranteed success: strength +4, huge modifier vs trivial DC.
   const intent = LogicIntentSchema.parse({
@@ -145,8 +153,27 @@ test("resolveCheck: successful attack applies bounded negative HP delta", () => 
   for (let i = 0; i < 5; i++) {
     const event = resolveCheck(toren, intent);
     assert.equal(event.success, true);
-    assert.ok(event.statDeltas.targetHp! < 0);
+    assert.deepEqual(event.statDeltas, {});
   }
+});
+
+test("rejectedEvent: keeps summary as the attempt description, moves the reason to rejectionReason", () => {
+  const resolved = resolveCheck(SAMPLE_CHARACTERS["mira-ashgrave"], {
+    eventType: "combat",
+    archetype: "test-scene",
+    summary: "drinks from the stranger's throat",
+    rollType: "attack",
+    attribute: "strength",
+    skill: null,
+    targetNumber: 10,
+    opponentTier: null,
+    cravingElevated: false,
+  });
+  const rejected = rejectedEvent("Mira Ashgrave has met Final Death — no further mutation is legal", resolved);
+  assert.equal(rejected.summary, "drinks from the stranger's throat");
+  assert.equal(rejected.rejectionReason, "Mira Ashgrave has met Final Death — no further mutation is legal");
+  assert.equal(rejected.success, false);
+  assert.deepEqual(rejected.statDeltas, {});
 });
 
 test("resolveCheck: opposedCheck has null targetNumber, rolls an opponent d20", () => {

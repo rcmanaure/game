@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/rcmanaure/.local/bin/graphify hook-guard search"
+            "command": "C:/Users/PC-1/.local/bin/graphify.EXE hook-guard search"
           }
         ]
       },
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/rcmanaure/.local/bin/graphify hook-guard read"
+            "command": "C:/Users/PC-1/.local/bin/graphify.EXE hook-guard read"
           }
         ]
       }
