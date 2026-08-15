@@ -1,21 +1,21 @@
 # Graph Report - game  (2026-08-14)
 
 ## Corpus Check
-- 298 files · ~257,522 words
+- 298 files · ~258,584 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2720 nodes · 2771 edges · 446 communities (241 shown, 205 thin omitted)
-- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 335 edges (avg confidence: 0.96)
+- 2729 nodes · 2776 edges · 445 communities (240 shown, 205 thin omitted)
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 336 edges (avg confidence: 0.96)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `acfe5e8c`
+- Built from commit: `84ed5dd3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- rules.test.ts
+- rules.ts
 - Node.js Backend Patterns Skill
 - AI DM Platform Backend Architecture
 - design_system
@@ -140,7 +140,7 @@
 - Other Control Mechanisms
 - 1. Player character creation: free-form vs. AI-predefined-with-portrait
 - adapters.ts
-- game.service.ts
+- Character
 - Game Engine Skill
 - GAME CREATION SYSTEM
 - Quick Reference
@@ -153,7 +153,7 @@
 - .claude/skills/zod/AGENTS.md
 - Animated 3D Characters (rigged GLB pipeline)
 - 2D Sprite Animation (video-to-spritesheet pipeline)
-- rules.ts
+- state.ts
 - Mathematical / Algorithmic Concepts
 - Stylization — the style contract for AI-generated game assets
 - Sections
@@ -167,7 +167,7 @@
 - Audio for Web Games
 - Tilemaps
 - Game Genre Terms
-- Game Ui Design - Validations
+- HUD Text Without Shadow/Outline
 - Procedural animation — non-humanoid branch
 - Zod Best Practices Skill
 - Sections
@@ -216,7 +216,7 @@
 - WebVR API (Deprecated)
 - XMLHttpRequest
 - WebGL API
-- Missing Hover State
+- Game Ui Design - Validations
 - Unity Canvas Without Scaler
 - Godot Control Fixed Size
 - Missing Reduced Motion Check
@@ -244,7 +244,7 @@
 - Issue tracker: GitHub
 - Research: Text-Game Tooling, Animation, Alternative Formats, Accessibility
 - Research: OpenRouter Free-Tier Model Candidates for LOGIC_MODEL / CREATIVE_MODEL
-- smoke.test.ts
+- graph.ts
 - Win Condition
 - Walking Enemies
 - Step 10: Finishing Up
@@ -297,7 +297,7 @@
 - Initialise Phaser
 - Moving Forward
 - Start Here
-- Step 9: Mouse Controls
+- Step 5: Game Over
 - Bounding Spheres
 - Vector Mathematics for Game Development
 - Game UI Design
@@ -359,7 +359,6 @@
 - .agents/skills/zod/references/compose-intersection.md
 - .agents/skills/zod/references/compose-lazy-recursive.md
 - .agents/skills/zod/references/compose-pipe.md
-- validator.ts
 - .agents/skills/zod/references/error-avoid-throwing-in-refine.md
 - .agents/skills/zod/references/error-i18n.md
 - .agents/skills/zod/references/error-path-for-nested.md
@@ -455,7 +454,7 @@
 - .claude/skills/zod/references/type-export-schemas-and-types.md
 - type-input-vs-output.md
 - type-use-z-infer.md
-- .agents/skills/zod/references/object-strict-vs-strip.md
+- .agents/skills/zod/references/compose-preprocess.md
 
 ## God Nodes (most connected - your core abstractions)
 1. `Programming and Technical Terms` - 29 edges
@@ -484,11 +483,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (446 total, 205 thin omitted)
+## Communities (445 total, 205 thin omitted)
 
-### Community 0 - "rules.test.ts"
-Cohesion: 0.27
-Nodes (9): clampAttributeModifier(), modifierFor(), resolve(), clampTargetNumber(), computeCriticalTier(), resolveCheck(), rollD20(), rollPlayerSide() (+1 more)
+### Community 0 - "rules.ts"
+Cohesion: 0.24
+Nodes (13): clampAttributeModifier(), modifierFor(), clampTargetNumber(), computeCriticalTier(), CriticalTier, CriticalTierSchema, PlayerRoll, resolveCheck() (+5 more)
 
 ### Community 1 - "Node.js Backend Patterns Skill"
 Cohesion: 0.20
@@ -552,7 +551,7 @@ Nodes (8): TypeScript Advanced Types, Builder Pattern, Conditional Types, Discri
 
 ### Community 16 - "compilerOptions"
 Cohesion: 0.12
-Nodes (16): **/*.spec.ts, src/backend/**/*.ts, src/harness/**/*.ts, compilerOptions, emitDecoratorMetadata, esModuleInterop, experimentalDecorators, module (+8 more)
+Nodes (16): src/backend/**/*.ts, src/harness/**/*.ts, **/*.test.ts, compilerOptions, emitDecoratorMetadata, esModuleInterop, experimentalDecorators, module (+8 more)
 
 ### Community 17 - ".agents/skills/nestjs-best-practices/scripts/build-agents.ts"
 Cohesion: 0.23
@@ -579,8 +578,8 @@ Cohesion: 0.20
 Nodes (10): Game UI Patterns, Game Loop Concept, Babylon.js 3D Framework, Phaser Game Framework, Three.js 3D Framework, Game Engine Skill, Game UI Design Skill, Higgsfield Game Generation Skill (+2 more)
 
 ### Community 23 - "narration.ts"
-Cohesion: 0.29
-Nodes (8): narrate(), contentToString(), deterministicNarration(), isRefusal(), narrateWithFallback(), NarrationResponse, outcomeLabel(), ResolvedEvent
+Cohesion: 0.38
+Nodes (7): contentToString(), deterministicNarration(), isRefusal(), narrateWithFallback(), NarrationResponse, outcomeLabel(), ResolvedEvent
 
 ### Community 24 - "Ball"
 Cohesion: 0.22
@@ -731,12 +730,12 @@ Cohesion: 0.10
 Nodes (19): 1. Player character creation: free-form vs. AI-predefined-with-portrait, 2. Dynamic portrait evolution: does the chosen v1 art stack support image-to-image editing on an existing portrait?, 3. Story reuse across users: does LangGraph.js's checkpointer support forking/cloning a thread?, AI Dungeon (Latitude) — customization is choice-based, not free-text, Character.ai/SillyTavern-style "Character Card" ecosystem — the strongest evidence for the predefined-portrait pattern, CRPG contrast — a different axis of tradeoff, not the same problem, docs.langchain.com's own Persistence guide doesn't offer one either, Gemini 2.5 Flash Image ("Nano Banana") — edits confirmed on the model's own page (+11 more)
 
 ### Community 124 - "adapters.ts"
-Cohesion: 0.18
-Nodes (6): CreativeAdapter, LogicAdapter, ModelConfig, PromptAdapter, requireEnv(), RetryPolicy
+Cohesion: 0.13
+Nodes (8): CreativeAdapter, LogicAdapter, ModelConfig, PromptAdapter, requireEnv(), RetryPolicy, narrate(), resolve()
 
-### Community 125 - "game.service.ts"
+### Community 125 - "Character"
 Cohesion: 0.17
-Nodes (14): Column, Entity, InjectRepository, PrimaryColumn, CharacterEntity, CharacterRepository, Injectable, GameService (+6 more)
+Nodes (13): Column, Entity, InjectRepository, PrimaryColumn, CharacterEntity, CharacterRepository, Injectable, GameService (+5 more)
 
 ### Community 126 - "Game Engine Skill"
 Cohesion: 0.12
@@ -755,8 +754,8 @@ Cohesion: 0.12
 Nodes (16): 10. DevOps & Deployment (LOW-MEDIUM), 1. Architecture (CRITICAL), 2. Dependency Injection (CRITICAL), 3. Error Handling (HIGH), 4. Security (HIGH), 5. Performance (HIGH), 6. Testing (MEDIUM-HIGH), 7. Database & ORM (MEDIUM-HIGH) (+8 more)
 
 ### Community 130 - "art.ts"
-Cohesion: 0.19
-Nodes (15): ArtResult, extractImageUrl(), generateArt(), placeholderUrl(), main(), saveImage(), loadEnv(), artTrigger() (+7 more)
+Cohesion: 0.16
+Nodes (15): ArtResult, extractImageUrl(), generateArt(), placeholderUrl(), ArtService, GenerateArtFn, main(), saveImage() (+7 more)
 
 ### Community 131 - "Quick Reference"
 Cohesion: 0.12
@@ -772,7 +771,7 @@ Nodes (15): Bug, Cross-Platform, Day One Patch, DLC (Downloadable Content), Earl
 
 ### Community 134 - ".agents/skills/zod/AGENTS.md"
 Cohesion: 0.13
-Nodes (7): Rule Title Here, Use preprocess() for Data Normalization, Avoid Dynamic Schema Creation in Hot Paths, Lazy Load Large Schemas, Use default() for Optional Fields with Defaults, Use Coercion for Form and Query Data, Export Both Schemas and Inferred Types
+Nodes (7): Rule Title Here, Choose strict() vs strip() for Unknown Keys, Avoid Dynamic Schema Creation in Hot Paths, Lazy Load Large Schemas, Use default() for Optional Fields with Defaults, Use Coercion for Form and Query Data, Export Both Schemas and Inferred Types
 
 ### Community 135 - ".claude/skills/zod/AGENTS.md"
 Cohesion: 0.15
@@ -786,9 +785,9 @@ Nodes (13): Animated 3D Characters (rigged GLB pipeline), CC0 asset sources (no 
 Cohesion: 0.15
 Nodes (12): 2D Sprite Animation (video-to-spritesheet pipeline), Failure recovery, Native AutoSprite route — preferred, Pipeline at a glance, Pixel-art sprites — the quality envelope, Stage 1 — Source image, Stage 2 — Key-pose generation (`flux_2`), Stage 3 — Video generation (`seedance1_5`) (+4 more)
 
-### Community 138 - "rules.ts"
-Cohesion: 0.13
-Nodes (24): rulesValidate(), State, CriticalTier, CriticalTierSchema, PlayerRoll, rejectedEvent(), ResolvedEventSchema, resolveWithFallback() (+16 more)
+### Community 138 - "state.ts"
+Cohesion: 0.11
+Nodes (21): AttributeSchema, HarnessState, HarnessStateSchema, LogicIntentRaw, LogicIntentRawSchema, nullableString, nullableStringOrNumber, OPPONENT_TIERS (+13 more)
 
 ### Community 139 - "Mathematical / Algorithmic Concepts"
 Cohesion: 0.17
@@ -842,9 +841,9 @@ Nodes (10): How It Works, Layers, Logic Grid, Performance Optimization, Renderin
 Cohesion: 0.20
 Nodes (10): Battle Royale, FPS (First-Person Shooter), Game Genre Terms, Metroidvania, MMORPG (Massively Multiplayer Online RPG), MOBA (Multiplayer Online Battle Arena), RPG (Role-Playing Game), RTS (Real-Time Strategy) (+2 more)
 
-### Community 152 - "Game Ui Design - Validations"
-Cohesion: 0.20
-Nodes (9): **Applies To**, **Fix Action**, Game Ui Design - Validations, HUD Text Without Shadow/Outline, **Id**, **Message**, **Pattern**, **Severity** (+1 more)
+### Community 152 - "HUD Text Without Shadow/Outline"
+Cohesion: 0.25
+Nodes (8): **Applies To**, **Fix Action**, HUD Text Without Shadow/Outline, **Id**, **Message**, **Pattern**, **Severity**, **Type**
 
 ### Community 153 - "Procedural animation — non-humanoid branch"
 Cohesion: 0.20
@@ -864,7 +863,7 @@ Nodes (9): File Structure, For Claude Code / AI Agents, For Developers, Key Prin
 
 ### Community 157 - "Paddle Game Template (2D Breakout)"
 Cohesion: 0.22
-Nodes (8): Complete Code for Step 5, Complete Final Game Code, Implementing Game Over and Paddle Collision, Paddle Game Template (2D Breakout), Quick Reference: All Functions, Quick Reference: All Game Variables, Step 5: Game Over, Storing the Interval Reference
+Nodes (8): Adding the mousemove Event Listener, Complete Event Listener Setup (Keyboard + Mouse), Complete Final Game Code, Paddle Game Template (2D Breakout), Quick Reference: All Functions, Quick Reference: All Game Variables, Step 9: Mouse Controls, The mouseMoveHandler Function
 
 ### Community 158 - "Step 2: Move the Ball"
 Cohesion: 0.22
@@ -1038,9 +1037,9 @@ Nodes (8): Code Example, Events, Key Methods, Key Properties, Note on Fetch API,
 Cohesion: 0.25
 Nodes (8): Code Example, Context Management Events, Key Interfaces, Recommended Libraries, WebGL 2 Features Important for Games, WebGL API, What It Is, Why It Matters for Games
 
-### Community 201 - "Missing Hover State"
-Cohesion: 0.25
-Nodes (8): **Applies To**, **Fix Action**, **Id**, **Message**, Missing Hover State, **Pattern**, **Severity**, **Type**
+### Community 201 - "Game Ui Design - Validations"
+Cohesion: 0.20
+Nodes (9): **Applies To**, **Fix Action**, Game Ui Design - Validations, **Id**, **Message**, Missing Hover State, **Pattern**, **Severity** (+1 more)
 
 ### Community 202 - "Unity Canvas Without Scaler"
 Cohesion: 0.25
@@ -1150,9 +1149,9 @@ Nodes (6): 1. Narrative-scripting engines (Ink, Twine, Yarn Spinner) vs custom b
 Cohesion: 0.29
 Nodes (6): 1. Every `:free` model currently on OpenRouter (2026-08-05 snapshot), 2. LOGIC_MODEL verification — actual `withStructuredOutput()` calls, 3. CREATIVE_MODEL verification — Spanish gothic narration, 4. IMAGE_MODEL — brief note only (per this pass's scope), Recommendation, Research: OpenRouter Free-Tier Model Candidates for LOGIC_MODEL / CREATIVE_MODEL
 
-### Community 229 - "smoke.test.ts"
-Cohesion: 0.47
-Nodes (4): HarnessStateSchema, STYLE_FORMULA, STYLE_TOKEN, VALID_INTENT
+### Community 229 - "graph.ts"
+Cohesion: 0.27
+Nodes (8): artService, rulesValidate(), State, rejectedEvent(), ResolvedEventSchema, resolveWithFallback(), needsTargetNumber(), sanitizeIntent()
 
 ### Community 230 - "Win Condition"
 Cohesion: 0.33
@@ -1343,8 +1342,8 @@ Cohesion: 0.40
 Nodes (5): CommonJS, ESM, Bun, Deno, Node.js
 
 ### Community 277 - "character.ts"
-Cohesion: 0.18
-Nodes (8): Attribute, ATTRIBUTES, CHARACTER_STATUSES, CharacterSchema, CharacterStatusSchema, Skill, SkillSchema, harnessGraph
+Cohesion: 0.13
+Nodes (13): Attribute, ATTRIBUTES, CHARACTER_STATUSES, CharacterSchema, CharacterStatus, CharacterStatusSchema, SAMPLE_CHARACTERS, Skill (+5 more)
 
 ### Community 278 - "Moving Sprites with Physics"
 Cohesion: 0.50
@@ -1362,9 +1361,9 @@ Nodes (4): Full Game Source Reference, Key Concepts Summary, Moving Forward, Sug
 Cohesion: 0.50
 Nodes (4): Level Data Format, Project Structure, Start Here, What You Will Build
 
-### Community 282 - "Step 9: Mouse Controls"
+### Community 282 - "Step 5: Game Over"
 Cohesion: 0.50
-Nodes (4): Adding the mousemove Event Listener, Complete Event Listener Setup (Keyboard + Mouse), Step 9: Mouse Controls, The mouseMoveHandler Function
+Nodes (4): Complete Code for Step 5, Implementing Game Over and Paddle Collision, Step 5: Game Over, Storing the Interval Reference
 
 ### Community 283 - "Bounding Spheres"
 Cohesion: 0.50
@@ -1426,26 +1425,22 @@ Nodes (3): Keyboard Controls, Reading Input in Update, Setting Up Input Keys
 Cohesion: 0.67
 Nodes (3): Loading the Hero Image, Spawning the Hero, The Main Character Sprite
 
-### Community 344 - "validator.ts"
-Cohesion: 0.36
-Nodes (5): CharacterStatus, LogicIntentRaw, applyMutation(), TransitionResult, validateTransition()
-
 ## Knowledge Gaps
-- **1637 isolated node(s):** `__filename`, `__dirname`, `CATEGORIES`, `RuleFrontmatter`, `Rule` (+1632 more)
+- **1640 isolated node(s):** `__filename`, `__dirname`, `CATEGORIES`, `RuleFrontmatter`, `Rule` (+1635 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **205 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Game Ui Design - Validations` connect `Game Ui Design - Validations` to `Hardcoded Screen Position`, `Touch Target Too Small`, `Color-Only Information`, `Missing Controller Navigation Setup`, `Long Animation Duration`, `Fixed Pixel Dimensions`, `Excessive Z-Index`, `Magic Number Positioning`, `Missing Keyboard Focus Indicator`, `Hardcoded Resolution Reference`, `Font Size Too Small`, `Hardcoded Button Prompt`, `Missing Hover State`, `Unity Canvas Without Scaler`, `Godot Control Fixed Size`, `Missing Reduced Motion Check`, `Static Button Text Instead of Localized`, `Tooltip Without Delay`, `Unity Find for UI Element`, `Unity UI Without Raycast Consideration`, `Godot UI Signal Emission Without Connection`?**
+- **Why does `Game Ui Design - Validations` connect `Game Ui Design - Validations` to `HUD Text Without Shadow/Outline`, `Hardcoded Screen Position`, `Touch Target Too Small`, `Color-Only Information`, `Missing Controller Navigation Setup`, `Long Animation Duration`, `Fixed Pixel Dimensions`, `Excessive Z-Index`, `Magic Number Positioning`, `Missing Keyboard Focus Indicator`, `Hardcoded Resolution Reference`, `Font Size Too Small`, `Hardcoded Button Prompt`, `Unity Canvas Without Scaler`, `Godot Control Fixed Size`, `Missing Reduced Motion Check`, `Static Button Text Instead of Localized`, `Tooltip Without Delay`, `Unity Find for UI Element`, `Unity UI Without Raycast Consideration`, `Godot UI Signal Emission Without Connection`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `Web APIs for Game Development` connect `Web APIs for Game Development` to `IndexedDB API`, `JavaScript`, `SVG (Scalable Vector Graphics)`, `WebGL API`, `WebVR API (Deprecated)`, `XMLHttpRequest`, `asm.js`, `Canvas API`, `Fullscreen API`, `Gamepad API`, `Pointer Lock API`, `Typed Arrays`, `Web Audio API`, `WebSockets API`, `Web Workers API`, `WebRTC API`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `Game Development Terminology` connect `Game Development Terminology` to `Art and Visual Terms`, `Platform and Distribution Terms`, `General Development Terms`, `Game Design Terms`, `Programming and Technical Terms`, `Game Genre Terms`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **Why does `Web APIs for Game Development` connect `Web APIs for Game Development` to `IndexedDB API`, `JavaScript`, `SVG (Scalable Vector Graphics)`, `WebGL API`, `WebVR API (Deprecated)`, `XMLHttpRequest`, `asm.js`, `Canvas API`, `Fullscreen API`, `Gamepad API`, `Pointer Lock API`, `Typed Arrays`, `Web Audio API`, `WebSockets API`, `Web Workers API`, `WebRTC API`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `__filename`, `__dirname`, `CATEGORIES` to the rest of the system?**
-  _1637 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1640 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AI DM Platform Backend Architecture` be split into smaller, more focused modules?**
   _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
 - **Should `design_system` be split into smaller, more focused modules?**
